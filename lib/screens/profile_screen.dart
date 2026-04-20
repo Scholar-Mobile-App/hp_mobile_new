@@ -181,39 +181,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     end: Alignment.bottomRight,
                   ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                     CircleAvatar(
-                       radius: 35,
-                       backgroundImage: user.image.isNotEmpty ? NetworkImage(
-                         user.image.startsWith('http') ? user.image : 'https://s3-triz.fra1.cdn.digitaloceanspaces.com/public/hp_user/' + user.image
-                       ) : null,
-                       backgroundColor: Colors.white,
-                       child: user.image.isEmpty ? Icon(
-                         Icons.person,
-                         size: 35,
-                         color: Color(0xFF1F2A6D),
-                       ) : null,
-                     ),
-                    SizedBox(height: 12),
-                    Text(
-                      user.fullName,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        radius: 35,
+                        backgroundImage: user.image.isNotEmpty ? NetworkImage(
+                          user.image.startsWith('http') ? user.image : 'https://s3-triz.fra1.cdn.digitaloceanspaces.com/public/hp_user/' + user.image
+                        ) : null,
+                        backgroundColor: Colors.white,
+                        child: user.image.isEmpty ? Icon(
+                          Icons.person,
+                          size: 35,
+                          color: Color(0xFF1F2A6D),
+                        ) : null,
                       ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      user.email,
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
+                      SizedBox(height: 12),
+                      Text(
+                        user.fullName,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 4),
+                      Text(
+                        user.email,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Container(
@@ -246,94 +248,95 @@ class _ProfileScreenState extends State<ProfileScreen> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFFF6A00), Color(0xFFFF7A1A)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0xFFFF6A00).withOpacity(0.3),
-                      blurRadius: 10,
-                      offset: Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.waving_hand,
-                      color: Colors.white,
-                      size: 32,
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Welcome, ${user.firstName}!',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Logged in as ${user.userProfileName} at ${user.orgName}',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 24),
-              Text(
-                'Dashboard',
-                style: TextStyle(
-                  color: Color(0xFF1F2A6D),
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 16),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ProfileDetailsScreen()),
-                  );
-                },
-                child: Container(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
                   padding: EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    gradient: LinearGradient(
+                      colors: [Color(0xFFFF6A00), Color(0xFFFF7A1A)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        blurRadius: 8,
-                        offset: Offset(0, 4),
+                        color: Color(0xFFFF6A00).withOpacity(0.3),
+                        blurRadius: 10,
+                        offset: Offset(0, 5),
                       ),
                     ],
                   ),
                   child: Row(
                     children: [
+                      Icon(
+                        Icons.waving_hand,
+                        color: Colors.white,
+                        size: 32,
+                      ),
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Welcome, ${user.firstName}!',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'Logged in as ${user.userProfileName} at ${user.orgName}',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 24),
+                Text(
+                  'Dashboard',
+                  style: TextStyle(
+                    color: Color(0xFF1F2A6D),
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 16),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ProfileDetailsScreen()),
+                    );
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          blurRadius: 8,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
                         CircleAvatar(
                           radius: 30,
                           backgroundImage: user.image.isNotEmpty ? NetworkImage(
@@ -346,221 +349,216 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             color: Colors.white,
                           ) : null,
                         ),
-                       SizedBox(width: 16),
-                       Expanded(
-                         child: Column(
-                           crossAxisAlignment: CrossAxisAlignment.start,
-                           children: [
-                             Text(
-                               user.fullName,
-                               style: TextStyle(
-                                 color: Color(0xFF1F2A6D),
-                                 fontSize: 20,
-                                 fontWeight: FontWeight.bold,
-                               ),
-                             ),
-                             SizedBox(height: 4),
-                             Text(
-                               user.email,
-                               style: TextStyle(
-                                 color: Colors.grey[600],
-                                 fontSize: 14,
-                               ),
-                             ),
-                             SizedBox(height: 4),
-                             Text(
-                               'Tap to view full profile',
-                               style: TextStyle(
-                                 color: Color(0xFFFF6A00),
-                                 fontSize: 12,
-                                 fontWeight: FontWeight.w500,
-                               ),
-                             ),
-                           ],
-                         ),
-                       ),
-                       Icon(
-                         Icons.arrow_forward_ios,
-                         color: Color(0xFF1F2A6D),
-                         size: 16,
-                       ),
-                     ],
-                   ),
-                 ),
-               ),
-               SizedBox(height: 24),
-               Text(
-                 'Quick Actions',
-                 style: TextStyle(
-                   color: Color(0xFF1F2A6D),
-                   fontSize: 22,
-                   fontWeight: FontWeight.bold,
-                 ),
-               ),
-               SizedBox(height: 16),
-               GridView.count(
-                 crossAxisCount: 2,
-                 shrinkWrap: true,
-                 physics: NeverScrollableScrollPhysics(),
-                 crossAxisSpacing: 16,
-                 mainAxisSpacing: 16,
-                 children: [
-                   _buildQuickActionCard(
-                     context,
-                     'Goals',
-                     Icons.flag,
-                     'Track your development goals',
-                     () => _navigateToGoals(context),
-                   ),
-                   _buildQuickActionCard(
-                     context,
-                     'Achievements',
-                     Icons.emoji_events,
-                     'View your milestones',
-                     () => _navigateToAchievements(context),
-                   ),
-                   _buildQuickActionCard(
-                     context,
-                     'Training',
-                     Icons.school,
-                     'Access learning resources',
-                     () => _navigateToTraining(context),
-                   ),
-                   _buildQuickActionCard(
-                     context,
-                     'Resources',
-                     Icons.library_books,
-                     'Company documents & policies',
-                     () => _navigateToResources(context),
-                   ),
-                 ],
-               ),
-               SizedBox(height: 24),
-               Text(
-                 'Recent Announcements',
-                 style: TextStyle(
-                   color: Color(0xFF1F2A6D),
-                   fontSize: 22,
-                   fontWeight: FontWeight.bold,
-                 ),
-               ),
-               SizedBox(height: 16),
-               Container(
-                 padding: EdgeInsets.all(20),
-                 decoration: BoxDecoration(
-                   color: Colors.white,
-                   borderRadius: BorderRadius.circular(16),
-                   boxShadow: [
-                     BoxShadow(
-                       color: Colors.grey.withOpacity(0.2),
-                       blurRadius: 8,
-                       offset: Offset(0, 4),
-                     ),
-                   ],
-                 ),
-                 child: Column(
-                   crossAxisAlignment: CrossAxisAlignment.start,
-                   children: [
-                     Row(
-                       children: [
-                         Icon(Icons.campaign, color: Color(0xFFFF6A00), size: 24),
-                         SizedBox(width: 12),
-                         Text(
-                           'Welcome to Gaps To Growth!',
-                           style: TextStyle(
-                             color: Color(0xFF1F2A6D),
-                             fontSize: 18,
-                             fontWeight: FontWeight.bold,
-                           ),
-                         ),
-                       ],
-                     ),
-                     SizedBox(height: 12),
-                     Text(
-                       'Your journey to professional development starts here. Set goals, track progress, and achieve your career aspirations with our comprehensive tools.',
-                       style: TextStyle(
-                         color: Colors.grey[700],
-                         fontSize: 14,
-                         height: 1.5,
-                       ),
-                     ),
-                     SizedBox(height: 16),
-                     Text(
-                       'Recent Update: New training modules available',
-                       style: TextStyle(
-                         color: Color(0xFFFF6A00),
-                         fontSize: 12,
-                         fontWeight: FontWeight.w500,
-                       ),
-                     ),
-                   ],
-                 ),
-               ),
-               SizedBox(height: 24),
-               Text(
-                 'Progress Overview',
-                 style: TextStyle(
-                   color: Color(0xFF1F2A6D),
-                   fontSize: 22,
-                   fontWeight: FontWeight.bold,
-                 ),
-               ),
-               SizedBox(height: 16),
-               Container(
-                 padding: EdgeInsets.all(20),
-                 decoration: BoxDecoration(
-                   gradient: LinearGradient(
-                     colors: [Color(0xFFFF6A00), Color(0xFFFF7A1A)],
-                     begin: Alignment.topLeft,
-                     end: Alignment.bottomRight,
-                   ),
-                   borderRadius: BorderRadius.circular(16),
-                   boxShadow: [
-                     BoxShadow(
-                       color: Color(0xFFFF6A00).withOpacity(0.3),
-                       blurRadius: 10,
-                       offset: Offset(0, 5),
-                     ),
-                   ],
-                 ),
-                 child: Column(
-                   crossAxisAlignment: CrossAxisAlignment.start,
-                   children: [
-                     Text(
-                       'Your Development Progress',
-                       style: TextStyle(
-                         color: Colors.white,
-                         fontSize: 18,
-                         fontWeight: FontWeight.bold,
-                       ),
-                     ),
-                     SizedBox(height: 16),
-                     _buildProgressItem('Goals Completed', '3/5', 0.6),
-                     SizedBox(height: 12),
-                     _buildProgressItem('Courses Started', '2/8', 0.25),
-                     SizedBox(height: 12),
-                     _buildProgressItem('Achievements Unlocked', '7/15', 0.47),
-                     SizedBox(height: 16),
-                     Text(
-                       'Keep up the great work! You\'re making excellent progress.',
-                       style: TextStyle(
-                         color: Colors.white70,
-                         fontSize: 14,
-                       ),
-                     ),
-                   ],
-                 ),
-               ),
-             ],
-           ),
-         ),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                user.fullName,
+                                style: TextStyle(
+                                  color: Color(0xFF1F2A6D),
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                user.email,
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 14,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                'Tap to view full profile',
+                                style: TextStyle(
+                                  color: Color(0xFFFF6A00),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: Color(0xFF1F2A6D),
+                          size: 16,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 24),
+                Text(
+                  'Quick Actions',
+                  style: TextStyle(
+                    color: Color(0xFF1F2A6D),
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 16),
+                GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  children: [
+                    _buildQuickActionCard(
+                      context,
+                      'Goals',
+                      Icons.flag,
+                      'Track your development goals',
+                      () => _navigateToGoals(context),
+                    ),
+                    _buildQuickActionCard(
+                      context,
+                      'Achievements',
+                      Icons.emoji_events,
+                      'View your milestones',
+                      () => _navigateToAchievements(context),
+                    ),
+                    _buildQuickActionCard(
+                      context,
+                      'Training',
+                      Icons.school,
+                      'Access learning resources',
+                      () => _navigateToTraining(context),
+                    ),
+                    _buildQuickActionCard(
+                      context,
+                      'Resources',
+                      Icons.library_books,
+                      'Company documents & policies',
+                      () => _navigateToResources(context),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 24),
+                Text(
+                  'Recent Announcements',
+                  style: TextStyle(
+                    color: Color(0xFF1F2A6D),
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 16),
+                Container(
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        blurRadius: 8,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.campaign, color: Color(0xFFFF6A00), size: 24),
+                          SizedBox(width: 12),
+                          Text(
+                            'Welcome to Gaps To Growth!',
+                            style: TextStyle(
+                              color: Color(0xFF1F2A6D),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 12),
+                      Text(
+                        'Your journey to professional development starts here. Set goals, track progress, and achieve your career aspirations with our comprehensive tools.',
+                        style: TextStyle(
+                          color: Colors.grey[700],
+                          fontSize: 14,
+                          height: 1.5,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Recent Update: New training modules available',
+                        style: TextStyle(
+                          color: Color(0xFFFF6A00),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 24),
+                Text(
+                  'Progress Overview',
+                  style: TextStyle(
+                    color: Color(0xFF1F2A6D),
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 16),
+                Container(
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFFFF6A00), Color(0xFFFF7A1A)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xFFFF6A00).withOpacity(0.3),
+                        blurRadius: 10,
+                        offset: Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Your Development Progress',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      _buildProgressItem('Goals Completed', '3/5', 0.6),
+                      SizedBox(height: 12),
+                      _buildProgressItem('Courses Started', '2/8', 0.25),
+                      SizedBox(height: 12),
+                      _buildProgressItem('Achievements Unlocked', '7/15', 0.47),
+                      SizedBox(height: 16),
+                      Text(
+                        'Keep up the great work! You\'re making excellent progress.',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
-
-
-
-
-
-
 }

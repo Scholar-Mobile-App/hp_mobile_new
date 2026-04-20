@@ -22,6 +22,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logo.png
+    - assets/crop.png
     - assets/login_bg.jpg
 
 flutter_icons:

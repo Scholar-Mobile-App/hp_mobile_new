@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
         child: MaterialApp(
-          title: 'HP Mobile',
+          title: 'Gaps To Growth',
           theme: ThemeData(
             useMaterial3: true,
             colorScheme: ColorScheme(
