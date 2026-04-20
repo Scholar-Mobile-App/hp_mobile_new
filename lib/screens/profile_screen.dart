@@ -246,11 +246,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
               Container(
                 padding: EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -552,8 +553,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                  ),
                ),
              ],
-           ),
-         ),
+            ),
+          ),
+        ),
       ),
     );
   }
