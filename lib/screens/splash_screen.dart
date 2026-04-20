@@ -16,7 +16,19 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   late AnimationController _progressController;
   late Animation<double> _logoFadeAnimation;
   late Animation<double> _logoScaleAnimation;
+  late Animation<double> _logoRotationAnimation;
+  late Animation<double> _logoGlowAnimation;
+  late Animation<double> _logoFloatAnimation;
+  late AnimationController _continuousRotationController;
+  late AnimationController _glowPulseController;
+  late Animation<double> _continuousRotationAnimation;
+  late Animation<double> _glowPulseAnimation;
   late Animation<Offset> _textSlideAnimation;
+  late Animation<double> _textScaleAnimation;
+  late Animation<int> _titleAnimation;
+  late Animation<int> _subtitleAnimation;
+  late String _displayedTitle;
+  late String _displayedSubtitle;
   late Animation<double> _progressAnimation;
 
   @override
@@ -45,6 +57,44 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       curve: Interval(0.2, 1.0, curve: Curves.elasticOut),
     ));
 
+    _logoRotationAnimation = Tween<double>(
+      begin: -0.2,
+      end: 0.0,
+    ).animate(CurvedAnimation(
+      parent: _logoController,
+      curve: Interval(0.0, 0.6, curve: Curves.easeOutBack),
+    ));
+
+    _logoGlowAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _logoController,
+      curve: Interval(0.5, 1.0, curve: Curves.easeOut),
+    ));
+
+    _logoFloatAnimation = Tween<double>(
+      begin: 0.0,
+      end: -10.0,
+    ).animate(CurvedAnimation(
+      parent: _logoController,
+      curve: Interval(0.6, 1.0, curve: Curves.easeInOutSine),
+    ));
+
+    _continuousRotationController = AnimationController(
+      duration: Duration(seconds: 20),
+      vsync: this,
+    )..repeat();
+
+    _continuousRotationAnimation = Tween<double>(begin: 0.0, end: 0.05).animate(_continuousRotationController);
+
+    _glowPulseController = AnimationController(
+      duration: Duration(milliseconds: 2000),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _glowPulseAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(_glowPulseController);
+
     // Text slide animation
     _textController = AnimationController(
       duration: Duration(milliseconds: 1000),
@@ -59,6 +109,24 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       curve: Curves.easeOutCubic,
     ));
 
+    _textScaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _textController,
+      curve: Curves.elasticOut,
+    ));
+
+    _titleAnimation = IntTween(begin: 0, end: 'Gaps To Growth'.length).animate(CurvedAnimation(
+      parent: _textController,
+      curve: Interval(0.0, 0.8, curve: Curves.easeIn),
+    ));
+
+    _subtitleAnimation = IntTween(begin: 0, end: 'Your Journey to Excellence'.length).animate(CurvedAnimation(
+      parent: _textController,
+      curve: Interval(0.2, 1.0, curve: Curves.easeIn),
+    ));
+
     // Progress animation
     _progressController = AnimationController(
       duration: Duration(milliseconds: 2000),
@@ -70,7 +138,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _progressController,
-      curve: Curves.easeInOut,
+      curve: Curves.easeInOutBack,
     ));
 
     // Start animations
@@ -99,6 +167,8 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     _logoController.dispose();
     _textController.dispose();
     _progressController.dispose();
+    _continuousRotationController.dispose();
+    _glowPulseController.dispose();
     super.dispose();
   }
 
@@ -144,49 +214,60 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
               AnimatedBuilder(
                 animation: _logoController,
                 builder: (context, child) {
-                  return FadeTransition(
-                    opacity: _logoFadeAnimation,
-                    child: ScaleTransition(
-                      scale: _logoScaleAnimation,
-                      child: Container(
-                        width: 180,
-                        height: 180,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withOpacity(0.1),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.white.withOpacity(0.2),
-                              blurRadius: 20,
-                              spreadRadius: 5,
-                            ),
-                          ],
-                        ),
-                        child: Center(
+                  return Transform.translate(
+                    offset: Offset(0, _logoFloatAnimation.value),
+                    child: FadeTransition(
+                      opacity: _logoFadeAnimation,
+                      child: RotationTransition(
+                        turns: AlwaysStoppedAnimation(_logoRotationAnimation.value + _continuousRotationAnimation.value),
+                        child: ScaleTransition(
+                          scale: _logoScaleAnimation,
                           child: Container(
-                            width: 120,
-                            height: 120,
+                            width: 180,
+                            height: 180,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                               gradient: LinearGradient(
-                                 colors: [Color(0xFFFFE4B5), Color(0xFFFFF0D6)],
-                                 begin: Alignment.topLeft,
-                                 end: Alignment.bottomRight,
-                               ),
-                               boxShadow: [
-                                 BoxShadow(
-                                   color: Color(0xFFFFE4B5).withOpacity(0.5),
-                                   blurRadius: 15,
-                                   spreadRadius: 2,
-                                 ),
-                               ],
+                              color: Colors.white.withOpacity(0.1),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.white.withOpacity(0.2),
+                                  blurRadius: 20,
+                                  spreadRadius: 5,
+                                ),
+                              BoxShadow(
+                                color: Color(0xFFFFE4B5).withOpacity(_logoGlowAnimation.value * _glowPulseAnimation.value * 0.6),
+                                blurRadius: 30,
+                                spreadRadius: _logoGlowAnimation.value * 10,
+                              ),
+                              ],
                             ),
                             child: Center(
-                              child: Image.asset(
-                                'assets/crop.png',
-                                width: 140,
-                                height: 140,
-                                fit: BoxFit.contain,
+                              child: Container(
+                                width: 120,
+                                height: 120,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  gradient: LinearGradient(
+                                    colors: [Color(0xFFFFE4B5), Color(0xFFFFF0D6)],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Color(0xFFFFE4B5).withOpacity(0.5),
+                                      blurRadius: 15,
+                                      spreadRadius: 2,
+                                    ),
+                                  ],
+                                ),
+                                child: Center(
+                                  child: Image.asset(
+                                    'assets/crop.png',
+                                    width: 140,
+                                    height: 140,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -201,31 +282,36 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
               AnimatedBuilder(
                 animation: _textController,
                 builder: (context, child) {
+                  _displayedTitle = 'Gaps To Growth'.substring(0, _titleAnimation.value);
+                  _displayedSubtitle = 'Your Journey to Excellence'.substring(0, _subtitleAnimation.value);
                   return SlideTransition(
                     position: _textSlideAnimation,
-                    child: FadeTransition(
-                      opacity: _textController,
-                      child: Column(
-                        children: [
-                          Text(
-                            'Gaps To Growth',
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              letterSpacing: 1.2,
+                    child: ScaleTransition(
+                      scale: _textScaleAnimation,
+                      child: FadeTransition(
+                        opacity: _textController,
+                        child: Column(
+                          children: [
+                            Text(
+                              _displayedTitle,
+                              style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                letterSpacing: 1.2,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Your Journey to Excellence',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white70,
-                              letterSpacing: 0.5,
+                            SizedBox(height: 8),
+                            Text(
+                              _displayedSubtitle,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white70,
+                                letterSpacing: 0.5,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   );
@@ -236,29 +322,27 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
               AnimatedBuilder(
                 animation: _progressController,
                 builder: (context, child) {
-                  return Container(
-                    width: 200,
-                    child: Column(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: LinearProgressIndicator(
-                            value: _progressAnimation.value,
-                            backgroundColor: Colors.white24,
-                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF6A00)),
-                            minHeight: 6,
-                          ),
+                  return Column(
+                    children: [
+                      Container(
+                        width: 60,
+                        height: 60,
+                        child: CircularProgressIndicator(
+                          value: _progressAnimation.value,
+                          backgroundColor: Colors.white24,
+                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF6A00)),
+                          strokeWidth: 6,
                         ),
-                        SizedBox(height: 16),
-                        Text(
-                          'Loading...',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 14,
-                          ),
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Loading...',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   );
                 },
               ),
