@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import '../services/auth_provider.dart';
+import '../models/menu.dart';
+import '../models/menu_response.dart';
 import 'login_screen.dart';
 import 'profile_details_screen.dart';
 import 'goals_screen.dart';
 import 'achievements_screen.dart';
 import 'training_screen.dart';
 import 'resources_screen.dart';
+import 'content_screen.dart';
+import 'competency_management/library_taxonomy/library_taxonomy_screen.dart';
+import 'competency_management/library_taxonomy/jobrole_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -24,16 +29,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
     debugPrint('Current user: ${user?.userName}');
     debugPrint('User token: ${user?.token}');
     debugPrint('User id: ${user?.id}');
+
+    // Fetch menu rights when dashboard loads to ensure dynamic data
+    if (user != null) {
+      debugPrint('Fetching latest menu data...');
+      auth.fetchMenuRights();
+    }
   }
 
-  Widget _buildQuickActionCard(BuildContext context, String title, IconData icon, String subtitle, VoidCallback onTap) {
+  Widget _buildQuickActionCard(BuildContext context, String title, IconData icon, String subtitle, VoidCallback? onTap, {required int level}) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double basePadding = screenWidth * 0.05;
+    double padding = level == 1 ? basePadding * 1.5 : level == 2 ? basePadding * 1.2 : basePadding;
+    double baseIconSize = screenWidth * 0.08;
+    double iconSize = level == 1 ? baseIconSize * 1.5 : level == 2 ? baseIconSize * 1.2 : baseIconSize;
+    double baseTitleFontSize = screenWidth * 0.04;
+    double titleFontSize = level == 1 ? baseTitleFontSize * 1.2 : level == 2 ? baseTitleFontSize * 1.1 : baseTitleFontSize;
+    double baseSubtitleFontSize = screenWidth * 0.03;
+
     return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(padding),
         decoration: BoxDecoration(
-          color: Colors.white,
+          gradient: LinearGradient(
+            colors: level == 1
+                ? [Color(0xFFFF6A00), Color(0xFFFF7A1A)]
+                : level == 2
+                    ? [Color(0xFF1F2A6D), Color(0xFF2E3A8C)]
+                    : [Colors.white, Color(0xFFF8F9FA)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
           borderRadius: BorderRadius.circular(16),
+          border: level == 3 ? Border.all(color: Color(0xFF1F2A6D).withOpacity(0.2), width: 1) : null,
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.2),
@@ -47,16 +77,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Icon(
               icon,
-              size: 40,
-              color: Color(0xFFFF6A00),
+              size: iconSize,
+              color: level == 1 || level == 2 ? Colors.white : Color(0xFF1F2A6D),
             ),
-            SizedBox(height: 12),
+            SizedBox(height: 8),
             Text(
               title,
               style: TextStyle(
-                color: Color(0xFF1F2A6D),
-                fontSize: 16,
+                fontSize: titleFontSize,
                 fontWeight: FontWeight.bold,
+                color: level == 1 || level == 2 ? Colors.white : Color(0xFF1F2A6D),
               ),
               textAlign: TextAlign.center,
             ),
@@ -64,8 +94,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               subtitle,
               style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 12,
+                fontSize: baseSubtitleFontSize,
+                color: level == 1 || level == 2 ? Colors.white70 : Colors.grey[600],
               ),
               textAlign: TextAlign.center,
             ),
@@ -137,10 +167,142 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  IconData _getIconFromString(String iconString) {
+    // Map common icon strings to Flutter Icons
+    switch (iconString.toLowerCase()) {
+      case 'mdi mdi-flag':
+        return Icons.flag;
+      case 'mdi mdi-emoji-events':
+        return Icons.emoji_events;
+      case 'mdi mdi-school':
+        return Icons.school;
+      case 'mdi mdi-library-books':
+        return Icons.library_books;
+      case 'mdi mdi-domain':
+        return Icons.domain;
+      case 'mdi mdi-account-group':
+        return Icons.group;
+      case 'mdi mdi-file-certificate':
+        return Icons.assignment;
+      case 'mdi mdi-school-outline':
+        return Icons.school_outlined;
+      case 'mdi mdi-account-multiple':
+        return Icons.people;
+      case 'mdi mdi-file-chart':
+        return Icons.bar_chart;
+      default:
+        return Icons.apps; // Default icon
+    }
+  }
+
+  void _navigateToMenuItem(BuildContext context, MenuItem menuItem) {
+    // Handle navigation based on menu item
+    if (menuItem.menuName == "Library & Taxonomy") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LibraryTaxonomyScreen(menuItem: menuItem),
+        ),
+      );
+    } else if (menuItem.menuName.toLowerCase().contains("jobrole")) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => JobRoleScreen(),
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ContentScreen(menuItem: menuItem),
+        ),
+      );
+    }
+  }
+
+  Widget _buildDefaultQuickActions(BuildContext context) {
+    debugPrint('No mobile menus available, showing default menus');
+    return GridView(
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 180, // Responsive
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 1.0,
+      ),
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      children: [
+        _buildQuickActionCard(
+          context,
+          'Goals',
+          Icons.flag,
+          'Track your development goals',
+          () => _navigateToGoals(context),
+          level: 3,
+        ),
+        _buildQuickActionCard(
+          context,
+          'Achievements',
+          Icons.emoji_events,
+          'View your milestones',
+          () => _navigateToAchievements(context),
+          level: 3,
+        ),
+        _buildQuickActionCard(
+          context,
+          'Training',
+          Icons.school,
+          'Access learning resources',
+          () => _navigateToTraining(context),
+          level: 3,
+        ),
+        _buildQuickActionCard(
+          context,
+          'Resources',
+          Icons.library_books,
+          'Company documents & policies',
+          () => _navigateToResources(context),
+          level: 3,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDynamicQuickActions(BuildContext context, List<MenuItem> mobileMenus) {
+    debugPrint('Showing ${mobileMenus.length} dynamic menus');
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 200, // Slightly larger for better fit
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 1.0,
+      ),
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: mobileMenus.length,
+      itemBuilder: (context, index) {
+        final menuItem = mobileMenus[index];
+        debugPrint('Menu item ${index}: ${menuItem.menuName}, icon: ${menuItem.icon}');
+        return _buildQuickActionCard(
+          context,
+          menuItem.menuName,
+          _getIconFromString(menuItem.icon),
+          'Access ${menuItem.menuName}',
+          () => _navigateToMenuItem(context, menuItem),
+          level: 3,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context);
     final user = auth.currentUser;
+    var mobileMenus = auth.menuResponse?.getMobileMenus() ?? [];
+
+
     debugPrint('Dashboard user image: ${user?.image}');
 
     if (user == null) {
@@ -160,6 +322,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         backgroundColor: Color(0xFF1F2A6D),
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh, color: Colors.white),
+            onPressed: () async {
+              debugPrint('Refresh button pressed');
+              await context.read<AuthProvider>().fetchMenuRights();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Menu updated')),
+              );
+            },
+          ),
+        ],
       ),
       drawer: Drawer(
         child: Container(
@@ -240,18 +414,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF1F2A6D).withOpacity(0.1), Color(0xFF2E3A8C).withOpacity(0.05)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          debugPrint('Pull to refresh triggered');
+          await context.read<AuthProvider>().fetchMenuRights();
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF1F2A6D).withOpacity(0.1), Color(0xFF2E3A8C).withOpacity(0.05)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
           ),
-        ),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
@@ -401,43 +580,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 SizedBox(height: 16),
-                GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  children: [
-                    _buildQuickActionCard(
-                      context,
-                      'Goals',
-                      Icons.flag,
-                      'Track your development goals',
-                      () => _navigateToGoals(context),
-                    ),
-                    _buildQuickActionCard(
-                      context,
-                      'Achievements',
-                      Icons.emoji_events,
-                      'View your milestones',
-                      () => _navigateToAchievements(context),
-                    ),
-                    _buildQuickActionCard(
-                      context,
-                      'Training',
-                      Icons.school,
-                      'Access learning resources',
-                      () => _navigateToTraining(context),
-                    ),
-                    _buildQuickActionCard(
-                      context,
-                      'Resources',
-                      Icons.library_books,
-                      'Company documents & policies',
-                      () => _navigateToResources(context),
-                    ),
-                  ],
-                ),
+                mobileMenus.isEmpty
+                    ? _buildDefaultQuickActions(context)
+                    : _buildDynamicQuickActions(context, mobileMenus),
                 SizedBox(height: 24),
                 Text(
                   'Recent Announcements',
@@ -559,6 +704,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
-    );
+    ),
+  );
   }
 }
