@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 import '../models/user.dart';
 import '../models/menu_response.dart';
 import '../models/job_role_task.dart';
@@ -440,6 +441,134 @@ class ApiService {
     } else {
       debugPrint('User behaviour fetch failed: ${response.body}');
       throw Exception('Failed to fetch user behaviour: ${response.statusCode}');
+    }
+  }
+
+  // Punch In API
+  Future<Map<String, dynamic>> punchIn(User user, String token) async {
+    final url = 'https://hp.triz.co.in/hrms-in-time/store';
+
+    final now = DateTime.now();
+    final outdate = DateFormat('yyyy-MM-dd').format(now);
+    final punchinTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
+
+    final payload = {
+      'type': 'API',
+      'token': token,
+      'user_id': user.id.toString(),
+      'client_id': '0',
+      'sub_institute_id': user.subInstituteId.toString(),
+      'outdate': outdate,
+      'punchin_time': punchinTime,
+      'address_in': '127.0.0.1', // Placeholder IP, can be replaced with actual IP fetching
+    };
+
+    debugPrint('Punching in with payload: $payload');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.post(
+      Uri.parse(url),
+      headers: headers,
+      body: json.encode(payload),
+    );
+
+    debugPrint('Punch in response status: ${response.statusCode}');
+    debugPrint('Punch in response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      debugPrint('Punch in response: $data');
+      if (data['status'] == '0') {
+        // Handle already punched in
+        throw Exception(data['message'] ?? 'Already punched in');
+      }
+      debugPrint('Punch in successful: $data');
+      return data;
+    } else {
+      debugPrint('Punch in failed: ${response.body}');
+      throw Exception('Failed to punch in: ${response.statusCode}');
+    }
+  }
+
+  // Punch Out API
+  Future<Map<String, dynamic>> punchOut(User user, String token) async {
+    final url = 'https://hp.triz.co.in/hrms-out-time/store';
+
+    final now = DateTime.now();
+    final outdate = DateFormat('yyyy-MM-dd').format(now);
+    final punchoutTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
+
+    final payload = {
+      'type': 'API',
+      'token': token,
+      'user_id': user.id.toString(),
+      'client_id': '0',
+      'sub_institute_id': user.subInstituteId.toString(),
+      'outdate': outdate,
+      'punchout_time': punchoutTime,
+      'address_out': '127.0.0.1', // Placeholder IP, can be replaced with actual IP fetching
+    };
+
+    debugPrint('Punching out with payload: $payload');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.post(
+      Uri.parse(url),
+      headers: headers,
+      body: json.encode(payload),
+    );
+
+    debugPrint('Punch out response status: ${response.statusCode}');
+    debugPrint('Punch out response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      debugPrint('Punch out response: $data');
+      if (data['status'] == '0') {
+        // Handle not punched in or other errors
+        throw Exception(data['message'] ?? 'Cannot punch out');
+      }
+      debugPrint('Punch out successful: $data');
+      return data;
+    } else {
+      debugPrint('Punch out failed: ${response.body}');
+      throw Exception('Failed to punch out: ${response.statusCode}');
+    }
+  }
+
+  // Fetch Attendance Data
+  Future<Map<String, dynamic>> fetchAttendance(User user, String token) async {
+    final url = 'https://hp.triz.co.in/hrms-attendance?type=API&token=$token&sub_institute_id=${user.subInstituteId}&user_id=${user.id}&formType=MyAttendance';
+
+    debugPrint('Fetching attendance from: $url');
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(Uri.parse(url), headers: headers);
+
+    debugPrint('Attendance fetch response status: ${response.statusCode}');
+    debugPrint('Attendance fetch response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      debugPrint('Attendance fetch successful: $data');
+      return data;
+    } else {
+      debugPrint('Attendance fetch failed: ${response.body}');
+      throw Exception('Failed to fetch attendance: ${response.statusCode}');
     }
   }
 }
