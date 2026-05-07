@@ -36,6 +36,7 @@ class User {
   final String schoolLogo;
   final String syear;
   final String orgName;
+  final String orgType;
   final String yearTitle;
   final String token;
 
@@ -75,6 +76,7 @@ class User {
     required this.schoolLogo,
     required this.syear,
     required this.orgName,
+    required this.orgType,
     required this.yearTitle,
     required this.token,
   });
@@ -162,6 +164,7 @@ class User {
           organization['SchoolName']?.toString() ??
           sessionData['org_name']?.toString() ??
           '',
+      orgType: sessionData['org_type']?.toString() ?? 'Healthcare',
       yearTitle:
           yearData['title']?.toString() ??
           sessionData['year_title']?.toString() ??
@@ -213,6 +216,7 @@ class User {
       schoolLogo: json['school_logo'] ?? '',
       syear: json['syear'] ?? '',
       orgName: json['org_name'] ?? '',
+      orgType: json['org_type'] ?? 'Healthcare',
       yearTitle: json['year_title'] ?? '',
       token: token,
     );
@@ -256,6 +260,7 @@ class User {
       schoolLogo: json['school_logo'] ?? '',
       syear: json['syear'] ?? '',
       orgName: json['org_name'] ?? '',
+      orgType: json['org_type'] ?? 'Healthcare',
       yearTitle: json['year_title'] ?? '',
       token: json['token'] ?? '',
     );
@@ -299,6 +304,7 @@ class User {
       'school_logo': schoolLogo,
       'syear': syear,
       'org_name': orgName,
+      'org_type': orgType,
       'year_title': yearTitle,
       'token': token,
     };

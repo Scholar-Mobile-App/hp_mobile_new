@@ -58,4 +58,26 @@ class MenuItem {
       isMobile: json['is_mobile'] ?? 0,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'menu_name': menuName,
+      'parent_id': parentId,
+      'level': level,
+      'page_type': pageType,
+      'access_link': accessLink,
+      'icon': icon,
+      'status': status,
+      'sort_order': sortOrder,
+      'sub_institute_id': subInstituteId,
+      'menu_type': menuType,
+      'can_view': canView,
+      'can_add': canAdd,
+      'can_edit': canEdit,
+      'can_delete': canDelete,
+      'dashboard_right': dashboardRight,
+      'is_mobile': isMobile,
+    };
+  }
 }

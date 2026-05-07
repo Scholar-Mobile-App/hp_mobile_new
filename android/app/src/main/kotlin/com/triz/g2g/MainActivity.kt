@@ -1,4 +1,4 @@
-package com.hp.gapstogrowth
+package com.triz.g2g
 
 import android.os.Build
 import android.os.Bundle
