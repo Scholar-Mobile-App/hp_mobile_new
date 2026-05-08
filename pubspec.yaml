@@ -1,6 +1,9 @@
 name: g2g_mobile
 description: A Flutter app for corporate login system
-version: 1.0.2+5
+#android
+#version: 1.0.2+5
+#ios
+version: 1.0.0+0
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -27,7 +30,7 @@ flutter:
     - assets/crop.png
     - assets/login_bg.jpg
 
-flutter_icons:
+flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/icon.png"

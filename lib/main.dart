@@ -18,6 +18,9 @@ class MyApp extends StatelessWidget {
           title: 'Gaps To Growth',
           theme: ThemeData(
             useMaterial3: true,
+            appBarTheme: AppBarTheme(
+              iconTheme: IconThemeData(color: Colors.white),
+            ),
             colorScheme: ColorScheme(
               primary: Color(0xFF1F2A6D), // Dark Blue
               onPrimary: Colors.white,

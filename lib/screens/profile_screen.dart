@@ -91,6 +91,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: level == 1 || level == 2 ? Colors.white : Color(0xFF1F2A6D),
               ),
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 4),
             Text(
@@ -100,6 +102,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: level == 1 || level == 2 ? Colors.white70 : Colors.grey[600],
               ),
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
