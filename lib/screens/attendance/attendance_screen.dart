@@ -20,6 +20,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
   late AnimationController _animationController;
   late Animation<double> _animation;
   bool _isLoading = false;
+  bool _isInitialLoading = true;
+  String _totalHours = '00:00:00';
 
   @override
   void initState() {
@@ -36,7 +38,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadAttendanceStatus();
+      _loadAttendanceStatus(showLoading: true);
     });
   }
 
@@ -60,19 +62,35 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
   }
 
   String _calculateWorkingHours() {
-    if (_punchInTime == null) return '0.00';
-    DateTime endTime = _punchOutTime ?? DateTime.now();
+    if (_punchInTime == null) return '0 hours';
+    if (_punchOutTime != null) {
+      return _formatTotalHours(_totalHours);
+    }
+    DateTime endTime = DateTime.now();
     Duration difference = endTime.difference(_punchInTime!);
-    double hours = difference.inMinutes / 60.0;
-    return hours.toStringAsFixed(2);
+    int totalMinutes = difference.inMinutes;
+    int h = totalMinutes ~/ 60;
+    int m = totalMinutes % 60;
+    return '$h:$m hours';
   }
 
-  void _loadAttendanceStatus() async {
+  void _loadAttendanceStatus({bool showLoading = true}) async {
+    if (showLoading) {
+      setState(() {
+        _isInitialLoading = true;
+      });
+    }
+
     final auth = Provider.of<AuthProvider>(context, listen: false);
     final user = auth.currentUser;
     final token = auth.originalToken ?? user?.token;
 
-    if (user == null || token == null) return;
+    if (user == null || token == null) {
+      setState(() {
+        _isInitialLoading = false;
+      });
+      return;
+    }
 
     try {
       final apiService = ApiService();
@@ -97,12 +115,17 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
         } else {
           _isPunchedIn = true;
         }
+        _totalHours = todayEntry['timestamp_diff'] ?? '00:00:00';
       }
 
       setState(() {});
     } catch (e) {
       debugPrint('Failed to load attendance status: $e');
       // Don't show error snackbar on init, just keep default state
+    } finally {
+      setState(() {
+        _isInitialLoading = false;
+      });
     }
   }
 
@@ -137,6 +160,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
         _punchOutTime = null;
       });
       _animationController.forward().then((_) => _animationController.reverse());
+      _loadAttendanceStatus(showLoading: false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('✓ Successfully punched in at ${_formatTime(_punchInTime)}'),
@@ -210,6 +234,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
         _isPunchedIn = false;
       });
       _animationController.forward().then((_) => _animationController.reverse());
+      _loadAttendanceStatus(showLoading: false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('✓ Successfully punched out at ${_formatTime(_punchOutTime)}'),
@@ -266,15 +291,35 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
         elevation: 0,
         centerTitle: true,
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF1F2A6D).withOpacity(0.05), Color(0xFF2E3A8C).withOpacity(0.02)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: SingleChildScrollView(
+      body: _isInitialLoading
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF6A00)),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Loading attendance data...',
+                    style: TextStyle(
+                      color: Color(0xFF1F2A6D),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF1F2A6D).withOpacity(0.05), Color(0xFF2E3A8C).withOpacity(0.02)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+              child: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -342,48 +387,48 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
                 ),
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: _isPunchedIn ? Colors.green.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: Icon(
-                            _isPunchedIn ? Icons.check_circle : Icons.radio_button_unchecked,
-                            color: _isPunchedIn ? Colors.green : Colors.grey,
-                            size: 28,
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        Text(
-                          'Current Status',
-                          style: TextStyle(
-                            color: Color(0xFF1F2A6D),
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: _isPunchedIn ? Colors.green.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      child: Text(
-                        _isPunchedIn ? 'Currently Working' : 'Not Clocked In',
-                        style: TextStyle(
-                          color: _isPunchedIn ? Colors.green : Colors.grey[600],
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
+                     Row(
+                       mainAxisAlignment: MainAxisAlignment.center,
+                       children: [
+                         Container(
+                           padding: EdgeInsets.all(8),
+                           decoration: BoxDecoration(
+                             color: _getStatusColor().withOpacity(0.1),
+                             borderRadius: BorderRadius.circular(50),
+                           ),
+                           child: Icon(
+                             _getStatusIcon(),
+                             color: _getStatusColor(),
+                             size: 28,
+                           ),
+                         ),
+                         SizedBox(width: 16),
+                         Text(
+                           'Current Status',
+                           style: TextStyle(
+                             color: Color(0xFF1F2A6D),
+                             fontSize: 20,
+                             fontWeight: FontWeight.bold,
+                           ),
+                         ),
+                       ],
+                     ),
+                     SizedBox(height: 20),
+                     Container(
+                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                       decoration: BoxDecoration(
+                         color: _getStatusColor().withOpacity(0.1),
+                         borderRadius: BorderRadius.circular(25),
+                       ),
+                       child: Text(
+                         _getStatusText(),
+                         style: TextStyle(
+                           color: _getStatusColor(),
+                           fontSize: 18,
+                           fontWeight: FontWeight.w600,
+                         ),
+                       ),
+                     ),
                   ],
                 ),
               ),
@@ -400,8 +445,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
                           child: child,
                         );
                       },
-                      child: ElevatedButton.icon(
-                        onPressed: (_isPunchedIn || _isLoading) ? null : _punchIn,
+                       child: ElevatedButton.icon(
+                         onPressed: (_isPunchedIn || _isLoading || _punchOutTime != null) ? null : _punchIn,
                         icon: _isLoading
                             ? SizedBox(
                                 width: 20,
@@ -517,10 +562,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
                         SizedBox(height: 12),
                         _buildSummaryRow('Punch Out Time', _formatTime(_punchOutTime)),
                         SizedBox(height: 12),
-                        _buildSummaryRow('Total Hours', '${_calculateWorkingHours()} hrs'),
+                        _buildSummaryRow('Total Hours', _calculateWorkingHours()),
                       ] else ...[
                         SizedBox(height: 12),
-                        _buildSummaryRow('Working Hours', '${_calculateWorkingHours()} hrs'),
+                        _buildSummaryRow('Working Hours', _calculateWorkingHours()),
                       ],
                     ] else ...[
                       Center(
@@ -538,10 +583,45 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
                 ),
               ),
             ],
+            ),
           ),
         ),
-      ),
     );
+  }
+
+  String _getStatusText() {
+    if (_isPunchedIn) {
+      return 'Currently Working';
+    } else if (_punchOutTime != null) {
+      return 'Punched Out';
+    } else {
+      return 'Not Clocked In';
+    }
+  }
+
+  Color _getStatusColor() {
+    if (_isPunchedIn) {
+      return Colors.green;
+    } else if (_punchOutTime != null) {
+      return Colors.blue;
+    } else {
+      return Colors.grey;
+    }
+  }
+
+  IconData _getStatusIcon() {
+    if (_isPunchedIn || _punchOutTime != null) {
+      return Icons.check_circle;
+    } else {
+      return Icons.radio_button_unchecked;
+    }
+  }
+
+  String _formatTotalHours(String diff) {
+    List<String> parts = diff.split(':');
+    int h = int.parse(parts[0]);
+    int m = int.parse(parts[1]);
+    return '$h:$m hours';
   }
 
   Widget _buildSummaryRow(String label, String value) {

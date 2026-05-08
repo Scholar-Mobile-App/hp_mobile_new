@@ -60,7 +60,7 @@ class _JobRoleTaskScreenState extends State<JobRoleTaskScreen> {
       debugPrint('JobRoleTaskScreen: User subInstituteId: ${user.subInstituteId}');
 
       debugPrint('JobRoleTaskScreen: Calling fetchJobRoleTasksTable API');
-      final tasks = await _apiService.fetchJobRoleTasksTable(user, widget.sector);
+      final tasks = await _apiService.fetchJobRoleTasksTable(user, sector: widget.sector);
       debugPrint('JobRoleTaskScreen: API call completed, received ${tasks.length} tasks');
 
       setState(() {

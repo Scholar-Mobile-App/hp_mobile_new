@@ -15,6 +15,8 @@ import '../models/user_behaviour.dart';
 import '../config/api_config.dart';
 
 class ApiService {
+  ApiService();
+
   static String get baseUrl => '${ApiConfig.baseUrl}${ApiConfig.loginEndpoint}';
 
   // Standard HTTP client
@@ -255,7 +257,7 @@ class ApiService {
     }
   }
 
-  // Fetch job roles by department
+  // Fetch job roles by department (original)
   Future<Map<String, dynamic>> fetchJobRolesByDepartment(User user, String token) async {
     final url = 'https://hp.triz.co.in/api/jobroles-by-department?sub_institute_id=${user.subInstituteId}';
 
@@ -274,6 +276,22 @@ class ApiService {
     } else {
       debugPrint('Job roles by department fetch failed: ${response.body}');
       throw Exception('Failed to fetch job roles by department: ${response.statusCode}');
+    }
+  }
+
+  // Fetch departments
+  Future<List<String>> fetchDepartments(User user, String token) async {
+    final data = await fetchJobRolesByDepartment(user, token);
+    return data.keys.toList();
+  }
+
+  // Fetch job roles by department name
+  Future<List<dynamic>> fetchJobRolesByDepartmentName(User user, String token, String department) async {
+    final data = await fetchJobRolesByDepartment(user, token);
+    if (data[department] != null) {
+      return data[department] as List<dynamic>;
+    } else {
+      return [];
     }
   }
 
@@ -355,11 +373,17 @@ class ApiService {
   }
 
   // Fetch job role tasks from table_data endpoint
-  Future<List<JobRoleTaskTable>> fetchJobRoleTasksTable(User user, String sector, {String orderDirection = 'desc'}) async {
-    final url = 'https://hp.triz.co.in/table_data?table=s_user_jobrole_task&filters[sub_institute_id]=${user.subInstituteId}&filters[sector]=$sector&order_by[direction]=$orderDirection';
+  Future<List<JobRoleTaskTable>> fetchJobRoleTasksTable(User user, {String? sector, String? jobrole, String orderDirection = 'desc'}) async {
+    String url = 'https://hp.triz.co.in/table_data?table=s_user_jobrole_task&filters[sub_institute_id]=${user.subInstituteId}';
+    if (sector != null) {
+      url += '&filters[sector]=${Uri.encodeComponent(sector)}';
+    }
+    if (jobrole != null) {
+      url += '&filters[jobrole]=${Uri.encodeComponent(jobrole)}';
+    }
+    url += '&order_by[direction]=$orderDirection';
 
     debugPrint('ApiService: Fetching job role tasks table from: $url');
-    debugPrint('ApiService: User sub_institute_id: ${user.subInstituteId}, sector: $sector');
 
     final response = await _httpClient.get(Uri.parse(url));
 
@@ -371,7 +395,7 @@ class ApiService {
       if (data.isNotEmpty) {
         debugPrint('ApiService: Sample task data: ${data.first}');
       }
-      return data.map((task) => JobRoleTaskTable.fromJson(task)).toList();
+      return data.map((json) => JobRoleTaskTable.fromJson(json)).toList();
     } else {
       debugPrint('ApiService: Job role tasks table fetch failed: ${response.body}');
       throw Exception('Failed to fetch job role tasks table: ${response.statusCode}');
@@ -569,6 +593,31 @@ class ApiService {
     } else {
       debugPrint('Attendance fetch failed: ${response.body}');
       throw Exception('Failed to fetch attendance: ${response.statusCode}');
+    }
+  }
+
+  // Fetch employees by job role
+  Future<List<dynamic>> fetchEmployeesByJobRole(User user, String token, String jobRoleId) async {
+    final url = 'https://hp.triz.co.in/search_data?type=API&token=$token&sub_institute_id=${user.subInstituteId}&org_type=${Uri.encodeComponent(user.orgType)}&searchType=jobrole_emp&searchWord=$jobRoleId';
+
+    debugPrint('Fetching employees by job role from: $url');
+
+    final response = await _httpClient.get(Uri.parse(url));
+
+    debugPrint('Employees fetch response status: ${response.statusCode}');
+    debugPrint('Employees fetch response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      debugPrint('Employees fetch successful');
+      if (data['searchData'] != null) {
+        return data['searchData'] as List<dynamic>;
+      } else {
+        return [];
+      }
+    } else {
+      debugPrint('Employees fetch failed: ${response.body}');
+      throw Exception('Failed to fetch employees: ${response.statusCode}');
     }
   }
 }
