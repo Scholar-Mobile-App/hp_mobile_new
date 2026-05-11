@@ -14,6 +14,7 @@ import 'content_screen.dart';
 import 'competency_management/library_taxonomy/library_taxonomy_screen.dart';
 import 'competency_management/library_taxonomy/jobrole_screen.dart';
 import 'attendance/attendance_screen.dart';
+import 'organization_management/task_assignment_progress_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -221,6 +222,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => AttendanceScreen(),
+        ),
+      );
+    } else if (menuItem.menuName == "Task Assignment & Progress") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TaskAssignmentProgressScreen(),
         ),
       );
     } else {
