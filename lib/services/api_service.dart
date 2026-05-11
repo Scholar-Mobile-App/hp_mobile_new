@@ -596,6 +596,60 @@ class ApiService {
     }
   }
 
+  // Fetch user skills
+  Future<List<Map<String, dynamic>>> fetchUserSkills(User user, String token) async {
+    final url = 'https://hp.triz.co.in/api/user-skills/${user.id}?type=API&token=$token&sub_institute_id=${user.subInstituteId}';
+
+    debugPrint('Fetching user skills from: $url');
+
+    final response = await _httpClient.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      debugPrint('User skills fetch successful');
+      final data = json.decode(response.body);
+      return List<Map<String, dynamic>>.from(data['data']);
+    } else {
+      debugPrint('User skills fetch failed: ${response.body}');
+      throw Exception('Failed to fetch user skills: ${response.statusCode}');
+    }
+  }
+
+  // Fetch user skills by user ID
+  Future<List<Map<String, dynamic>>> fetchUserSkillsById(int userId, String token, User currentUser) async {
+    final url = 'https://hp.triz.co.in/api/user-skills/$userId?type=API&token=$token&sub_institute_id=${currentUser.subInstituteId}';
+
+    debugPrint('Fetching user skills for ID $userId from: $url');
+
+    final response = await _httpClient.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      debugPrint('User skills fetch successful for ID $userId');
+      final data = json.decode(response.body);
+      return List<Map<String, dynamic>>.from(data['data']);
+    } else {
+      debugPrint('User skills fetch failed for ID $userId: ${response.body}');
+      throw Exception('Failed to fetch user skills: ${response.statusCode}');
+    }
+  }
+
+  // Fetch supervisor
+  Future<Map<String, dynamic>> fetchSupervisor(int userId, int subInstituteId) async {
+    final url = 'https://hp.triz.co.in/getSupervisor?user_id=$userId&sub_institute_id=$subInstituteId';
+
+    debugPrint('Fetching supervisor for user ID $userId from: $url');
+
+    final response = await _httpClient.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      debugPrint('Supervisor fetch successful');
+      final data = json.decode(response.body);
+      return data['data'] as Map<String, dynamic>;
+    } else {
+      debugPrint('Supervisor fetch failed: ${response.body}');
+      throw Exception('Failed to fetch supervisor: ${response.statusCode}');
+    }
+  }
+
   // Fetch employees by job role
   Future<List<dynamic>> fetchEmployeesByJobRole(User user, String token, String jobRoleId) async {
     final url = 'https://hp.triz.co.in/search_data?type=API&token=$token&sub_institute_id=${user.subInstituteId}&org_type=${Uri.encodeComponent(user.orgType)}&searchType=jobrole_emp&searchWord=$jobRoleId';
@@ -618,6 +672,66 @@ class ApiService {
     } else {
       debugPrint('Employees fetch failed: ${response.body}');
       throw Exception('Failed to fetch employees: ${response.statusCode}');
+    }
+  }
+
+  // Assign Task API
+  Future<Map<String, dynamic>> assignTask({
+    required User user,
+    required String token,
+    required String taskTitle,
+    required String taskDescription,
+    required String taskAllocatedTo,
+    required String skillId,
+    required String skills,
+    required String manageBy,
+    required String observationPoint,
+    required String kpa,
+    required String selType,
+    required int repeatDays,
+    required String repeatUntil,
+  }) async {
+    final url = 'https://hp.triz.co.in/task?type=API&token=$token&sub_institute_id=${user.subInstituteId}&org_type=Healthcare&syear=2025&user_id=${user.id}&formType=multiUser';
+
+    final payload = {
+      'TASK_ALLOCATED_TO': taskAllocatedTo,
+      'task_title': taskTitle,
+      'task_description': taskDescription,
+      'skill_id': skillId,
+      'skills': skills,
+      'manageby': manageBy,
+      'observation_point': observationPoint,
+      'KPA': kpa,
+      'selType': selType,
+      'repeat_days': repeatDays.toString(),
+      'repeat_until': repeatUntil,
+    };
+
+    debugPrint('Assigning task with URL: $url');
+    debugPrint('Assigning task with payload: $payload');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.post(
+      Uri.parse(url),
+      headers: headers,
+      body: json.encode(payload),
+    );
+
+    debugPrint('Assign task response status: ${response.statusCode}');
+    debugPrint('Assign task response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      debugPrint('Assign task response: $data');
+      return data;
+    } else {
+      debugPrint('Assign task failed: ${response.body}');
+      throw Exception('Failed to assign task: ${response.statusCode}');
     }
   }
 }
