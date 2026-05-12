@@ -4,6 +4,9 @@ import 'package:intl/intl.dart';
 
 import '../../services/auth_provider.dart';
 import '../../services/api_service.dart';
+import '../../services/notification_service.dart';
+import 'package:another_flushbar/flushbar.dart';
+import 'package:intl/intl.dart';
 
 class TaskAssignmentProgressScreen extends StatefulWidget {
   const TaskAssignmentProgressScreen({super.key});
@@ -77,6 +80,7 @@ class _TaskAssignmentProgressScreenState
     _tabController.addListener(() {
       setState(() {}); // Force rebuild when tab changes
     });
+    _initializeNotifications();
     fetchDepartments();
     taskTitleFocusNode.addListener(() {
       if (taskTitleFocusNode.hasFocus && taskTitle.isEmpty) {
@@ -89,6 +93,16 @@ class _TaskAssignmentProgressScreenState
         });
       }
     });
+  }
+
+  Future<void> _initializeNotifications() async {
+    try {
+      final notificationService = NotificationService();
+      await notificationService.initialize();
+      // FCM token is now handled at login time
+    } catch (e) {
+      debugPrint('Error initializing notifications: $e');
+    }
   }
 
   @override
@@ -1697,6 +1711,23 @@ class _TaskAssignmentProgressScreenState
                           repeatDays: repeatDays,
                           repeatUntil: repeatUntil,
                         );
+
+                        // Send push notification to the assigned employee
+                        // Note: In production, this should be handled by the backend server
+                        // The backend should send FCM notification to the assignee's device
+                        // Currently only logging for backend integration
+                        await NotificationService().sendPushNotification(
+                          token: '', // Backend should retrieve assignee's FCM token
+                          title: 'New Task Assigned',
+                          body: 'You have been assigned: $taskTitle',
+                          data: {
+                            'type': 'task_assigned',
+                            'task_title': taskTitle,
+                            'assigned_by': user.fullName,
+                            'employee_id': employeeId,
+                          },
+                        );
+
                       } catch (e) {
                         debugPrint('Error assigning task to employee $employeeId: $e');
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -1709,14 +1740,27 @@ class _TaskAssignmentProgressScreenState
                       }
                     }
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Task assigned successfully!'),
-                        backgroundColor: Color(0xFF10B981),
+                    // Show in-app notification for the assigner
+                    final flushbar = Flushbar(
+                      title: '✅ Task Assigned Successfully!',
+                      message: 'Task "$taskTitle" has been assigned to ${selectedEmployeeIds.length} team member${selectedEmployeeIds.length == 1 ? '' : 's'}.',
+                      duration: const Duration(seconds: 3),
+                      backgroundColor: Colors.green.shade600,
+                      flushbarPosition: FlushbarPosition.TOP,
+                      icon: const Icon(
+                        Icons.check_circle,
+                        color: Colors.white,
                       ),
-                    );
-                    // Optionally navigate back or to another screen
-                    Navigator.of(context).pop();
+                    )..show(context);
+
+                    debugPrint('🎉 Task assigned! Notification displayed to user.');
+
+                    // Navigate back after a short delay to allow notification to show
+                    Future.delayed(const Duration(seconds: 1), () {
+                      if (mounted && context.mounted) {
+                        Navigator.of(context).pop();
+                      }
+                    });
                   } else {
                     // Other tabs - continue to next tab
                     _tabController.animateTo(_tabController.index + 1);

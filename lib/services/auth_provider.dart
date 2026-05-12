@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 import '../models/menu_response.dart';
 import '../services/api_service.dart';
+import '../services/notification_service.dart';
 
 class AuthProvider with ChangeNotifier {
   User? _currentUser;
@@ -92,6 +93,18 @@ class AuthProvider with ChangeNotifier {
     } catch (e) {
       debugPrint('Failed to fetch menu rights: $e');
       // Don't fail login if menu fetch fails
+    }
+
+    // Initialize notifications and update FCM token
+    try {
+      debugPrint('Initializing notification service and updating FCM token');
+      final notificationService = NotificationService();
+      await notificationService.initialize();
+      await notificationService.updateTokenWithUser(_currentUser!.id.toString(), _originalToken ?? userToken);
+      debugPrint('FCM token updated successfully at login');
+    } catch (e) {
+      debugPrint('Failed to initialize notifications or update FCM token: $e');
+      // Don't fail login if notification setup fails
     }
 
     // Persist the finalized session user and menu response

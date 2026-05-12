@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import '../services/auth_provider.dart';
+import '../services/notification_service.dart';
+import '../models/user.dart';
 import '../models/menu.dart';
 import '../models/menu_response.dart';
 import 'login_screen.dart';
@@ -22,21 +24,19 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  @override
-  void initState() {
-    super.initState();
-    debugPrint('Dashboard initState called');
-    final auth = Provider.of<AuthProvider>(context, listen: false);
-    final user = auth.currentUser;
-    debugPrint('Current user: ${user?.userName}');
-    debugPrint('User token: ${user?.token}');
-    debugPrint('User id: ${user?.id}');
-
-    // Fetch menu rights when dashboard loads to ensure dynamic data
-    if (user != null) {
-      debugPrint('Fetching latest menu data...');
-      auth.fetchMenuRights();
+  Future<void> _initializeFCMToken(User user) async {
+    try {
+      final notificationService = NotificationService();
+      await notificationService.initialize();
+      await notificationService.updateTokenWithUser(user.id.toString(), user.token);
+    } catch (e) {
+      debugPrint('Error initializing FCM token: $e');
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   Widget _buildQuickActionCard(BuildContext context, String title, IconData icon, String subtitle, VoidCallback? onTap, {required int level}) {
@@ -343,6 +343,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Color(0xFF1F2A6D),
         elevation: 0,
         actions: [
+          IconButton(
+            icon: Icon(Icons.notifications, color: Colors.white),
+            tooltip: 'Test Notification',
+            onPressed: () async {
+              debugPrint('Test notification button pressed');
+              await NotificationService().testLocalNotification();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Test notification sent to drawer')),
+              );
+            },
+          ),
           IconButton(
             icon: Icon(Icons.refresh, color: Colors.white),
             onPressed: () async {

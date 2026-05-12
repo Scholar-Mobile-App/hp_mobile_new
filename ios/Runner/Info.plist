@@ -68,5 +68,11 @@
 		</array>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>remote-notification</string>
+		</array>
+		<key>NSUserNotificationsUsageDescription</key>
+		<string>This app needs notification permissions to send you updates about tasks and assignments.</string>
 	</dict>
 </plist>

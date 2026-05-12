@@ -1,9 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'screens/splash_screen.dart';
 import 'services/auth_provider.dart';
+import 'services/notification_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase (optional - app works without it)
+  try {
+    await Firebase.initializeApp();
+    await NotificationService().initialize();
+    debugPrint('Firebase and notifications initialized successfully');
+  } catch (e) {
+    debugPrint('Firebase initialization failed: $e');
+    debugPrint('App will run without push notifications. Setup Firebase for full functionality.');
+  }
+
   runApp(MyApp());
 }
 
