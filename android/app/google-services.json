@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "705483520793",
+    "project_id": "gapstogrowth-ba988",
+    "storage_bucket": "gapstogrowth-ba988.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:705483520793:android:f43599a58bc5dad5bae388",
+        "android_client_info": {
+          "package_name": "com.example.g2g_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC02WNSaPxug_oGzqs-eHul3LrHzeQpHXw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:705483520793:android:4510c025399f5b69bae388",
+        "android_client_info": {
+          "package_name": "com.triz.g2g"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC02WNSaPxug_oGzqs-eHul3LrHzeQpHXw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
