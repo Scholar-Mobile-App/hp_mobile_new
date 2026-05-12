@@ -41,13 +41,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildQuickActionCard(BuildContext context, String title, IconData icon, String subtitle, VoidCallback? onTap, {required int level}) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double basePadding = screenWidth * 0.05;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    // Responsive sizing based on device type and orientation
+    bool isLandscape = screenWidth > screenHeight;
+    double basePadding;
+
+    if (screenWidth >= 1200) {
+      basePadding = isLandscape ? 22 : 24;
+    } else if (screenWidth >= 800) {
+      basePadding = isLandscape ? 20 : 22;
+    } else if (screenWidth >= 600) {
+      basePadding = isLandscape ? 18 : 20;
+    } else {
+      basePadding = isLandscape ? 16 : 18;
+    }
+
     double padding = level == 1 ? basePadding * 1.5 : level == 2 ? basePadding * 1.2 : basePadding;
-    double baseIconSize = screenWidth * 0.08;
-    double iconSize = level == 1 ? baseIconSize * 1.5 : level == 2 ? baseIconSize * 1.2 : baseIconSize;
-    double baseTitleFontSize = screenWidth * 0.04;
-    double titleFontSize = level == 1 ? baseTitleFontSize * 1.2 : level == 2 ? baseTitleFontSize * 1.1 : baseTitleFontSize;
-    double baseSubtitleFontSize = screenWidth * 0.03;
 
     return InkWell(
       onTap: onTap,
@@ -74,38 +84,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: iconSize,
-              color: level == 1 || level == 2 ? Colors.white : Color(0xFF1F2A6D),
-            ),
-            SizedBox(height: 8),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: titleFontSize,
-                fontWeight: FontWeight.bold,
-                color: level == 1 || level == 2 ? Colors.white : Color(0xFF1F2A6D),
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            SizedBox(height: 4),
-            Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: baseSubtitleFontSize,
-                color: level == 1 || level == 2 ? Colors.white70 : Colors.grey[600],
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final bool isCompactCard = constraints.maxWidth < 180;
+            final double cardWidth = constraints.maxWidth;
+            final double iconSize = (cardWidth * (isCompactCard ? 0.16 : 0.18)).clamp(22.0, 44.0);
+            final double titleFontSize = (cardWidth * (isCompactCard ? 0.088 : 0.105)).clamp(12.5, 22.0);
+            final double subtitleFontSize = (cardWidth * (isCompactCard ? 0.062 : 0.078)).clamp(10.0, 16.0);
+
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  size: iconSize,
+                  color: level == 1 || level == 2 ? Colors.white : Color(0xFF1F2A6D),
+                ),
+                SizedBox(height: isCompactCard ? 6 : 12),
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: titleFontSize,
+                      fontWeight: FontWeight.bold,
+                      color: level == 1 || level == 2 ? Colors.white : Color(0xFF1F2A6D),
+                      height: 1.15,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                SizedBox(height: isCompactCard ? 2 : 6),
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: subtitleFontSize,
+                      fontWeight: screenWidth >= 500 ? FontWeight.w600 : FontWeight.normal,
+                      color: level == 1 || level == 2 ? Colors.white70 : Colors.grey[600],
+                      height: 1.15,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: isCompactCard ? 1 : 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -243,12 +272,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildDefaultQuickActions(BuildContext context) {
     debugPrint('No mobile menus available, showing default menus');
+
+    // Responsive grid configuration based on screen size and orientation
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    bool isLandscape = screenWidth > screenHeight;
+
+    int crossAxisCount;
+    double childAspectRatio;
+
+    if (screenWidth >= 1200) {
+      // Large tablets/desktops
+      crossAxisCount = isLandscape ? 5 : 4;
+      childAspectRatio = isLandscape ? 1.1 : 1.2;
+    } else if (screenWidth >= 800) {
+      // Medium tablets
+      crossAxisCount = isLandscape ? 4 : 3;
+      childAspectRatio = isLandscape ? 1.15 : 1.25;
+    } else if (screenWidth >= 600) {
+      // Small tablets/large phones
+      crossAxisCount = isLandscape ? 3 : 2;
+      childAspectRatio = isLandscape ? 1.2 : 1.3;
+    } else {
+      // Phones
+      crossAxisCount = isLandscape ? 3 : 2;
+      childAspectRatio = isLandscape ? 1.3 : 1.4;
+    }
+
     return GridView(
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 180, // Responsive
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        childAspectRatio: 1.0,
+        childAspectRatio: childAspectRatio,
       ),
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
@@ -291,12 +347,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildDynamicQuickActions(BuildContext context, List<MenuItem> mobileMenus) {
     debugPrint('Showing ${mobileMenus.length} dynamic menus');
+
+    // Responsive grid configuration based on screen size and orientation (same as default)
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    bool isLandscape = screenWidth > screenHeight;
+
+    int crossAxisCount;
+    double childAspectRatio;
+
+    if (screenWidth >= 1200) {
+      // Large tablets/desktops
+      crossAxisCount = isLandscape ? 5 : 4;
+      childAspectRatio = isLandscape ? 1.1 : 1.2;
+    } else if (screenWidth >= 800) {
+      // Medium tablets
+      crossAxisCount = isLandscape ? 4 : 3;
+      childAspectRatio = isLandscape ? 1.15 : 1.25;
+    } else if (screenWidth >= 600) {
+      // Small tablets/large phones
+      crossAxisCount = isLandscape ? 3 : 2;
+      childAspectRatio = isLandscape ? 1.2 : 1.3;
+    } else {
+      // Phones
+      crossAxisCount = isLandscape ? 3 : 2;
+      childAspectRatio = isLandscape ? 1.3 : 1.4;
+    }
+
     return GridView.builder(
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 200, // Slightly larger for better fit
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        childAspectRatio: 1.0,
+        childAspectRatio: childAspectRatio,
       ),
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
@@ -343,17 +426,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Color(0xFF1F2A6D),
         elevation: 0,
         actions: [
-          IconButton(
-            icon: Icon(Icons.notifications, color: Colors.white),
-            tooltip: 'Test Notification',
-            onPressed: () async {
-              debugPrint('Test notification button pressed');
-              await NotificationService().testLocalNotification();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Test notification sent to drawer')),
-              );
-            },
-          ),
           IconButton(
             icon: Icon(Icons.refresh, color: Colors.white),
             onPressed: () async {
