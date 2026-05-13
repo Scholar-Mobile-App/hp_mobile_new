@@ -74,5 +74,7 @@
 		</array>
 		<key>NSUserNotificationsUsageDescription</key>
 		<string>This app needs notification permissions to send you updates about tasks and assignments.</string>
+		<key>FirebaseAutomaticInitializationEnabled</key>
+		<false/>
 	</dict>
 </plist>
