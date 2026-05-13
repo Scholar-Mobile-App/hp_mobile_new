@@ -98,7 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Icon(
                   icon,
                   size: iconSize,
-                  color: level == 1 || level == 2 ? Colors.white : Color(0xFF1F2A6D),
+                  color: level == 1 || level == 2 ? Colors.white : Color(0xFFFF6A00),
                 ),
                 SizedBox(height: isCompactCard ? 6 : 12),
                 Flexible(
@@ -202,7 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  IconData _getIconFromString(String iconString) {
+  IconData _getIconFromString(String iconString, String menuName, int index) {
     // Map common icon strings to Flutter Icons
     switch (iconString.toLowerCase()) {
       case 'mdi mdi-flag':
@@ -225,8 +225,87 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return Icons.people;
       case 'mdi mdi-file-chart':
         return Icons.bar_chart;
+      case 'mdi mdi-view-dashboard':
+        return Icons.dashboard;
+      case 'mdi mdi-account-box':
+        return Icons.account_box;
+      case 'mdi mdi-calendar-check':
+        return Icons.calendar_today;
+      case 'mdi mdi-clipboard-check':
+        return Icons.checklist;
+      case 'mdi mdi-chart-line':
+        return Icons.show_chart;
+      case 'mdi mdi-book-open':
+        return Icons.book;
+      case 'mdi mdi-settings':
+        return Icons.settings;
+      case 'mdi mdi-bell':
+        return Icons.notifications;
+      case 'mdi mdi-folder':
+        return Icons.folder;
+      case 'mdi mdi-star':
+        return Icons.star;
+      case 'mdi mdi-trophy':
+        return Icons.emoji_events;
+      case 'mdi mdi-target':
+        return Icons.track_changes;
+      case 'mdi mdi-brain':
+        return Icons.psychology;
+      case 'mdi mdi-lightbulb':
+        return Icons.lightbulb;
+      case 'mdi mdi-trending-up':
+        return Icons.trending_up;
       default:
-        return Icons.apps; // Default icon
+        // Dynamic fallback based on menu name keywords and index
+        return _getDynamicIcon(menuName, index);
+    }
+  }
+
+  IconData _getDynamicIcon(String menuName, int index) {
+    // Create a dynamic icon based on menu name keywords
+    final name = menuName.toLowerCase();
+
+    // Check for specific keywords in menu name
+    if (name.contains('goal') || name.contains('target')) {
+      return Icons.track_changes;
+    } else if (name.contains('achievement') || name.contains('trophy') || name.contains('award')) {
+      return Icons.emoji_events;
+    } else if (name.contains('training') || name.contains('course') || name.contains('learning')) {
+      return Icons.school;
+    } else if (name.contains('resource') || name.contains('library') || name.contains('document')) {
+      return Icons.library_books;
+    } else if (name.contains('profile') || name.contains('account')) {
+      return Icons.account_circle;
+    } else if (name.contains('attendance') || name.contains('calendar')) {
+      return Icons.calendar_today;
+    } else if (name.contains('competency') || name.contains('skill')) {
+      return Icons.psychology;
+    } else if (name.contains('organization') || name.contains('team') || name.contains('group')) {
+      return Icons.group;
+    } else if (name.contains('report') || name.contains('chart') || name.contains('analytics')) {
+      return Icons.bar_chart;
+    } else if (name.contains('task') || name.contains('assignment')) {
+      return Icons.assignment;
+    } else if (name.contains('dashboard') || name.contains('overview')) {
+      return Icons.dashboard;
+    } else {
+      // Fallback to a rotating set of icons based on index
+      final icons = [
+        Icons.apps,
+        Icons.widgets,
+        Icons.grid_view,
+        Icons.view_list,
+        Icons.view_module,
+        Icons.list,
+        Icons.menu,
+        Icons.more_horiz,
+        Icons.more_vert,
+        Icons.category,
+        Icons.extension,
+        Icons.build,
+        Icons.settings_applications,
+      ];
+      return icons[index % icons.length];
     }
   }
 
@@ -390,7 +469,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return _buildQuickActionCard(
           context,
           menuItem.menuName,
-          _getIconFromString(menuItem.icon),
+          _getIconFromString(menuItem.icon, menuItem.menuName, index),
           'Access ${menuItem.menuName}',
           () => _navigateToMenuItem(context, menuItem),
           level: 3,

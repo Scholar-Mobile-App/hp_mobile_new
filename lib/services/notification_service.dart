@@ -5,6 +5,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../main.dart';
+import '../screens/organization_management/task_assignment_progress_screen.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -59,6 +61,7 @@ class NotificationService {
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         // Handle notification tap
         debugPrint('Notification tapped: ${response.payload}');
+        _handleNotificationTap(response.payload);
       },
     );
 
@@ -175,12 +178,48 @@ class NotificationService {
     debugPrint('💡 Note: In-app notification shown to user. Push notifications require backend server implementation');
   }
 
+  // Handle notification tap navigation
+  void _handleNotificationTap(String? payload) {
+    if (payload == null || payload.isEmpty) return;
+
+    try {
+      // Parse the payload - it might be a JSON string from Firebase data
+      Map<String, dynamic> data = {};
+      if (payload.startsWith('{')) {
+        data = jsonDecode(payload);
+      }
+
+      final type = data['type'] ?? '';
+
+      switch (type) {
+        case 'task_assigned':
+          // Navigate to Task Assignment & Progress screen
+          _navigateToTaskScreen();
+          break;
+        default:
+          debugPrint('Unknown notification type: $type');
+          break;
+      }
+    } catch (e) {
+      debugPrint('Error parsing notification payload: $e');
+    }
+  }
+
+  void _navigateToTaskScreen() {
+    debugPrint('🔔 Navigating to Task Assignment screen for task notification');
+    navigatorKey.currentState?.push(
+      MaterialPageRoute(
+        builder: (context) => TaskAssignmentProgressScreen(),
+      ),
+    );
+  }
+
   // Test method to verify local notifications work
   Future<void> testLocalNotification() async {
     await _showLocalNotification(
-      title: 'Test Notification',
-      body: 'This is a test notification to verify the notification drawer works',
-      payload: 'test_payload',
+      title: 'Test Task Notification',
+      body: 'This is a test notification to verify task notification navigation works',
+      payload: jsonEncode({'type': 'task_assigned', 'task_title': 'Test Task'}),
     );
     debugPrint('🔔 Test local notification sent');
   }
@@ -191,13 +230,14 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint('Handling background message: ${message.messageId}');
   debugPrint('Title: ${message.notification?.title}');
   debugPrint('Body: ${message.notification?.body}');
+  debugPrint('Data: ${message.data}');
 
   // Show local notification for background messages as well for consistency
   if (message.notification != null) {
     await NotificationService._showLocalNotification(
       title: message.notification!.title ?? 'Notification',
       body: message.notification!.body ?? '',
-      payload: message.data.toString(),
+      payload: jsonEncode(message.data), // Use JSON encoded data for proper parsing
     );
   }
 }
@@ -206,18 +246,29 @@ void _handleForegroundMessage(RemoteMessage message) {
   debugPrint('Foreground message: ${message.messageId}');
   debugPrint('Title: ${message.notification?.title}');
   debugPrint('Body: ${message.notification?.body}');
+  debugPrint('Data: ${message.data}');
 
   // Show local notification for foreground messages
   if (message.notification != null) {
     NotificationService._showLocalNotification(
       title: message.notification!.title ?? 'Notification',
       body: message.notification!.body ?? '',
-      payload: message.data.toString(),
+      payload: jsonEncode(message.data), // Use JSON encoded data for proper parsing
     );
   }
 }
 
 void _handleMessageOpenedApp(RemoteMessage message) {
   debugPrint('Message opened app: ${message.messageId}');
-  // Handle navigation when notification is tapped
+  debugPrint('Data: ${message.data}');
+
+  // Handle navigation when notification is tapped from terminated state
+  final type = message.data['type'] ?? '';
+  if (type == 'task_assigned') {
+    navigatorKey.currentState?.push(
+      MaterialPageRoute(
+        builder: (context) => TaskAssignmentProgressScreen(),
+      ),
+    );
+  }
 }
