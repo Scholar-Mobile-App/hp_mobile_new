@@ -5,6 +5,9 @@ import 'screens/splash_screen.dart';
 import 'services/auth_provider.dart';
 import 'services/notification_service.dart';
 
+// Global navigator key for notification navigation
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -30,6 +33,7 @@ class MyApp extends StatelessWidget {
       ],
         child: MaterialApp(
           title: 'Gaps To Growth',
+          navigatorKey: navigatorKey,
           theme: ThemeData(
             useMaterial3: true,
             appBarTheme: AppBarTheme(

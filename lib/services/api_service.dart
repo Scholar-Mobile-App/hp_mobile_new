@@ -12,6 +12,7 @@ import '../models/job_role_kaba.dart';
 import '../models/user_knowledge.dart';
 import '../models/user_ability.dart';
 import '../models/user_behaviour.dart';
+import '../models/task.dart';
 import '../config/api_config.dart';
 
 class ApiService {
@@ -732,6 +733,129 @@ class ApiService {
     } else {
       debugPrint('Assign task failed: ${response.body}');
       throw Exception('Failed to assign task: ${response.statusCode}');
+    }
+  }
+
+  // Fetch assigned tasks for the user
+  Future<List<Task>> fetchAssignedTasks(User user, String token) async {
+    final url = 'https://hp.triz.co.in/task?type=API&sub_institute_id=${user.subInstituteId}&token=$token&user_id=${user.id}&syear=2025&user_profile_name=${user.userProfileName}';
+
+    debugPrint('Fetching assigned tasks from: $url');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(
+      Uri.parse(url),
+      headers: headers,
+    );
+
+    debugPrint('Fetch assigned tasks response status: ${response.statusCode}');
+    debugPrint('Fetch assigned tasks response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      debugPrint('Fetch assigned tasks response: $responseData');
+      if (responseData['status'] == '1' && responseData['data'] is List) {
+        final tasks = responseData['data'] as List<dynamic>;
+        return tasks.map((task) => Task.fromJson(task)).toList();
+      } else if (responseData['checkList'] is List) {
+        final tasks = responseData['checkList'] as List<dynamic>;
+        return tasks.map((task) => Task.fromJson(task)).toList();
+      } else {
+        return [];
+      }
+    } else {
+      debugPrint('Fetch assigned tasks failed: ${response.body}');
+      throw Exception('Failed to fetch assigned tasks: ${response.statusCode}');
+    }
+  }
+
+  // Update task
+  Future<Map<String, dynamic>> updateTask({
+    required User user,
+    required String token,
+    required Task task,
+    required String status,
+    required String completionRemark,
+    required String approveRemarks,
+    required String approveStatus,
+  }) async {
+    final url = 'https://hp.triz.co.in/task/${task.id}';
+
+    final payload = {
+      'id': task.id.toString(),
+      'task_title': task.taskTitle,
+      'task_description': task.taskDescription ?? '',
+      'file_size': task.fileSize ?? '',
+      'file_type': task.fileType ?? '',
+      'task_date': task.taskDate,
+      'repeat_days': task.repeatDays,
+      'kra': task.kra ?? '',
+      'kpa': task.kpa ?? '',
+      'task_type': task.taskType,
+      'status': status,
+      'taskcompletation_remarks': completionRemark,
+      'task_allocated': task.taskAllocated.toString(),
+      'task_allocated_to': task.taskAllocatedTo.toString(),
+      'required_skills': task.requiredSkills ?? '',
+      'skill_id': task.skillId ?? '',
+      'observation_point': task.observationPoint ?? '',
+      'CREATED_IP_ADDRESS': task.createdIpAddress,
+      'SYEAR': task.syear,
+      'sub_institute_id': task.subInstituteId.toString(),
+      'approved_by': task.approvedBy ?? '',
+      'approved_on': task.approvedOn ?? '',
+      'approve_status': approveStatus,
+      'approve_remarks': approveRemarks,
+      'reply': task.reply ?? '',
+      'created_by': task.createdBy.toString(),
+      'updated_by': task.updatedBy?.toString() ?? '',
+      'deleted_by': task.deletedBy?.toString() ?? '',
+      'created_at': task.createdAt,
+      'updated_at': task.updatedAt ?? '',
+      'deleted_at': task.deletedAt ?? '',
+      'manageby': task.manageby ?? '',
+      'ALLOCATOR': task.allocator ?? '',
+      'ALLOCATED_TO': task.allocatedTo ?? '',
+      'department': task.department ?? '',
+      'jobrole': task.jobrole ?? '',
+      'taskcompletation_remarks': completionRemark,
+      'type': 'API',
+      'token': token,
+      'sub_institute_id': user.subInstituteId.toString(),
+      'formType': 'approveStatus',
+      'method_field': 'PUT',
+      'syear': '2025',
+    };
+
+    debugPrint('Updating task with URL: $url');
+    debugPrint('Updating task with payload keys: ${payload.keys.toList()}');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.put(
+      Uri.parse(url),
+      headers: headers,
+      body: json.encode(payload),
+    );
+
+    debugPrint('Update task response status: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      debugPrint('Update task response: $data');
+      return data;
+    } else {
+      debugPrint('Update task failed: ${response.body}');
+      throw Exception('Failed to update task: ${response.statusCode}');
     }
   }
 }

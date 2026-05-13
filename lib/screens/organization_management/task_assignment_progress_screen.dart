@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import '../../services/auth_provider.dart';
 import '../../services/api_service.dart';
 import '../../services/notification_service.dart';
+import '../../models/task.dart';
+import 'task_details_screen.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:intl/intl.dart';
 
@@ -19,6 +21,9 @@ class TaskAssignmentProgressScreen extends StatefulWidget {
 class _TaskAssignmentProgressScreenState
     extends State<TaskAssignmentProgressScreen> with TickerProviderStateMixin {
   late TabController _tabController;
+  bool _isViewingTasks = true; // Start with viewing tasks
+  List<Task> assignedTasks = [];
+  bool isLoadingAssignedTasks = true;
   String? selectedDepartment;
   String? selectedJobRole;
   String? selectedJobRoleName;
@@ -81,7 +86,7 @@ class _TaskAssignmentProgressScreenState
       setState(() {}); // Force rebuild when tab changes
     });
     _initializeNotifications();
-    fetchDepartments();
+    fetchAssignedTasks();
     taskTitleFocusNode.addListener(() {
       if (taskTitleFocusNode.hasFocus && taskTitle.isEmpty) {
         setState(() {
@@ -319,6 +324,39 @@ class _TaskAssignmentProgressScreenState
     }
   }
 
+  Future<void> fetchAssignedTasks() async {
+    setState(() {
+      isLoadingAssignedTasks = true;
+      assignedTasks = [];
+    });
+
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final user = auth.currentUser;
+    if (user == null) {
+      setState(() {
+        isLoadingAssignedTasks = false;
+      });
+      return;
+    }
+
+    final apiService = ApiService();
+    await apiService.loadCookies();
+
+    try {
+      final token = auth.originalToken ?? user.token;
+      final tasksData = await apiService.fetchAssignedTasks(user, token);
+      setState(() {
+        assignedTasks = tasksData;
+        isLoadingAssignedTasks = false;
+      });
+    } catch (e) {
+      debugPrint('Error fetching assigned tasks: $e');
+      setState(() {
+        isLoadingAssignedTasks = false;
+      });
+    }
+  }
+
   Future<void> _selectRepeatUntilDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -407,9 +445,9 @@ class _TaskAssignmentProgressScreenState
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAFA),
       appBar: AppBar(
-        title: const Text(
-          'Task Assignment',
-          style: TextStyle(
+        title: Text(
+          _isViewingTasks ? 'My Tasks' : 'Task Assignment',
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.5,
@@ -428,8 +466,29 @@ class _TaskAssignmentProgressScreenState
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
+        actions: _isViewingTasks ? [
+          TextButton.icon(
+            onPressed: () {
+              setState(() {
+                _isViewingTasks = false;
+              });
+              fetchDepartments(); // Initialize data for task creation
+            },
+            icon: const Icon(
+              Icons.add_task,
+              color: Color(0xFF6366F1),
+            ),
+            label: const Text(
+              'Assign Task',
+              style: TextStyle(
+                color: Color(0xFF6366F1),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ] : null,
       ),
-      body: Column(
+      body: _isViewingTasks ? _buildAssignedTasksView() : Column(
         children: [
           // Progress Indicator
           Container(
@@ -502,7 +561,7 @@ class _TaskAssignmentProgressScreenState
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomNavigation(),
+      bottomNavigationBar: _isViewingTasks ? null : _buildBottomNavigation(),
     );
   }
 
@@ -572,6 +631,231 @@ class _TaskAssignmentProgressScreenState
     if (taskTitle.isEmpty || taskDescription.isEmpty) return 2;
     // Skills selection is optional, so we can proceed to review even without skills
     return 3;
+  }
+
+  Widget _buildAssignedTasksView() {
+    return Column(
+      children: [
+        // Header
+        Container(
+          padding: EdgeInsets.all(getResponsivePadding(context)),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border(
+              bottom: BorderSide(color: Colors.grey.shade100, width: 1),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Tasks Assigned to You',
+                style: TextStyle(
+                  fontSize: getResponsiveTextSize(context, 28.0),
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF1A1A1A),
+                  letterSpacing: -0.5,
+                ),
+              ),
+              SizedBox(height: getResponsiveMargin(context) / 2),
+              Text(
+                'View and manage tasks assigned to you by your supervisors.',
+                style: TextStyle(
+                  fontSize: getResponsiveTextSize(context, 16.0),
+                  color: Colors.grey.shade600,
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Task List
+        Expanded(
+          child: isLoadingAssignedTasks
+              ? const Center(child: CircularProgressIndicator())
+              : assignedTasks.isEmpty
+                  ? _buildEmptyState(
+                      icon: Icons.assignment_outlined,
+                      title: 'No Tasks Assigned',
+                      message: 'You don\'t have any tasks assigned to you yet.',
+                    )
+                  : RefreshIndicator(
+                      onRefresh: fetchAssignedTasks,
+                      child: ListView.builder(
+                        padding: EdgeInsets.all(getResponsivePadding(context)),
+                        itemCount: assignedTasks.length,
+                        itemBuilder: (context, index) {
+                          final task = assignedTasks[index];
+                          return _buildTaskCard(task);
+                        },
+                      ),
+                    ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTaskCard(Task task) {
+    return Card(
+      margin: EdgeInsets.only(bottom: getResponsiveMargin(context) * 0.5),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey.shade200, width: 1),
+      ),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TaskDetailsScreen(task: task),
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: EdgeInsets.all(getResponsivePadding(context)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    _getStatusIcon(task.status),
+                    color: _getStatusColor(task.status),
+                    size: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      task.taskTitle,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF1A1A1A),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Chip(
+                    label: Text(
+                      _getStatusText(task.status),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: _getStatusColor(task.status),
+                      ),
+                    ),
+                    backgroundColor: _getStatusColor(task.status).withOpacity(0.1),
+                    side: BorderSide.none,
+                    padding: EdgeInsets.zero,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                ],
+              ),
+              if (task.taskDescription != null && task.taskDescription!.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  task.taskDescription!,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade600,
+                    height: 1.4,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Icon(
+                    Icons.person_outline,
+                    size: 16,
+                    color: Colors.grey.shade500,
+                  ),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      task.allocatedTo ?? 'Unassigned',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Icon(
+                    Icons.schedule,
+                    size: 16,
+                    color: Colors.grey.shade500,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    _formatDate(task.createdAt),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _getStatusText(String status) {
+    switch (status.toLowerCase()) {
+      case 'completed':
+        return 'Completed';
+      case 'in_progress':
+        return 'In Progress';
+      case 'pending':
+      default:
+        return 'Pending';
+    }
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'completed':
+        return const Color(0xFF10B981);
+      case 'in_progress':
+        return const Color(0xFFF59E0B);
+      case 'pending':
+      default:
+        return const Color(0xFF6B7280);
+    }
+  }
+
+  IconData _getStatusIcon(String status) {
+    switch (status.toLowerCase()) {
+      case 'completed':
+        return Icons.check_circle;
+      case 'in_progress':
+        return Icons.hourglass_top;
+      case 'pending':
+      default:
+        return Icons.schedule;
+    }
+  }
+
+  String _formatDate(dynamic date) {
+    if (date == null) return 'N/A';
+    try {
+      final dateTime = DateTime.parse(date.toString());
+      return DateFormat('MMM dd, yyyy').format(dateTime);
+    } catch (e) {
+      return date.toString();
+    }
   }
 
   Widget _buildFiltersTab() {
@@ -1755,12 +2039,28 @@ class _TaskAssignmentProgressScreenState
 
                     debugPrint('🎉 Task assigned! Notification displayed to user.');
 
-                    // Navigate back after a short delay to allow notification to show
-                    Future.delayed(const Duration(seconds: 1), () {
-                      if (mounted && context.mounted) {
-                        Navigator.of(context).pop();
-                      }
+                    // Switch back to viewing tasks and refresh the list
+                    setState(() {
+                      _isViewingTasks = true;
+                      _tabController.index = 0; // Reset to first tab
+                      // Reset all form data
+                      selectedDepartment = null;
+                      selectedJobRole = null;
+                      selectedJobRoleName = null;
+                      employees = [];
+                      selectedEmployeeIds = {};
+                      taskTitle = '';
+                      taskTitleController.clear();
+                      taskDescription = '';
+                      taskDescriptionController.clear();
+                      selectedRepeatDays = null;
+                      selectedRepeatUntil = null;
+                      selectedPriority = null;
+                      filteredTasks = [];
+                      skills = [];
+                      selectedSkillIds = {};
                     });
+                    fetchAssignedTasks();
                   } else {
                     // Other tabs - continue to next tab
                     _tabController.animateTo(_tabController.index + 1);
