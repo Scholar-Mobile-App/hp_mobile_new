@@ -243,51 +243,57 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               const SizedBox(height: 16),
                               // Remember me and Forgot Password
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Checkbox(
-                                        value: _rememberMe,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _rememberMe = value ?? false;
-                                          });
-                                        },
-                                        activeColor: const Color(0xFF0F172A),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(4),
-                                        ),
-                                      ),
-                                      Text(
-                                        'Remember me',
-                                        style: GoogleFonts.inter(
-                                          color: const Color(0xFF64748B),
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => const ForgotPasswordScreen(),
-                                        ),
-                                      );
-                                    },
-                                    child: Text(
-                                      'Forgot Password?',
-                                      style: GoogleFonts.inter(
-                                        color: const Color(0xFF0F172A),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                               Row(
+                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                 children: [
+                                   Flexible(
+                                     child: Row(
+                                       children: [
+                                         Checkbox(
+                                           value: _rememberMe,
+                                           onChanged: (value) {
+                                             setState(() {
+                                               _rememberMe = value ?? false;
+                                             });
+                                           },
+                                           activeColor: const Color(0xFF0F172A),
+                                           shape: RoundedRectangleBorder(
+                                             borderRadius: BorderRadius.circular(4),
+                                           ),
+                                         ),
+                                         Flexible(
+                                           child: Text(
+                                             'Remember me',
+                                             style: GoogleFonts.inter(
+                                               color: const Color(0xFF64748B),
+                                               fontSize: 14,
+                                             ),
+                                           ),
+                                         ),
+                                       ],
+                                     ),
+                                   ),
+                                   Flexible(
+                                     child: TextButton(
+                                       onPressed: () {
+                                         Navigator.push(
+                                           context,
+                                           MaterialPageRoute(
+                                             builder: (context) => const ForgotPasswordScreen(),
+                                           ),
+                                         );
+                                       },
+                                       child: Text(
+                                         'Forgot Password?',
+                                         style: GoogleFonts.inter(
+                                           color: const Color(0xFF0F172A),
+                                           fontSize: 14,
+                                           fontWeight: FontWeight.w500,
+                                         ),
+                                       ),
+                                     ),
+                                   ),
+                                 ],
                               ),
                               const SizedBox(height: 24),
                               // Login Button
