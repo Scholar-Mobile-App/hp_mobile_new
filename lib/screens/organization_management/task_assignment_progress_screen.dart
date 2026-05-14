@@ -1967,11 +1967,14 @@ class _TaskAssignmentProgressScreenState
                     String skillId = '';
                     String skillsName = '';
                     if (selectedSkillIds.isNotEmpty) {
-                      final skill = skills.firstWhere(
-                        (s) => s['id'].toString() == selectedSkillIds.first,
-                      );
-                      skillId = skill['id'].toString();
-                      skillsName = skill['skill_name']?.toString() ?? '';
+                      // Collect all selected skills
+                      final selectedSkills = skills.where(
+                        (s) => selectedSkillIds.contains(s['id'].toString()),
+                      ).toList();
+
+                      // Create comma-separated strings for skill IDs and names
+                      skillId = selectedSkills.map((s) => s['id'].toString()).join(',');
+                      skillsName = selectedSkills.map((s) => s['skill_name']?.toString() ?? '').join(',');
                     }
 
                     final repeatDays = selectedRepeatDays != null ? int.parse(selectedRepeatDays!.split(' ')[0]) : 1;

@@ -736,6 +736,56 @@ class ApiService {
     }
   }
 
+  // Fetch a single task by ID
+  Future<Task?> fetchTaskById(int taskId, User user, String token) async {
+    final url = 'https://hp.triz.co.in/task/$taskId?type=API&token=$token&sub_institute_id=${user.subInstituteId}';
+
+    debugPrint('Fetching task by ID from: $url');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(
+      Uri.parse(url),
+      headers: headers,
+    );
+
+    debugPrint('Fetch task by ID response status: ${response.statusCode}');
+    debugPrint('Fetch task by ID response body length: ${response.body.length}');
+
+    if (response.statusCode == 200) {
+      if (response.body.trim().isEmpty) {
+        debugPrint('Empty response body, task endpoint might not exist');
+        return null;
+      }
+
+      try {
+        final responseData = json.decode(response.body);
+        debugPrint('Fetch task by ID response: $responseData');
+
+        // Try different response formats
+        if (responseData['status'] == '1' && responseData['data'] != null) {
+          return Task.fromJson(responseData['data']);
+        } else if (responseData is Map && responseData.containsKey('id')) {
+          // Direct task object
+          return Task.fromJson(responseData as Map<String, dynamic>);
+        } else {
+          debugPrint('Unexpected response format for task');
+          return null;
+        }
+      } catch (e) {
+        debugPrint('Error parsing task response: $e');
+        return null;
+      }
+    } else {
+      debugPrint('Fetch task by ID failed: ${response.statusCode}');
+      throw Exception('Failed to fetch task by ID: ${response.statusCode}');
+    }
+  }
+
   // Fetch assigned tasks for the user
   Future<List<Task>> fetchAssignedTasks(User user, String token) async {
     final url = 'https://hp.triz.co.in/task?type=API&sub_institute_id=${user.subInstituteId}&token=$token&user_id=${user.id}&syear=2025&user_profile_name=${user.userProfileName}';
