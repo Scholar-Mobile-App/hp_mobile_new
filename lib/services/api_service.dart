@@ -873,7 +873,6 @@ class ApiService {
       'ALLOCATED_TO': task.allocatedTo ?? '',
       'department': task.department ?? '',
       'jobrole': task.jobrole ?? '',
-      'taskcompletation_remarks': completionRemark,
       'type': 'API',
       'token': token,
       'sub_institute_id': user.subInstituteId.toString(),
@@ -908,6 +907,7 @@ class ApiService {
       throw Exception('Failed to update task: ${response.statusCode}');
     }
   }
+  
 
   // Forgot Password API
   Future<Map<String, dynamic>> forgotPassword(String email) async {

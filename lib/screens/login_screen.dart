@@ -375,34 +375,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 32),
-                      // Sign up link
-                      // Center(
-                      //   child: TextButton(
-                      //     onPressed: () {
-                      //       // Handle sign up navigation
-                      //     },
-                      //     child: RichText(
-                      //       text: TextSpan(
-                      //         text: "Don't have an account? ",
-                      //         style: GoogleFonts.inter(
-                      //           color: const Color(0xFF64748B),
-                      //           fontSize: 14,
-                      //         ),
-                      //         children: [
-                      //           TextSpan(
-                      //             text: 'Sign Up',
-                      //             style: GoogleFonts.inter(
-                      //               color: const Color(0xFFFF6A00),
-                      //               fontSize: 14,
-                      //               fontWeight: FontWeight.w600,
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
+                       const SizedBox(height: 32),
                     ],
                   ),
                 ),

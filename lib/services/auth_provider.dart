@@ -166,6 +166,34 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  // Delete account
+  Future<void> deleteAccount(String reason) async {
+    if (_currentUser == null) return;
+
+    _isLoading = true;
+    notifyListeners();
+
+    debugPrint('Starting account deletion for user: ${_currentUser!.id}');
+
+    final apiService = ApiService();
+    await apiService.loadCookies();
+    final tokenToUse = _originalToken ?? _currentUser!.token;
+
+    // Clear all user data
+    _currentUser = null;
+    _menuResponse = null;
+    _originalToken = null;
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('user');
+    await prefs.remove('menu_response');
+    await prefs.remove('original_token');
+    await prefs.remove('cookies');
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
   // Check session on app start
   Future<void> checkSession() async {
     final prefs = await SharedPreferences.getInstance();

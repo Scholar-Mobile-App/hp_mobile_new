@@ -144,7 +144,10 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     // Start animations
     _startAnimations();
 
-    _initializeApp();
+    // Initialize app after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeApp();
+    });
   }
 
   void _startAnimations() {
@@ -175,8 +178,16 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   Future<void> _initializeApp() async {
     // Simulate some loading time for splash
     await Future.delayed(Duration(seconds: 3));
+
+    // Check if widget is still mounted
+    if (!mounted) return;
+
     // Check session
     await context.read<AuthProvider>().checkSession();
+
+    // Check again if widget is still mounted after async operation
+    if (!mounted) return;
+
     // Navigate
     final auth = context.read<AuthProvider>();
     if (auth.currentUser != null) {

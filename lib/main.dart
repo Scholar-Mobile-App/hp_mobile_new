@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'screens/splash_screen.dart';
+import 'screens/login_screen.dart';
 import 'services/auth_provider.dart';
 import 'services/notification_service.dart';
 
@@ -58,7 +59,7 @@ class MyApp extends StatelessWidget {
               brightness: Brightness.light,
             ),
           ),
-          home: SplashScreen(),
+           home: SplashScreen(),
         ),
     );
   }

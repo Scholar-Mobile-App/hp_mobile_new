@@ -349,6 +349,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+
   Widget _buildDefaultQuickActions(BuildContext context) {
     debugPrint('No mobile menus available, showing default menus');
 
@@ -574,24 +575,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
-              Container(
-                color: Colors.white.withOpacity(0.1),
-                child: ListTile(
-                  leading: Icon(Icons.logout, color: Colors.white),
-                  title: Text(
-                    'Logout',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                  onTap: () async {
-                    Navigator.pop(context); // Close the drawer
-                    await auth.logout();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()),
-                    );
-                  },
-                ),
-              ),
+               Container(
+                 color: Colors.white.withOpacity(0.1),
+                 child: ListTile(
+                   leading: Icon(Icons.logout, color: Colors.white),
+                   title: Text(
+                     'Logout',
+                     style: TextStyle(color: Colors.white, fontSize: 16),
+                   ),
+                   onTap: () async {
+                     Navigator.pop(context); // Close the drawer
+                     await auth.logout();
+                     Navigator.pushReplacement(
+                       context,
+                       MaterialPageRoute(builder: (context) => LoginScreen()),
+                     );
+                   },
+                 ),
+               ),
             ],
           ),
         ),
