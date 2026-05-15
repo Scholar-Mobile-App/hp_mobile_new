@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-
 import '../../services/auth_provider.dart';
 import '../../services/api_service.dart';
 import '../../services/notification_service.dart';
 import '../../models/task.dart';
 import 'task_details_screen.dart';
 import 'package:another_flushbar/flushbar.dart';
-import 'package:intl/intl.dart';
 
 class TaskAssignmentProgressScreen extends StatefulWidget {
   const TaskAssignmentProgressScreen({super.key});
@@ -30,6 +28,8 @@ class _TaskAssignmentProgressScreenState
   String? selectedRepeatDays;
   DateTime? selectedRepeatUntil;
   String? selectedPriority;
+  String _selectedTaskStatusFilter = 'all';
+  bool _sortNewestFirst = true;
 
   // Responsive design helpers
   double getResponsivePadding(BuildContext context) {
@@ -443,51 +443,34 @@ class _TaskAssignmentProgressScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
-      appBar: AppBar(
-        title: Text(
-          _isViewingTasks ? 'My Tasks' : 'Task Assignment',
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-            letterSpacing: -0.5,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        shadowColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
-        foregroundColor: const Color(0xFF1A1A1A),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Color(0xFF1A1A1A),
-            size: 24,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        actions: _isViewingTasks ? [
-          TextButton.icon(
-            onPressed: () {
-              setState(() {
-                _isViewingTasks = false;
-              });
-              fetchDepartments(); // Initialize data for task creation
-            },
-            icon: const Icon(
-              Icons.add_task,
-              color: Color(0xFF6366F1),
-            ),
-            label: const Text(
-              'Assign Task',
-              style: TextStyle(
-                color: Color(0xFF6366F1),
-                fontWeight: FontWeight.w600,
+      backgroundColor: _isViewingTasks
+          ? const Color(0xFFF7F8FC)
+          : const Color(0xFFFAFAFA),
+      appBar: _isViewingTasks
+          ? null
+          : AppBar(
+              title: const Text(
+                'Task Assignment',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.5,
+                ),
+              ),
+              backgroundColor: Colors.white,
+              elevation: 0,
+              shadowColor: Colors.transparent,
+              surfaceTintColor: Colors.transparent,
+              foregroundColor: const Color(0xFF1A1A1A),
+              leading: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: Color(0xFF1A1A1A),
+                  size: 24,
+                ),
+                onPressed: () => Navigator.of(context).pop(),
               ),
             ),
-          ),
-        ] : null,
-      ),
       body: _isViewingTasks ? _buildAssignedTasksView() : Column(
         children: [
           // Progress Indicator
@@ -634,178 +617,245 @@ class _TaskAssignmentProgressScreenState
   }
 
   Widget _buildAssignedTasksView() {
-    return Column(
-      children: [
-        // Header
-        Container(
-          padding: EdgeInsets.all(getResponsivePadding(context)),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border(
-              bottom: BorderSide(color: Colors.grey.shade100, width: 1),
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Tasks Assigned to You',
-                style: TextStyle(
-                  fontSize: getResponsiveTextSize(context, 28.0),
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF1A1A1A),
-                  letterSpacing: -0.5,
-                ),
-              ),
-              SizedBox(height: getResponsiveMargin(context) / 2),
-              Text(
-                'View and manage tasks assigned to you by your supervisors.',
-                style: TextStyle(
-                  fontSize: getResponsiveTextSize(context, 16.0),
-                  color: Colors.grey.shade600,
-                  height: 1.5,
-                ),
-              ),
-            ],
-          ),
-        ),
+    final displayedTasks = _getDisplayedAssignedTasks();
+    final horizontalPadding = getResponsivePadding(context);
 
-        // Task List
-        Expanded(
-          child: isLoadingAssignedTasks
-              ? const Center(child: CircularProgressIndicator())
-              : assignedTasks.isEmpty
-                  ? _buildEmptyState(
-                      icon: Icons.assignment_outlined,
-                      title: 'No Tasks Assigned',
-                      message: 'You don\'t have any tasks assigned to you yet.',
-                    )
-                  : RefreshIndicator(
-                      onRefresh: fetchAssignedTasks,
-                      child: ListView.builder(
-                        padding: EdgeInsets.all(getResponsivePadding(context)),
-                        itemCount: assignedTasks.length,
-                        itemBuilder: (context, index) {
-                          final task = assignedTasks[index];
-                          return _buildTaskCard(task);
-                        },
+    return SafeArea(
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              horizontalPadding,
+              getResponsiveMargin(context),
+              horizontalPadding,
+              0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    _buildHeaderIconButton(
+                      icon: Icons.arrow_back_rounded,
+                      onTap: () => Navigator.of(context).pop(),
+                    ),
+                    SizedBox(width: getResponsiveMargin(context)),
+                    Expanded(
+                      child: Text(
+                        'My Tasks',
+                        style: TextStyle(
+                          fontSize: getResponsiveTextSize(context, 24.0),
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF1F3270),
+                          letterSpacing: -0.8,
+                        ),
                       ),
                     ),
-        ),
-      ],
+                    _buildAssignTaskButton(),
+                  ],
+                ),
+                SizedBox(height: getResponsivePadding(context) * 1.4),
+                Text(
+                  'Tasks Assigned to You',
+                  style: TextStyle(
+                    fontSize: getResponsiveTextSize(context, 30.0),
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF1F3270),
+                    letterSpacing: -0.9,
+                  ),
+                ),
+                SizedBox(height: getResponsiveMargin(context)),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  child: Text(
+                    'View and manage tasks assigned to you by your supervisors.',
+                    style: TextStyle(
+                      fontSize: getResponsiveTextSize(context, 16.0),
+                      color: const Color(0xFF5E6C96),
+                      height: 1.45,
+                    ),
+                  ),
+                ),
+                SizedBox(height: getResponsivePadding(context) * 1.1),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      _buildTaskStatusFilterBar(),
+                      SizedBox(width: getResponsiveMargin(context)),
+                      _buildFilterActionButton(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: getResponsiveMargin(context)),
+          Expanded(
+            child: isLoadingAssignedTasks
+                ? const Center(child: CircularProgressIndicator())
+                : displayedTasks.isEmpty
+                    ? Padding(
+                        padding: EdgeInsets.all(horizontalPadding),
+                        child: _buildEmptyState(
+                          icon: Icons.assignment_outlined,
+                          title: assignedTasks.isEmpty
+                              ? 'No Tasks Assigned'
+                              : 'No Matching Tasks',
+                          message: assignedTasks.isEmpty
+                              ? 'You don\'t have any tasks assigned to you yet.'
+                              : 'Try a different task status filter to see more items.',
+                        ),
+                      )
+                    : RefreshIndicator(
+                        onRefresh: fetchAssignedTasks,
+                        child: ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: EdgeInsets.fromLTRB(
+                            horizontalPadding,
+                            0,
+                            horizontalPadding,
+                            horizontalPadding,
+                          ),
+                          itemCount: displayedTasks.length,
+                          itemBuilder: (context, index) {
+                            final task = displayedTasks[index];
+                            return _buildTaskCard(task);
+                          },
+                        ),
+                      ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildTaskCard(Task task) {
-    return Card(
-      margin: EdgeInsets.only(bottom: getResponsiveMargin(context) * 0.5),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.shade200, width: 1),
+    final statusColor = _getStatusColor(task.status);
+
+    return Container(
+      margin: EdgeInsets.only(bottom: getResponsiveMargin(context) * 1.2),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(26),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1F3270).withOpacity(0.07),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => TaskDetailsScreen(task: task),
-            ),
-          );
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: EdgeInsets.all(getResponsivePadding(context)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    _getStatusIcon(task.status),
-                    color: _getStatusColor(task.status),
-                    size: 20,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      task.taskTitle,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF1A1A1A),
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Chip(
-                    label: Text(
-                      _getStatusText(task.status),
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: _getStatusColor(task.status),
-                      ),
-                    ),
-                    backgroundColor: _getStatusColor(task.status).withOpacity(0.1),
-                    side: BorderSide.none,
-                    padding: EdgeInsets.zero,
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                ],
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TaskDetailsScreen(task: task),
               ),
-              if (task.taskDescription != null && task.taskDescription!.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                Text(
-                  task.taskDescription!,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade600,
-                    height: 1.4,
+            );
+          },
+          borderRadius: BorderRadius.circular(26),
+          child: IntrinsicHeight(
+            child: Row(
+              children: [
+                Container(
+                  width: 5,
+                  decoration: BoxDecoration(
+                    color: statusColor,
+                    borderRadius: const BorderRadius.horizontal(
+                      left: Radius.circular(26),
+                    ),
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.all(getResponsivePadding(context)),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 52,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            color: statusColor.withOpacity(0.12),
+                            shape: BoxShape.circle,
+                          ),
+                          alignment: Alignment.center,
+                          child: Icon(
+                            _getStatusIcon(task.status),
+                            color: statusColor,
+                            size: 28,
+                          ),
+                        ),
+                        SizedBox(width: getResponsiveMargin(context)),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      task.taskTitle,
+                                      style: TextStyle(
+                                        fontSize: getResponsiveTextSize(
+                                          context,
+                                          17.0,
+                                        ),
+                                        fontWeight: FontWeight.w700,
+                                        color: const Color(0xFF1F3270),
+                                        height: 1.25,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  _buildStatusBadge(task.status),
+                                ],
+                              ),
+                              if (task.taskDescription != null &&
+                                  task.taskDescription!.trim().isNotEmpty) ...[
+                                const SizedBox(height: 10),
+                                Text(
+                                  task.taskDescription!,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xFF58678F),
+                                    height: 1.35,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                              const SizedBox(height: 16),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: _buildTaskMetaPanel(task),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Icon(
+                                    Icons.chevron_right_rounded,
+                                    color: const Color(0xFF42558F),
+                                    size: 28,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Icon(
-                    Icons.person_outline,
-                    size: 16,
-                    color: Colors.grey.shade500,
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      task.allocatedTo ?? 'Unassigned',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey.shade600,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Icon(
-                    Icons.schedule,
-                    size: 16,
-                    color: Colors.grey.shade500,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    _formatDate(task.createdAt),
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -813,7 +863,7 @@ class _TaskAssignmentProgressScreenState
   }
 
   String _getStatusText(String status) {
-    switch (status.toLowerCase()) {
+    switch (_normalizeTaskStatus(status)) {
       case 'completed':
         return 'Completed';
       case 'in_progress':
@@ -825,26 +875,26 @@ class _TaskAssignmentProgressScreenState
   }
 
   Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
+    switch (_normalizeTaskStatus(status)) {
       case 'completed':
-        return const Color(0xFF10B981);
+        return const Color(0xFF45D37B);
       case 'in_progress':
-        return const Color(0xFFF59E0B);
+        return const Color(0xFF4B96FF);
       case 'pending':
       default:
-        return const Color(0xFF6B7280);
+        return const Color(0xFFFF7A1A);
     }
   }
 
   IconData _getStatusIcon(String status) {
-    switch (status.toLowerCase()) {
+    switch (_normalizeTaskStatus(status)) {
       case 'completed':
-        return Icons.check_circle;
+        return Icons.check_rounded;
       case 'in_progress':
-        return Icons.hourglass_top;
+        return Icons.radio_button_unchecked_rounded;
       case 'pending':
       default:
-        return Icons.schedule;
+        return Icons.access_time_rounded;
     }
   }
 
@@ -858,21 +908,431 @@ class _TaskAssignmentProgressScreenState
     }
   }
 
+  String _normalizeTaskStatus(String status) {
+    final normalized = status.trim().toLowerCase().replaceAll(' ', '_');
+    if (normalized == 'inprogress') {
+      return 'in_progress';
+    }
+    return normalized;
+  }
+
+  List<Task> _getDisplayedAssignedTasks() {
+    final filtered = assignedTasks.where((task) {
+      if (_selectedTaskStatusFilter == 'all') {
+        return true;
+      }
+      return _normalizeTaskStatus(task.status) == _selectedTaskStatusFilter;
+    }).toList();
+
+    filtered.sort((a, b) {
+      final firstDate = _parseTaskDate(a);
+      final secondDate = _parseTaskDate(b);
+      return _sortNewestFirst
+          ? secondDate.compareTo(firstDate)
+          : firstDate.compareTo(secondDate);
+    });
+
+    return filtered;
+  }
+
+  DateTime _parseTaskDate(Task task) {
+    final rawDate = task.taskDate.isNotEmpty ? task.taskDate : task.createdAt;
+    return DateTime.tryParse(rawDate) ?? DateTime.fromMillisecondsSinceEpoch(0);
+  }
+
+  String _getTaskDisplayDate(Task task) {
+    final rawDate = task.taskDate.isNotEmpty ? task.taskDate : task.createdAt;
+    return _formatDate(rawDate);
+  }
+
+  String _getTaskPersonLabel(Task task) {
+    final person = task.allocator?.trim();
+    if (person != null && person.isNotEmpty) {
+      return person;
+    }
+
+    final fallback = task.allocatedTo?.trim();
+    if (fallback != null && fallback.isNotEmpty) {
+      return fallback;
+    }
+
+    return 'Unassigned';
+  }
+
+  Widget _buildHeaderIconButton({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF1F3270).withOpacity(0.06),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Icon(
+            icon,
+            color: const Color(0xFF1F3270),
+            size: 26,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAssignTaskButton() {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _isViewingTasks = false;
+        });
+        fetchDepartments();
+      },
+      borderRadius: BorderRadius.circular(20),
+      child: Ink(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        decoration: BoxDecoration(
+          color: const Color(0xFF2E3E98),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF2E3E98).withOpacity(0.18),
+              blurRadius: 18,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(
+              Icons.add_circle_outline_rounded,
+              color: Color(0xFFF3C56A),
+              size: 26,
+            ),
+            SizedBox(width: 10),
+            Text(
+              'Assign Task',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTaskStatusFilterBar() {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1F3270).withOpacity(0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          _buildTaskFilterChip(
+            value: 'all',
+            label: 'All',
+            icon: Icons.view_list_rounded,
+          ),
+          _buildTaskFilterChip(
+            value: 'pending',
+            label: 'Pending',
+            icon: Icons.access_time_rounded,
+          ),
+          _buildTaskFilterChip(
+            value: 'in_progress',
+            label: 'In Progress',
+            icon: Icons.radio_button_unchecked_rounded,
+          ),
+          _buildTaskFilterChip(
+            value: 'completed',
+            label: 'Completed',
+            icon: Icons.check_circle_outline_rounded,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTaskFilterChip({
+    required String value,
+    required String label,
+    required IconData icon,
+  }) {
+    final isSelected = _selectedTaskStatusFilter == value;
+    final iconColor = value == 'all'
+        ? (isSelected ? Colors.white : const Color(0xFF31406F))
+        : (isSelected ? Colors.white : _getStatusColor(value));
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            setState(() {
+              _selectedTaskStatusFilter = value;
+            });
+          },
+          borderRadius: BorderRadius.circular(18),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            constraints: const BoxConstraints(minHeight: 62),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+        decoration: BoxDecoration(
+              color: isSelected
+                  ? const Color(0xFF2E3E98)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: 22,
+                  color: iconColor,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected
+                        ? Colors.white
+                        : const Color(0xFF31406F),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTaskMetaPanel(Task task) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF4F6FE),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 10,
+        runSpacing: 8,
+        children: [
+          _buildTaskMetaItem(
+            icon: Icons.person_outline_rounded,
+            value: _getTaskPersonLabel(task),
+          ),
+          Container(
+            width: 1,
+            height: 18,
+            color: const Color(0xFFD9DEEF),
+          ),
+          _buildTaskMetaItem(
+            icon: Icons.calendar_today_outlined,
+            value: _getTaskDisplayDate(task),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterActionButton() {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(20),
+      child: InkWell(
+        onTap: _showTaskSortSheet,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF1F3270).withOpacity(0.05),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.filter_alt_outlined,
+            color: Color(0xFF4B5D91),
+            size: 28,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showTaskSortSheet() async {
+    final selectedOption = await showModalBottomSheet<bool>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Sort Tasks',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF1F3270),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(
+                    Icons.arrow_downward_rounded,
+                    color: _sortNewestFirst
+                        ? const Color(0xFF2E3E98)
+                        : const Color(0xFF7A86A8),
+                  ),
+                  title: const Text('Newest first'),
+                  trailing: _sortNewestFirst
+                      ? const Icon(
+                          Icons.check_rounded,
+                          color: Color(0xFF2E3E98),
+                        )
+                      : null,
+                  onTap: () => Navigator.of(context).pop(true),
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(
+                    Icons.arrow_upward_rounded,
+                    color: !_sortNewestFirst
+                        ? const Color(0xFF2E3E98)
+                        : const Color(0xFF7A86A8),
+                  ),
+                  title: const Text('Oldest first'),
+                  trailing: !_sortNewestFirst
+                      ? const Icon(
+                          Icons.check_rounded,
+                          color: Color(0xFF2E3E98),
+                        )
+                      : null,
+                  onTap: () => Navigator.of(context).pop(false),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (selectedOption != null) {
+      setState(() {
+        _sortNewestFirst = selectedOption;
+      });
+    }
+  }
+
+  Widget _buildStatusBadge(String status) {
+    final color = _getStatusColor(status);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(
+        _getStatusText(status),
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w700,
+          color: color,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTaskMetaItem({
+    required IconData icon,
+    required String value,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          icon,
+          size: 18,
+          color: const Color(0xFF5D6A90),
+        ),
+        const SizedBox(width: 8),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 170),
+          child: Text(
+            value,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF4D5D88),
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildFiltersTab() {
     return SingleChildScrollView(
       padding: EdgeInsets.all(getResponsivePadding(context)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Project Filters',
-            style: TextStyle(
-              fontSize: getResponsiveTextSize(context, 28.0),
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF1A1A1A),
-              letterSpacing: -0.5,
-            ),
-          ),
+          // Text(
+          //   'Project Filters',
+          //   style: TextStyle(
+          //     fontSize: getResponsiveTextSize(context, 28.0),
+          //     fontWeight: FontWeight.w700,
+          //     color: const Color(0xFF1A1A1A),
+          //     letterSpacing: -0.5,
+          //   ),
+          // ),
           SizedBox(height: getResponsiveMargin(context) / 2),
           Text(
             'Select the department and job role to define the task scope.',
@@ -1967,11 +2427,14 @@ class _TaskAssignmentProgressScreenState
                     String skillId = '';
                     String skillsName = '';
                     if (selectedSkillIds.isNotEmpty) {
-                      final skill = skills.firstWhere(
-                        (s) => s['id'].toString() == selectedSkillIds.first,
-                      );
-                      skillId = skill['id'].toString();
-                      skillsName = skill['skill_name']?.toString() ?? '';
+                      // Collect all selected skills
+                      final selectedSkills = skills.where(
+                        (s) => selectedSkillIds.contains(s['id'].toString()),
+                      ).toList();
+
+                      // Create comma-separated strings for skill IDs and names
+                      skillId = selectedSkills.map((s) => s['id'].toString()).join(',');
+                      skillsName = selectedSkills.map((s) => s['skill_name']?.toString() ?? '').join(',');
                     }
 
                     final repeatDays = selectedRepeatDays != null ? int.parse(selectedRepeatDays!.split(' ')[0]) : 1;

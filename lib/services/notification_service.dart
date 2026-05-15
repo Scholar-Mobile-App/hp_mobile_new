@@ -5,8 +5,13 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:provider/provider.dart';
 import '../main.dart';
 import '../screens/organization_management/task_assignment_progress_screen.dart';
+import '../screens/organization_management/task_details_screen.dart';
+import '../services/api_service.dart';
+import '../services/auth_provider.dart';
+import '../models/task.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -190,11 +195,17 @@ class NotificationService {
       }
 
       final type = data['type'] ?? '';
+      final taskId = data['task_id'];
 
       switch (type) {
         case 'task_assigned':
-          // Navigate to Task Assignment & Progress screen
-          _navigateToTaskScreen();
+          if (taskId != null) {
+            // Navigate to specific task details
+            navigateToTaskDetails(taskId);
+          } else {
+            // Fallback to task list screen
+            _navigateToTaskScreen();
+          }
           break;
         default:
           debugPrint('Unknown notification type: $type');
@@ -212,6 +223,56 @@ class NotificationService {
         builder: (context) => TaskAssignmentProgressScreen(),
       ),
     );
+  }
+
+  void navigateToTaskDetails(dynamic taskId) async {
+    debugPrint('🔔 Navigating to Task Details screen for task ID: $taskId');
+
+    // Get the current context to access providers
+    final context = navigatorKey.currentState?.context;
+    if (context == null) {
+      debugPrint('❌ Context not available for navigation');
+      return;
+    }
+
+    try {
+      // Get auth provider
+      final auth = Provider.of<AuthProvider>(context, listen: false);
+      final user = auth.currentUser;
+      final token = auth.originalToken ?? user?.token;
+
+      if (user == null || token == null) {
+        debugPrint('❌ User not logged in, cannot fetch task details');
+        // Fallback to task list
+        _navigateToTaskScreen();
+        return;
+      }
+
+      // Fetch all tasks and find the specific one
+      final apiService = ApiService();
+      await apiService.loadCookies();
+      final tasks = await apiService.fetchAssignedTasks(user, token);
+
+      final task = tasks.firstWhere(
+        (t) => t.id == int.parse(taskId.toString()),
+        orElse: () => null as Task,
+      );
+
+      if (task != null) {
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(
+            builder: (context) => TaskDetailsScreen(task: task),
+          ),
+        );
+      } else {
+        debugPrint('❌ Task not found, navigating to task list');
+        _navigateToTaskScreen();
+      }
+    } catch (e) {
+      debugPrint('❌ Error fetching task details: $e');
+      // Fallback to task list
+      _navigateToTaskScreen();
+    }
   }
 
   // Test method to verify local notifications work
@@ -264,11 +325,19 @@ void _handleMessageOpenedApp(RemoteMessage message) {
 
   // Handle navigation when notification is tapped from terminated state
   final type = message.data['type'] ?? '';
+  final taskId = message.data['task_id'];
+
   if (type == 'task_assigned') {
-    navigatorKey.currentState?.push(
-      MaterialPageRoute(
-        builder: (context) => TaskAssignmentProgressScreen(),
-      ),
-    );
+    if (taskId != null) {
+      // Navigate to specific task details
+      NotificationService().navigateToTaskDetails(taskId);
+    } else {
+      // Fallback to task list screen
+      navigatorKey.currentState?.push(
+        MaterialPageRoute(
+          builder: (context) => TaskAssignmentProgressScreen(),
+        ),
+      );
+    }
   }
 }
