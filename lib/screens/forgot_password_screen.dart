@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../services/api_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -17,6 +18,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -192,35 +194,52 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   ],
                                 ),
                                 child: ElevatedButton(
-                                  onPressed: _isLoading
-                                      ? null
-                                      : () async {
-                                          if (_formKey.currentState!.validate()) {
-                                            setState(() {
-                                              _isLoading = true;
-                                            });
-                                            // Simulate API call
-                                            await Future.delayed(const Duration(seconds: 2));
-                                            setState(() {
-                                              _isLoading = false;
-                                            });
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(
-                                                content: Text('Reset link sent to your email'),
-                                                backgroundColor: const Color(0xFF059669),
-                                                behavior: SnackBarBehavior.floating,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(12),
-                                                ),
-                                                margin: const EdgeInsets.all(16),
-                                              ),
-                                            );
-                                            // Navigate back after success
-                                            Future.delayed(const Duration(seconds: 2), () {
-                                              Navigator.pop(context);
-                                            });
-                                          }
-                                        },
+                                   onPressed: _isLoading
+                                       ? null
+                                       : () async {
+                                           if (_formKey.currentState!.validate()) {
+                                             setState(() {
+                                               _isLoading = true;
+                                             });
+                                             try {
+                                               final apiService = ApiService();
+                                               await apiService.forgotPassword(_emailController.text);
+                                               setState(() {
+                                                 _isLoading = false;
+                                               });
+                                               ScaffoldMessenger.of(context).showSnackBar(
+                                                 SnackBar(
+                                                   content: Text('Reset link sent to your email'),
+                                                   backgroundColor: const Color(0xFF059669),
+                                                   behavior: SnackBarBehavior.floating,
+                                                   shape: RoundedRectangleBorder(
+                                                     borderRadius: BorderRadius.circular(12),
+                                                   ),
+                                                   margin: const EdgeInsets.all(16),
+                                                 ),
+                                               );
+                                               // Navigate back after success
+                                               Future.delayed(const Duration(seconds: 2), () {
+                                                 Navigator.pop(context);
+                                               });
+                                             } catch (e) {
+                                               setState(() {
+                                                 _isLoading = false;
+                                               });
+                                               ScaffoldMessenger.of(context).showSnackBar(
+                                                 SnackBar(
+                                                   content: Text('Failed to send reset email: ${e.toString()}'),
+                                                   backgroundColor: const Color(0xFFDC2626),
+                                                   behavior: SnackBarBehavior.floating,
+                                                   shape: RoundedRectangleBorder(
+                                                     borderRadius: BorderRadius.circular(12),
+                                                   ),
+                                                   margin: const EdgeInsets.all(16),
+                                                 ),
+                                               );
+                                             }
+                                           }
+                                         },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.transparent,
                                     shadowColor: Colors.transparent,

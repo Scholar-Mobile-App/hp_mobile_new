@@ -908,4 +908,40 @@ class ApiService {
       throw Exception('Failed to update task: ${response.statusCode}');
     }
   }
+
+  // Forgot Password API
+  Future<Map<String, dynamic>> forgotPassword(String email) async {
+    final url = 'https://hp.triz.co.in/forget-password';
+
+    final payload = {
+      'email': email,
+      'type': 'API',
+      'reset_url': 'https://hp-frontend-three.vercel.app//rest-password',
+    };
+
+    debugPrint('Forgot password request to: $url');
+    debugPrint('Payload: $payload');
+
+    final headers = {
+      'Content-Type': 'application/json',
+    };
+
+    final response = await _httpClient.post(
+      Uri.parse(url),
+      headers: headers,
+      body: json.encode(payload),
+    );
+
+    debugPrint('Forgot password response status: ${response.statusCode}');
+    debugPrint('Forgot password response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      debugPrint('Forgot password response: $data');
+      return data;
+    } else {
+      debugPrint('Forgot password failed: ${response.body}');
+      throw Exception('Failed to send reset email: ${response.statusCode}');
+    }
+  }
 }
