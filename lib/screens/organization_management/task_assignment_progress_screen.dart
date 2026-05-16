@@ -651,7 +651,8 @@ class _TaskAssignmentProgressScreenState
                         ),
                       ),
                     ),
-                    _buildAssignTaskButton(),
+                    if ((Provider.of<AuthProvider>(context, listen: false).currentUser?.userProfileName ?? '').toLowerCase().contains('admin'))
+                      _buildAssignTaskButton(),
                   ],
                 ),
                 SizedBox(height: getResponsivePadding(context) * 1.4),
