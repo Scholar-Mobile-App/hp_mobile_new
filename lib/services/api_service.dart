@@ -15,6 +15,38 @@ import '../models/user_behaviour.dart';
 import '../models/task.dart';
 import '../config/api_config.dart';
 
+class OrgSectionForSubmit {
+  final String legalName;
+  final String cin;
+  final String gstin;
+  final String pan;
+  final String registeredAddress;
+  final String mobileNo;
+  final String countryCode;
+  final String email;
+  final String website;
+  final String? industry;
+  final String? employeeCount;
+  final String workWeek;
+  final String? logoUrl;
+
+  OrgSectionForSubmit({
+    required this.legalName,
+    required this.cin,
+    required this.gstin,
+    required this.pan,
+    required this.registeredAddress,
+    required this.mobileNo,
+    required this.countryCode,
+    required this.email,
+    required this.website,
+    this.industry,
+    this.employeeCount,
+    required this.workWeek,
+    this.logoUrl,
+  });
+}
+
 class ApiService {
   ApiService();
 
@@ -258,6 +290,90 @@ class ApiService {
     }
   }
 
+  // Fetch organization data
+  Future<Map<String, dynamic>> fetchOrganizationData(int subInstituteId, String token) async {
+    final url = 'https://hp.triz.co.in/settings/organization_data?type=API&sub_institute_id=$subInstituteId&token=$token';
+
+    debugPrint('Fetching organization data from: $url');
+
+    final response = await _httpClient.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      debugPrint('Organization data fetch successful');
+      return json.decode(response.body);
+    } else {
+      debugPrint('Organization data fetch failed: ${response.body}');
+      throw Exception('Failed to fetch organization data: ${response.statusCode}');
+    }
+  }
+
+  // Submit organization data (POST)
+  Future<Map<String, dynamic>> submitOrganizationData({
+    required int subInstituteId,
+    required String token,
+    required List<OrgSectionForSubmit> organizations,
+  }) async {
+    final url = 'https://hp.triz.co.in/settings/organization_data';
+
+    final Map<String, String> body = {
+      'type': 'API',
+      'formType': 'org_data',
+      'sub_institute_id': subInstituteId.toString(),
+      'token': token,
+    };
+
+    // Main organization (first one)
+    if (organizations.isNotEmpty) {
+      final main = organizations[0];
+      body['legal_name'] = main.legalName;
+      body['cin'] = main.cin;
+      body['gstin'] = main.gstin;
+      body['pan'] = main.pan;
+      body['registered_address'] = main.registeredAddress;
+      body['mobile_no'] = main.mobileNo;
+      body['country_code'] = main.countryCode;
+      body['email'] = main.email;
+      body['website'] = main.website;
+      body['industry'] = main.industry ?? '';
+      body['employee_count'] = main.employeeCount ?? '';
+      body['work_week'] = main.workWeek;
+      body['logo_url'] = main.logoUrl ?? '';
+    }
+
+    // Sister companies
+    for (int i = 1; i < organizations.length; i++) {
+      final sister = organizations[i];
+      final prefix = 'sister_companies[$i][legal_name]';
+      body['sister_companies[$i][legal_name]'] = sister.legalName;
+      body['sister_companies[$i][cin]'] = sister.cin;
+      body['sister_companies[$i][gstin]'] = sister.gstin;
+      body['sister_companies[$i][pan]'] = sister.pan;
+      body['sister_companies[$i][registered_address]'] = sister.registeredAddress;
+      body['sister_companies[$i][mobile_no]'] = sister.mobileNo;
+      body['sister_companies[$i][country_code]'] = sister.countryCode;
+      body['sister_companies[$i][email]'] = sister.email;
+      body['sister_companies[$i][website]'] = sister.website;
+      body['sister_companies[$i][industry]'] = sister.industry ?? '';
+      body['sister_companies[$i][employee_count]'] = sister.employeeCount ?? '';
+      body['sister_companies[$i][work_week]'] = sister.workWeek;
+    }
+
+    debugPrint('Submitting organization data to: $url');
+
+    final response = await _httpClient.post(
+      Uri.parse(url),
+      body: body,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      debugPrint('Organization data submitted successfully');
+      return json.decode(response.body);
+    } else {
+      debugPrint('Organization submit failed: ${response.body}');
+      throw Exception('Failed to submit organization data: ${response.statusCode}');
+    }
+  }
+
   // Fetch job roles by department (original)
   Future<Map<String, dynamic>> fetchJobRolesByDepartment(User user, String token) async {
     final url = 'https://hp.triz.co.in/api/jobroles-by-department?sub_institute_id=${user.subInstituteId}';
@@ -284,6 +400,137 @@ class ApiService {
   Future<List<String>> fetchDepartments(User user, String token) async {
     final data = await fetchJobRolesByDepartment(user, token);
     return data.keys.toList();
+  }
+
+  // Fetch department management data (main + sub departments)
+  Future<Map<String, dynamic>> fetchDepartmentManagement(User user, String token) async {
+    final url = 'https://hp.triz.co.in/api/departments-management?type=api&token=$token&sub_institute_id=${user.subInstituteId}';
+    debugPrint('Fetching department management from: $url');
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+    final response = await _httpClient.get(Uri.parse(url), headers: headers);
+
+    if (response.statusCode == 200) {
+      debugPrint('Department management fetch successful');
+      return json.decode(response.body) as Map<String, dynamic>;
+    } else {
+      debugPrint('Department management fetch failed: ${response.body}');
+      throw Exception('Failed to fetch department management: ${response.statusCode}');
+    }
+  }
+
+  // Add new department
+  Future<void> addDepartment({
+    required int subInstituteId,
+    required String token,
+    required int userId,
+    required String department,
+  }) async {
+    const url = 'https://hp.triz.co.in/hrms/add_department';
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+      'Content-Type': 'application/json',
+    };
+    final body = jsonEncode({
+      'type': 'API',
+      'sub_institute_id': subInstituteId,
+      'token': token,
+      'formType': 'add department',
+      'user_id': userId,
+      'department': department,
+    });
+
+    debugPrint('Adding department to: $url');
+    final response = await _httpClient.post(Uri.parse(url), headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      debugPrint('Add department successful');
+    } else {
+      debugPrint('Add department failed: ${response.body}');
+      throw Exception('Failed to add department: ${response.statusCode}');
+    }
+  }
+
+  // Add sub department
+  Future<void> addSubDepartment({
+    required int subInstituteId,
+    required String token,
+    required int userId,
+    required String department,
+    required int parentId,
+  }) async {
+    const url = 'https://hp.triz.co.in/api/departments-management';
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+      'Content-Type': 'application/json',
+    };
+    final body = jsonEncode({
+      'type': 'api',
+      'token': token,
+      'sub_institute_id': subInstituteId,
+      'department': department,
+      'parent_id': parentId,
+      'user_id': userId,
+      'formType': 'add sub_department',
+    });
+
+    debugPrint('Adding sub-department to: $url');
+    final response = await _httpClient.post(Uri.parse(url), headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      debugPrint('Add sub-department successful');
+    } else {
+      debugPrint('Add sub-department failed: ${response.body}');
+      throw Exception('Failed to add sub-department: ${response.statusCode}');
+    }
+  }
+
+  // Edit sub department
+  Future<void> editSubDepartment({
+    required int subInstituteId,
+    required String token,
+    required int userId,
+    required String parentDepartmentName,
+    required String oldSubDepartment,
+    required String newSubDepartment,
+  }) async {
+    const url = 'https://hp.triz.co.in/hrms/add_department';
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+      'Content-Type': 'application/json',
+    };
+    final body = jsonEncode({
+      'type': 'API',
+      'sub_institute_id': subInstituteId,
+      'token': token,
+      'user_id': userId,
+      'department': parentDepartmentName,
+      'old_sub_department': oldSubDepartment,
+      'sub_department': newSubDepartment,
+      'formType': 'edit sub_department',
+    });
+
+    debugPrint('Editing sub-department to: $url');
+    final response = await _httpClient.post(Uri.parse(url), headers: headers, body: body);
+
+    debugPrint('Edit sub-department response: ${response.body}');
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['status'] == '1' || data['status'] == 1) {
+        debugPrint('Edit sub-department successful');
+      } else {
+        throw Exception(data['message'] ?? 'Failed to edit sub-department');
+      }
+    } else {
+      debugPrint('Edit sub-department failed: ${response.body}');
+      throw Exception('Failed to edit sub-department: ${response.statusCode}');
+    }
   }
 
   // Fetch job roles by department name

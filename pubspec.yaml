@@ -21,6 +21,7 @@ dependencies:
   firebase_messaging: ^16.2.1
   another_flushbar: ^1.12.30
   flutter_local_notifications: ^17.0.0
+  image_picker: ^1.0.7
 
 dev_dependencies:
   flutter_test:
