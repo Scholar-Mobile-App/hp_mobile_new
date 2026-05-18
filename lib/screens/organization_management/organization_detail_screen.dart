@@ -27,14 +27,6 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen>
       label: 'Department',
       icon: Icons.groups_rounded,
     ),
-    _OrganizationTabItem(
-      label: 'Compliance',
-      icon: Icons.verified_user_rounded,
-    ),
-    _OrganizationTabItem(
-      label: 'Disciplinary',
-      icon: Icons.gavel_rounded,
-    ),
   ];
 
   late final TabController _tabController;
