@@ -313,7 +313,7 @@ class ApiService {
     required String token,
     required List<OrgSectionForSubmit> organizations,
   }) async {
-    final url = 'https://hp.triz.co.in/settings/organization_data';
+    const url = 'https://hp.triz.co.in/settings/organization_data';
 
     final Map<String, String> body = {
       'type': 'API',
@@ -718,7 +718,7 @@ class ApiService {
 
   // Punch In API
   Future<Map<String, dynamic>> punchIn(User user, String token) async {
-    final url = 'https://hp.triz.co.in/hrms-in-time/store';
+    const url = 'https://hp.triz.co.in/hrms-in-time/store';
 
     final now = DateTime.now();
     final outdate = DateFormat('yyyy-MM-dd').format(now);
@@ -769,7 +769,7 @@ class ApiService {
 
   // Punch Out API
   Future<Map<String, dynamic>> punchOut(User user, String token) async {
-    final url = 'https://hp.triz.co.in/hrms-out-time/store';
+    const url = 'https://hp.triz.co.in/hrms-out-time/store';
 
     final now = DateTime.now();
     final outdate = DateFormat('yyyy-MM-dd').format(now);
@@ -1158,7 +1158,7 @@ class ApiService {
 
   // Forgot Password API
   Future<Map<String, dynamic>> forgotPassword(String email) async {
-    final url = 'https://hp.triz.co.in/forget-password';
+    const url = 'https://hp.triz.co.in/forget-password';
 
     final payload = {
       'email': email,

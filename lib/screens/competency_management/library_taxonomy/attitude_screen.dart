@@ -8,7 +8,7 @@ import '../../../services/api_service.dart';
 import 'attitude_detail_screen.dart';
 
 class AttitudeScreen extends StatefulWidget {
-  const AttitudeScreen({Key? key}) : super(key: key);
+  const AttitudeScreen({super.key});
 
   @override
   _AttitudeScreenState createState() => _AttitudeScreenState();
@@ -80,50 +80,50 @@ class _AttitudeScreenState extends State<AttitudeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Attitudes'),
-        backgroundColor: Color(0xFF1F2A6D),
+        title: const Text('Attitudes'),
+        backgroundColor: const Color(0xFF1F2A6D),
         foregroundColor: Colors.white,
       ),
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Search attitudes',
-                prefixIcon: Icon(Icons.search, color: Color(0xFF1F2A6D)),
+                prefixIcon: const Icon(Icons.search, color: Color(0xFF1F2A6D)),
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Color(0xFF1F2A6D), width: 1),
+                  borderSide: const BorderSide(color: Color(0xFF1F2A6D), width: 1),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Color(0xFF1F2A6D), width: 1),
+                  borderSide: const BorderSide(color: Color(0xFF1F2A6D), width: 1),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Color(0xFFFF6A00), width: 2),
+                  borderSide: const BorderSide(color: Color(0xFFFF6A00), width: 2),
                 ),
               ),
             ),
           ),
           Expanded(
             child: filteredAttitudes.isEmpty
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : ListView.builder(
                     itemCount: filteredAttitudes.length,
                     itemBuilder: (context, index) {
                       final attitude = filteredAttitudes[index];
                       return Card(
-                        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         elevation: 6,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
+                            gradient: const LinearGradient(
                               colors: [Colors.white, Color(0xFFE8F4FD)],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
@@ -131,14 +131,14 @@ class _AttitudeScreenState extends State<AttitudeScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: ListTile(
-                            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                             leading: Container(
-                              padding: EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Color(0xFF1F2A6D).withOpacity(0.1),
+                                color: const Color(0xFF1F2A6D).withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.psychology,
                                 color: Color(0xFF1F2A6D),
                                 size: 28,
@@ -146,7 +146,7 @@ class _AttitudeScreenState extends State<AttitudeScreen> {
                             ),
                             title: Text(
                               attitude.title ?? 'No Title',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                                 color: Color(0xFF1F2A6D),
@@ -155,11 +155,11 @@ class _AttitudeScreenState extends State<AttitudeScreen> {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 Row(
                                   children: [
                                     Icon(Icons.category, size: 16, color: Colors.grey[600]),
-                                    SizedBox(width: 4),
+                                    const SizedBox(width: 4),
                                     Text(
                                       attitude.category ?? 'No Category',
                                       style: TextStyle(
@@ -169,11 +169,11 @@ class _AttitudeScreenState extends State<AttitudeScreen> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 4),
+                                const SizedBox(height: 4),
                                 Row(
                                   children: [
                                     Icon(Icons.subdirectory_arrow_right, size: 16, color: Colors.grey[600]),
-                                    SizedBox(width: 4),
+                                    const SizedBox(width: 4),
                                     Text(
                                       attitude.subCategory ?? 'No Sub-Category',
                                       style: TextStyle(
@@ -200,12 +200,12 @@ class _AttitudeScreenState extends State<AttitudeScreen> {
                               ],
                             ),
                             trailing: Container(
-                              padding: EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Color(0xFFFF6A00).withOpacity(0.1),
+                                color: const Color(0xFFFF6A00).withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.arrow_forward_ios,
                                 color: Color(0xFFFF6A00),
                                 size: 16,

@@ -4,7 +4,7 @@ import '../models/menu.dart';
 class ContentScreen extends StatelessWidget {
   final MenuItem menuItem;
 
-  const ContentScreen({Key? key, required this.menuItem}) : super(key: key);
+  const ContentScreen({super.key, required this.menuItem});
 
   @override
   Widget build(BuildContext context) {
@@ -12,18 +12,18 @@ class ContentScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           menuItem.menuName,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color(0xFF1F2A6D),
+        backgroundColor: const Color(0xFF1F2A6D),
         elevation: 0,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF1F2A6D).withOpacity(0.1), Color(0xFF2E3A8C).withOpacity(0.05)],
+            colors: [const Color(0xFF1F2A6D).withOpacity(0.1), const Color(0xFF2E3A8C).withOpacity(0.05)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -37,19 +37,19 @@ class ContentScreen extends StatelessWidget {
                 Icon(
                   _getIconForMenu(menuItem.icon),
                   size: 80,
-                  color: Color(0xFFFF6A00),
+                  color: const Color(0xFFFF6A00),
                 ),
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
                 Text(
                   menuItem.menuName,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF1F2A6D),
                   ),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Text(
                   'Access Link: ${menuItem.accessLink}',
                   style: TextStyle(
@@ -58,9 +58,9 @@ class ContentScreen extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 32),
+                const SizedBox(height: 32),
                 Container(
-                  padding: EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
@@ -68,7 +68,7 @@ class ContentScreen extends StatelessWidget {
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.2),
                         blurRadius: 8,
-                        offset: Offset(0, 4),
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),

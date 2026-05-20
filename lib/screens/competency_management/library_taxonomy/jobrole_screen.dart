@@ -10,7 +10,7 @@ import '../../../services/auth_provider.dart';
 import '../../../services/api_service.dart';
 
 class JobRoleScreen extends StatefulWidget {
-  const JobRoleScreen({Key? key}) : super(key: key);
+  const JobRoleScreen({super.key});
 
   @override
   _JobRoleScreenState createState() => _JobRoleScreenState();
@@ -103,54 +103,54 @@ class _JobRoleScreenState extends State<JobRoleScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Job Roles'),
-        backgroundColor: Color(0xFF1F2A6D),
+        title: const Text('Job Roles'),
+        backgroundColor: const Color(0xFF1F2A6D),
         foregroundColor: Colors.white,
       ),
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Search job roles',
-                prefixIcon: Icon(Icons.search, color: Color(0xFF1F2A6D)),
+                prefixIcon: const Icon(Icons.search, color: Color(0xFF1F2A6D)),
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.filter_list, color: Color(0xFF1F2A6D)),
+                  icon: const Icon(Icons.filter_list, color: Color(0xFF1F2A6D)),
                   onPressed: _showDepartmentFilter,
                 ),
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Color(0xFF1F2A6D), width: 1),
+                  borderSide: const BorderSide(color: Color(0xFF1F2A6D), width: 1),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Color(0xFF1F2A6D), width: 1),
+                  borderSide: const BorderSide(color: Color(0xFF1F2A6D), width: 1),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Color(0xFFFF6A00), width: 2),
+                  borderSide: const BorderSide(color: Color(0xFFFF6A00), width: 2),
                 ),
               ),
             ),
           ),
           Expanded(
             child: filteredJobRoles.isEmpty
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : ListView.builder(
                     itemCount: filteredJobRoles.length,
                     itemBuilder: (context, index) {
                       final jobRole = filteredJobRoles[index];
                       return Card(
-                        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         elevation: 6,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
+                            gradient: const LinearGradient(
                               colors: [Colors.white, Color(0xFFE8F4FD)],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
@@ -158,14 +158,14 @@ class _JobRoleScreenState extends State<JobRoleScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: ListTile(
-                            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                             leading: Container(
-                              padding: EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Color(0xFF1F2A6D).withOpacity(0.1),
+                                color: const Color(0xFF1F2A6D).withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.business_center,
                                 color: Color(0xFF1F2A6D),
                                 size: 28,
@@ -173,7 +173,7 @@ class _JobRoleScreenState extends State<JobRoleScreen> {
                             ),
                             title: Text(
                               jobRole.jobrole,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                                 color: Color(0xFF1F2A6D),
@@ -182,11 +182,11 @@ class _JobRoleScreenState extends State<JobRoleScreen> {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 Row(
                                   children: [
                                     Icon(Icons.apartment, size: 16, color: Colors.grey[600]),
-                                    SizedBox(width: 4),
+                                    const SizedBox(width: 4),
                                     Text(
                                       jobRole.department,
                                       style: TextStyle(
@@ -196,11 +196,11 @@ class _JobRoleScreenState extends State<JobRoleScreen> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 4),
+                                const SizedBox(height: 4),
                                 Row(
                                   children: [
                                     Icon(Icons.factory, size: 16, color: Colors.grey[600]),
-                                    SizedBox(width: 4),
+                                    const SizedBox(width: 4),
                                     Text(
                                       jobRole.industries,
                                       style: TextStyle(
@@ -227,12 +227,12 @@ class _JobRoleScreenState extends State<JobRoleScreen> {
                               ],
                             ),
                             trailing: Container(
-                              padding: EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Color(0xFFFF6A00).withOpacity(0.1),
+                                color: const Color(0xFFFF6A00).withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.arrow_forward_ios,
                                 color: Color(0xFFFF6A00),
                                 size: 16,
@@ -265,12 +265,12 @@ class _JobRoleScreenState extends State<JobRoleScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Select Department'),
+        title: const Text('Select Department'),
         content: SingleChildScrollView(
           child: Column(
             children: [
               ListTile(
-                title: Text('All'),
+                title: const Text('All'),
                 onTap: () {
                   setState(() {
                     _selectedDepartment = null;
@@ -304,12 +304,12 @@ class _JobRoleScreenState extends State<JobRoleScreen> {
         children: [
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: Color(0xFFFF6A00),
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(value),
         ],
       ),
@@ -320,7 +320,7 @@ class _JobRoleScreenState extends State<JobRoleScreen> {
 class JobRoleDetailDialog extends StatefulWidget {
   final JobRole jobRole;
 
-  const JobRoleDetailDialog({Key? key, required this.jobRole}) : super(key: key);
+  const JobRoleDetailDialog({super.key, required this.jobRole});
 
   @override
   _JobRoleDetailDialogState createState() => _JobRoleDetailDialogState();
@@ -382,7 +382,7 @@ class _JobRoleDetailDialogState extends State<JobRoleDetailDialog> {
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
         height: MediaQuery.of(context).size.height * 0.9,
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             Row(
@@ -390,7 +390,7 @@ class _JobRoleDetailDialogState extends State<JobRoleDetailDialog> {
                 Expanded(
                   child: Text(
                     widget.jobRole.jobrole,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF1F2A6D),
@@ -398,15 +398,15 @@ class _JobRoleDetailDialogState extends State<JobRoleDetailDialog> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close),
+                  icon: const Icon(Icons.close),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
             ),
-            Divider(),
+            const Divider(),
             Expanded(
               child: _isLoading
-                  ? Center(child: CircularProgressIndicator())
+                  ? const Center(child: CircularProgressIndicator())
                   : _error != null
                       ? Center(child: Text('Error: $_error'))
                       : DefaultTabController(
@@ -416,9 +416,9 @@ class _JobRoleDetailDialogState extends State<JobRoleDetailDialog> {
                               TabBar(
                                 isScrollable: true,
                                 tabs: [
-                                  Tab(text: 'Basic Info'),
+                                  const Tab(text: 'Basic Info'),
                                   Tab(text: 'Tasks (${_tasks?.length ?? 0})'),
-                                  Tab(text: 'KABA'),
+                                  const Tab(text: 'KABA'),
                                   Tab(text: 'Skills (${_skills?.length ?? 0})'),
                                 ],
                               ),
@@ -444,14 +444,14 @@ class _JobRoleDetailDialogState extends State<JobRoleDetailDialog> {
 
   Widget _buildBasicInfoTab() {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildDetailRow('Industry', widget.jobRole.industries),
           _buildDetailRow('Department', widget.jobRole.department),
-          if (widget.jobRole.subDepartment != null && widget.jobRole.subDepartment!.isNotEmpty)
-            _buildDetailRow('Sub-Department', widget.jobRole.subDepartment!),
+          if (widget.jobRole.subDepartment.isNotEmpty)
+            _buildDetailRow('Sub-Department', widget.jobRole.subDepartment),
           if (widget.jobRole.description != null && widget.jobRole.description!.isNotEmpty)
             _buildDetailRow('Description', widget.jobRole.description!),
           if (widget.jobRole.education != null && widget.jobRole.education!.isNotEmpty)
@@ -469,7 +469,7 @@ class _JobRoleDetailDialogState extends State<JobRoleDetailDialog> {
 
   Widget _buildTasksTab() {
     if (_tasks == null || _tasks!.isEmpty) {
-      return Center(child: Text('No tasks available'));
+      return const Center(child: Text('No tasks available'));
     }
 
     return ListView.builder(
@@ -477,17 +477,17 @@ class _JobRoleDetailDialogState extends State<JobRoleDetailDialog> {
       itemBuilder: (context, index) {
         final task = _tasks![index];
         return Card(
-          margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Padding(
-            padding: EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   task.task,
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text('Critical Work Function: ${task.criticalWorkFunction}'),
                 Text('Type: ${task.taskType}'),
                 Text('Created by: ${task.firstName} ${task.lastName}'),
@@ -501,43 +501,43 @@ class _JobRoleDetailDialogState extends State<JobRoleDetailDialog> {
 
   Widget _buildKABATab() {
     if (_kaba == null) {
-      return Center(child: Text('No KABA data available'));
+      return const Center(child: Text('No KABA data available'));
     }
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             _kaba!.title,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(_kaba!.description),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           if (_kaba!.skill.isNotEmpty) ...[
-            Text('Skills:', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text('Skills:', style: TextStyle(fontWeight: FontWeight.bold)),
             ..._kaba!.skill.map((item) => _buildKABAItem(item)),
           ],
           if (_kaba!.knowledge.isNotEmpty) ...[
-            SizedBox(height: 16),
-            Text('Knowledge:', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            const Text('Knowledge:', style: TextStyle(fontWeight: FontWeight.bold)),
             ..._kaba!.knowledge.map((item) => _buildKABAItem(item)),
           ],
           if (_kaba!.ability.isNotEmpty) ...[
-            SizedBox(height: 16),
-            Text('Abilities:', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            const Text('Abilities:', style: TextStyle(fontWeight: FontWeight.bold)),
             ..._kaba!.ability.map((item) => _buildKABAItem(item)),
           ],
           if (_kaba!.attitude.isNotEmpty) ...[
-            SizedBox(height: 16),
-            Text('Attitude:', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            const Text('Attitude:', style: TextStyle(fontWeight: FontWeight.bold)),
             ..._kaba!.attitude.map((item) => _buildKABAItem(item)),
           ],
           if (_kaba!.behaviour.isNotEmpty) ...[
-            SizedBox(height: 16),
-            Text('Behaviour:', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            const Text('Behaviour:', style: TextStyle(fontWeight: FontWeight.bold)),
             ..._kaba!.behaviour.map((item) => _buildKABAItem(item)),
           ],
         ],
@@ -547,20 +547,20 @@ class _JobRoleDetailDialogState extends State<JobRoleDetailDialog> {
 
   Widget _buildKABAItem(KABAItem item) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 4),
+      margin: const EdgeInsets.symmetric(vertical: 4),
       child: Padding(
-        padding: EdgeInsets.all(12),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               item.title,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             Text('Category: ${item.category}'),
             Text('Sub-Category: ${item.subCategory}'),
             Text('Proficiency Level: ${item.proficiencyLevel}'),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(item.description),
           ],
         ),
@@ -570,7 +570,7 @@ class _JobRoleDetailDialogState extends State<JobRoleDetailDialog> {
 
   Widget _buildSkillsTab() {
     if (_skills == null || _skills!.isEmpty) {
-      return Center(child: Text('No skills available'));
+      return const Center(child: Text('No skills available'));
     }
 
     return ListView.builder(
@@ -578,21 +578,21 @@ class _JobRoleDetailDialogState extends State<JobRoleDetailDialog> {
       itemBuilder: (context, index) {
         final skill = _skills![index];
         return Card(
-          margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Padding(
-            padding: EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   skill.skillTitle,
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text('Category: ${skill.category}'),
                 Text('Sub-Category: ${skill.subCategory}'),
                 Text('Proficiency Level: ${skill.proficiencyLevel}'),
                 Text('Code: ${skill.skillCode}'),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(skill.skillDescription),
               ],
             ),
@@ -610,12 +610,12 @@ class _JobRoleDetailDialogState extends State<JobRoleDetailDialog> {
         children: [
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: Color(0xFFFF6A00),
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(value),
         ],
       ),

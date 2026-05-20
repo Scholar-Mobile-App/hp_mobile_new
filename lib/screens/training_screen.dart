@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 
 class TrainingScreen extends StatelessWidget {
+  const TrainingScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Training & Learning',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color(0xFF1F2A6D),
+        backgroundColor: const Color(0xFF1F2A6D),
         elevation: 0,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF1F2A6D).withOpacity(0.1), Color(0xFF2E3A8C).withOpacity(0.05)],
+            colors: [const Color(0xFF1F2A6D).withOpacity(0.1), const Color(0xFF2E3A8C).withOpacity(0.05)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -28,7 +30,7 @@ class TrainingScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Learning Center',
                 style: TextStyle(
                   color: Color(0xFF1F2A6D),
@@ -36,7 +38,7 @@ class TrainingScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 'Expand your knowledge and skills with our comprehensive training programs',
                 style: TextStyle(
@@ -44,7 +46,7 @@ class TrainingScreen extends StatelessWidget {
                   fontSize: 16,
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               _buildCourseCard(
                 'Advanced Leadership Skills',
                 'Develop strategic thinking and team management abilities',
@@ -53,7 +55,7 @@ class TrainingScreen extends StatelessWidget {
                 Icons.leaderboard,
                 true,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               _buildCourseCard(
                 'Digital Transformation',
                 'Navigate the digital landscape and emerging technologies',
@@ -62,7 +64,7 @@ class TrainingScreen extends StatelessWidget {
                 Icons.computer,
                 false,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               _buildCourseCard(
                 'Project Management Excellence',
                 'Master agile and traditional project management methodologies',
@@ -71,7 +73,7 @@ class TrainingScreen extends StatelessWidget {
                 Icons.work,
                 true,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               _buildCourseCard(
                 'Communication & Influence',
                 'Enhance your ability to communicate effectively and influence others',
@@ -80,7 +82,7 @@ class TrainingScreen extends StatelessWidget {
                 Icons.message,
                 false,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               _buildCourseCard(
                 'Data Analytics Fundamentals',
                 'Learn to analyze data and make data-driven decisions',
@@ -89,9 +91,9 @@ class TrainingScreen extends StatelessWidget {
                 Icons.analytics,
                 false,
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -99,14 +101,14 @@ class TrainingScreen extends StatelessWidget {
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.2),
                       blurRadius: 8,
-                      offset: Offset(0, 4),
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Learning Paths',
                       style: TextStyle(
                         color: Color(0xFF1F2A6D),
@@ -114,20 +116,20 @@ class TrainingScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     _buildLearningPath('Management Track', '3 courses • 12h total', 0.4),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildLearningPath('Technical Excellence', '5 courses • 18h total', 0.2),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildLearningPath('Leadership Development', '4 courses • 15h total', 0.6),
                   ],
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [Color(0xFFFF6A00), Color(0xFFFF7A1A)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -135,16 +137,16 @@ class TrainingScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Color(0xFFFF6A00).withOpacity(0.3),
+                      color: const Color(0xFFFF6A00).withOpacity(0.3),
                       blurRadius: 10,
-                      offset: Offset(0, 5),
+                      offset: const Offset(0, 5),
                     ),
                   ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Your Progress',
                       style: TextStyle(
                         color: Colors.white,
@@ -152,14 +154,14 @@ class TrainingScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     _buildProgressItem('Courses Completed', '8/15', 0.53),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildProgressItem('Learning Hours', '24/50', 0.48),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildProgressItem('Certificates Earned', '3/8', 0.38),
-                    SizedBox(height: 16),
-                    Text(
+                    const SizedBox(height: 16),
+                    const Text(
                       'Great progress! Keep learning to unlock new opportunities.',
                       style: TextStyle(
                         color: Colors.white70,
@@ -169,9 +171,9 @@ class TrainingScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -179,14 +181,14 @@ class TrainingScreen extends StatelessWidget {
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.2),
                       blurRadius: 8,
-                      offset: Offset(0, 4),
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Recommended for You',
                       style: TextStyle(
                         color: Color(0xFF1F2A6D),
@@ -194,7 +196,7 @@ class TrainingScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     _buildRecommendation('Innovation & Creativity', 'Based on your role and interests'),
                     _buildRecommendation('Change Management', 'Popular among your peers'),
                     _buildRecommendation('Advanced Communication', 'Complements your current skills'),
@@ -210,7 +212,7 @@ class TrainingScreen extends StatelessWidget {
 
   Widget _buildCourseCard(String title, String description, String rating, String duration, IconData icon, bool enrolled) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -218,7 +220,7 @@ class TrainingScreen extends StatelessWidget {
           BoxShadow(
             color: Colors.grey.withOpacity(0.2),
             blurRadius: 8,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -229,14 +231,14 @@ class TrainingScreen extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                color: Color(0xFFFF6A00),
+                color: const Color(0xFFFF6A00),
                 size: 28,
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Color(0xFF1F2A6D),
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -245,7 +247,7 @@ class TrainingScreen extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             description,
             style: TextStyle(
@@ -254,14 +256,14 @@ class TrainingScreen extends StatelessWidget {
               height: 1.4,
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
-                  Icon(Icons.star, color: Colors.amber, size: 16),
-                  SizedBox(width: 4),
+                  const Icon(Icons.star, color: Colors.amber, size: 16),
+                  const SizedBox(width: 4),
                   Text(
                     rating,
                     style: TextStyle(
@@ -273,8 +275,8 @@ class TrainingScreen extends StatelessWidget {
               ),
               Row(
                 children: [
-                  Icon(Icons.access_time, color: Colors.grey, size: 16),
-                  SizedBox(width: 4),
+                  const Icon(Icons.access_time, color: Colors.grey, size: 16),
+                  const SizedBox(width: 4),
                   Text(
                     duration,
                     style: TextStyle(
@@ -286,21 +288,21 @@ class TrainingScreen extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 16),
-          Container(
+          const SizedBox(height: 16),
+          SizedBox(
             width: double.infinity,
             height: 40,
             child: ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
-                backgroundColor: enrolled ? Colors.grey : Color(0xFFFF6A00),
+                backgroundColor: enrolled ? Colors.grey : const Color(0xFFFF6A00),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
               child: Text(
                 enrolled ? 'Continue Learning' : 'Enroll Now',
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
@@ -321,7 +323,7 @@ class TrainingScreen extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Color(0xFF1F2A6D),
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -334,11 +336,11 @@ class TrainingScreen extends StatelessWidget {
                   fontSize: 12,
                 ),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               LinearProgressIndicator(
                 value: progress,
                 backgroundColor: Colors.grey[300],
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF6A00)),
+                valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFFF6A00)),
               ),
             ],
           ),
@@ -356,14 +358,14 @@ class TrainingScreen extends StatelessWidget {
           children: [
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 14,
               ),
             ),
             Text(
               value,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -371,11 +373,11 @@ class TrainingScreen extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 6),
+        const SizedBox(height: 6),
         LinearProgressIndicator(
           value: progress,
           backgroundColor: Colors.white24,
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
         ),
       ],
     );
@@ -389,19 +391,19 @@ class TrainingScreen extends StatelessWidget {
           Container(
             width: 8,
             height: 8,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Color(0xFFFF6A00),
               shape: BoxShape.circle,
             ),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Color(0xFF1F2A6D),
                     fontSize: 16,
                     fontWeight: FontWeight.w500,

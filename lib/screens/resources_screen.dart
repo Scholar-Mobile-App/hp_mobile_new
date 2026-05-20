@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 
 class ResourcesScreen extends StatelessWidget {
+  const ResourcesScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Resources',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color(0xFF1F2A6D),
+        backgroundColor: const Color(0xFF1F2A6D),
         elevation: 0,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF1F2A6D).withOpacity(0.1), Color(0xFF2E3A8C).withOpacity(0.05)],
+            colors: [const Color(0xFF1F2A6D).withOpacity(0.1), const Color(0xFF2E3A8C).withOpacity(0.05)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -28,7 +30,7 @@ class ResourcesScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Company Resources',
                 style: TextStyle(
                   color: Color(0xFF1F2A6D),
@@ -36,7 +38,7 @@ class ResourcesScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 'Access important documents, policies, and helpful information',
                 style: TextStyle(
@@ -44,7 +46,7 @@ class ResourcesScreen extends StatelessWidget {
                   fontSize: 16,
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               _buildResourceSection(
                 'HR Policies',
                 [
@@ -54,7 +56,7 @@ class ResourcesScreen extends StatelessWidget {
                   _buildResourceItem('Benefits Overview', 'Health, retirement, and other employee benefits', Icons.medical_services),
                 ],
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               _buildResourceSection(
                 'IT & Security',
                 [
@@ -64,7 +66,7 @@ class ResourcesScreen extends StatelessWidget {
                   _buildResourceItem('Software Licenses', 'Access to company-approved software and tools', Icons.computer),
                 ],
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               _buildResourceSection(
                 'Professional Development',
                 [
@@ -74,9 +76,9 @@ class ResourcesScreen extends StatelessWidget {
                   _buildResourceItem('Research Library', 'Access to industry research and whitepapers', Icons.library_books),
                 ],
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -84,14 +86,14 @@ class ResourcesScreen extends StatelessWidget {
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.2),
                       blurRadius: 8,
-                      offset: Offset(0, 4),
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Quick Links',
                       style: TextStyle(
                         color: Color(0xFF1F2A6D),
@@ -99,7 +101,7 @@ class ResourcesScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     _buildQuickLink('Company Directory', 'Find contact information for colleagues'),
                     _buildQuickLink('Internal Job Postings', 'View open positions within the company'),
                     _buildQuickLink('Expense Reimbursement', 'Submit expense reports online'),
@@ -108,11 +110,11 @@ class ResourcesScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [Color(0xFFFF6A00), Color(0xFFFF7A1A)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -120,16 +122,16 @@ class ResourcesScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Color(0xFFFF6A00).withOpacity(0.3),
+                      color: const Color(0xFFFF6A00).withOpacity(0.3),
                       blurRadius: 10,
-                      offset: Offset(0, 5),
+                      offset: const Offset(0, 5),
                     ),
                   ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Emergency Contacts',
                       style: TextStyle(
                         color: Colors.white,
@@ -137,7 +139,7 @@ class ResourcesScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     _buildEmergencyContact('HR Emergency Hotline', '+1-800-HP-HELP'),
                     _buildEmergencyContact('IT Security Incident', 'security@hp.com'),
                     _buildEmergencyContact('Facilities Emergency', '+1-800-HP-FACILITY'),
@@ -145,9 +147,9 @@ class ResourcesScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -155,14 +157,14 @@ class ResourcesScreen extends StatelessWidget {
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.2),
                       blurRadius: 8,
-                      offset: Offset(0, 4),
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Recent Updates',
                       style: TextStyle(
                         color: Color(0xFF1F2A6D),
@@ -170,7 +172,7 @@ class ResourcesScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     _buildUpdate('New Benefits Package', 'Updated health and retirement benefits effective January 2025', 'Dec 15, 2024'),
                     _buildUpdate('Remote Work Policy Update', 'Revised guidelines for hybrid work arrangements', 'Nov 28, 2024'),
                     _buildUpdate('Diversity & Inclusion Initiative', 'New programs and resources for employee engagement', 'Nov 10, 2024'),
@@ -186,7 +188,7 @@ class ResourcesScreen extends StatelessWidget {
 
   Widget _buildResourceSection(String title, List<Widget> items) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -194,7 +196,7 @@ class ResourcesScreen extends StatelessWidget {
           BoxShadow(
             color: Colors.grey.withOpacity(0.2),
             blurRadius: 8,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -203,13 +205,13 @@ class ResourcesScreen extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               color: Color(0xFF1F2A6D),
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           ...items,
         ],
       ),
@@ -224,31 +226,31 @@ class ResourcesScreen extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Color(0xFFFF6A00).withOpacity(0.1),
+                color: const Color(0xFFFF6A00).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
                 icon,
-                color: Color(0xFFFF6A00),
+                color: const Color(0xFFFF6A00),
                 size: 20,
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Color(0xFF1F2A6D),
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   Text(
                     description,
                     style: TextStyle(
@@ -259,7 +261,7 @@ class ResourcesScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(
+            const Icon(
               Icons.arrow_forward_ios,
               color: Color(0xFF1F2A6D),
               size: 16,
@@ -277,19 +279,19 @@ class ResourcesScreen extends StatelessWidget {
         onTap: () {},
         child: Row(
           children: [
-            Icon(
+            const Icon(
               Icons.link,
               color: Color(0xFFFF6A00),
               size: 16,
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Color(0xFF1F2A6D),
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -316,16 +318,16 @@ class ResourcesScreen extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.phone,
             color: Colors.white70,
             size: 16,
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 14,
               ),
@@ -333,7 +335,7 @@ class ResourcesScreen extends StatelessWidget {
           ),
           Text(
             contact,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -352,19 +354,19 @@ class ResourcesScreen extends StatelessWidget {
           Container(
             width: 8,
             height: 8,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Color(0xFFFF6A00),
               shape: BoxShape.circle,
             ),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Color(0xFF1F2A6D),
                     fontSize: 16,
                     fontWeight: FontWeight.w500,

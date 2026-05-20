@@ -6,6 +6,8 @@ import '../../services/auth_provider.dart';
 import '../../services/api_service.dart';
 
 class AttendanceScreen extends StatefulWidget {
+  const AttendanceScreen({super.key});
+
   @override
   _AttendanceScreenState createState() => _AttendanceScreenState();
 }
@@ -27,7 +29,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
   void initState() {
     super.initState();
     _updateTime();
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) => _updateTime());
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) => _updateTime());
 
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -137,7 +139,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
     if (user == null || token == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('❌ User not logged in'),
+          content: const Text('❌ User not logged in'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -179,7 +181,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('ℹ️ You have already punched in'),
+            content: const Text('ℹ️ You have already punched in'),
             backgroundColor: Colors.blue,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -212,7 +214,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
     if (user == null || token == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('❌ User not logged in'),
+          content: const Text('❌ User not logged in'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -238,7 +240,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('✓ Successfully punched out at ${_formatTime(_punchOutTime)}'),
-          backgroundColor: Color(0xFF1F2A6D),
+          backgroundColor: const Color(0xFF1F2A6D),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
@@ -252,7 +254,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('ℹ️ You are not currently punched in'),
+            content: const Text('ℹ️ You are not currently punched in'),
             backgroundColor: Colors.blue,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -279,7 +281,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'My Attendance',
           style: TextStyle(
             color: Colors.white,
@@ -287,12 +289,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
             fontSize: 20,
           ),
         ),
-        backgroundColor: Color(0xFF1F2A6D),
+        backgroundColor: const Color(0xFF1F2A6D),
         elevation: 0,
         centerTitle: true,
       ),
       body: _isInitialLoading
-          ? Center(
+          ? const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -314,7 +316,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
           : Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFF1F2A6D).withOpacity(0.05), Color(0xFF2E3A8C).withOpacity(0.02)],
+                  colors: [const Color(0xFF1F2A6D).withOpacity(0.05), const Color(0xFF2E3A8C).withOpacity(0.02)],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
@@ -326,9 +328,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
             children: [
               // Digital Clock
               Container(
-                padding: EdgeInsets.all(24),
+                padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [Color(0xFFFF6A00), Color(0xFFFF7A1A)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -336,33 +338,33 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Color(0xFFFF6A00).withOpacity(0.3),
+                      color: const Color(0xFFFF6A00).withOpacity(0.3),
                       blurRadius: 15,
-                      offset: Offset(0, 8),
+                      offset: const Offset(0, 8),
                     ),
                   ],
                 ),
                 child: Column(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.access_time,
                       color: Colors.white,
                       size: 40,
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     Text(
                       _currentTime,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 36,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'monospace',
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       _currentDate,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 16,
                       ),
@@ -370,10 +372,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
                   ],
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               // Status Card
               Container(
-                padding: EdgeInsets.all(24),
+                padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
@@ -381,7 +383,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.15),
                       blurRadius: 12,
-                      offset: Offset(0, 6),
+                      offset: const Offset(0, 6),
                     ),
                   ],
                 ),
@@ -391,7 +393,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
                        mainAxisAlignment: MainAxisAlignment.center,
                        children: [
                          Container(
-                           padding: EdgeInsets.all(8),
+                           padding: const EdgeInsets.all(8),
                            decoration: BoxDecoration(
                              color: _getStatusColor().withOpacity(0.1),
                              borderRadius: BorderRadius.circular(50),
@@ -402,8 +404,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
                              size: 28,
                            ),
                          ),
-                         SizedBox(width: 16),
-                         Text(
+                         const SizedBox(width: 16),
+                         const Text(
                            'Current Status',
                            style: TextStyle(
                              color: Color(0xFF1F2A6D),
@@ -413,9 +415,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
                          ),
                        ],
                      ),
-                     SizedBox(height: 20),
+                     const SizedBox(height: 20),
                      Container(
-                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                        decoration: BoxDecoration(
                          color: _getStatusColor().withOpacity(0.1),
                          borderRadius: BorderRadius.circular(25),
@@ -432,7 +434,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
                   ],
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               // Punch Buttons
               Row(
                 children: [
@@ -448,7 +450,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
                        child: ElevatedButton.icon(
                          onPressed: (_isPunchedIn || _isLoading || _punchOutTime != null) ? null : _punchIn,
                         icon: _isLoading
-                            ? SizedBox(
+                            ? const SizedBox(
                                 width: 20,
                                 height: 20,
                                 child: CircularProgressIndicator(
@@ -456,25 +458,25 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
                                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                 ),
                               )
-                            : Icon(Icons.login, size: 28),
+                            : const Icon(Icons.login, size: 28),
                         label: Text(
                           _isLoading ? 'Punching In...' : 'Punch In',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: _isPunchedIn ? Colors.grey : Color(0xFFFF6A00),
+                          backgroundColor: _isPunchedIn ? Colors.grey : const Color(0xFFFF6A00),
                           foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 20),
+                          padding: const EdgeInsets.symmetric(vertical: 20),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
                           elevation: _isPunchedIn ? 0 : 8,
-                          shadowColor: Color(0xFFFF6A00).withOpacity(0.3),
+                          shadowColor: const Color(0xFFFF6A00).withOpacity(0.3),
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   Expanded(
                     child: AnimatedBuilder(
                       animation: _animation,
@@ -487,7 +489,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
                       child: ElevatedButton.icon(
                         onPressed: (_isPunchedIn && !_isLoading) ? _punchOut : null,
                         icon: _isLoading
-                            ? SizedBox(
+                            ? const SizedBox(
                                 width: 20,
                                 height: 20,
                                 child: CircularProgressIndicator(
@@ -495,32 +497,32 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
                                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                 ),
                               )
-                            : Icon(Icons.logout, size: 28),
+                            : const Icon(Icons.logout, size: 28),
                         label: Text(
                           _isLoading ? 'Punching Out...' : 'Punch Out',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: _isPunchedIn ? Color(0xFF1F2A6D) : Colors.grey,
+                          backgroundColor: _isPunchedIn ? const Color(0xFF1F2A6D) : Colors.grey,
                           foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 20),
+                          padding: const EdgeInsets.symmetric(vertical: 20),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
                           elevation: _isPunchedIn ? 8 : 0,
-                          shadowColor: Color(0xFF1F2A6D).withOpacity(0.3),
+                          shadowColor: const Color(0xFF1F2A6D).withOpacity(0.3),
                         ),
                       ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               // Today's Summary
               Container(
-                padding: EdgeInsets.all(24),
+                padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [Color(0xFF1F2A6D), Color(0xFF2E3A8C)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -528,16 +530,16 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Color(0xFF1F2A6D).withOpacity(0.3),
+                      color: const Color(0xFF1F2A6D).withOpacity(0.3),
                       blurRadius: 15,
-                      offset: Offset(0, 8),
+                      offset: const Offset(0, 8),
                     ),
                   ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    const Row(
                       children: [
                         Icon(
                           Icons.analytics,
@@ -555,20 +557,20 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
                         ),
                       ],
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     if (_punchInTime != null) ...[
                       _buildSummaryRow('Punch In Time', _formatTime(_punchInTime)),
                       if (_punchOutTime != null) ...[
-                        SizedBox(height: 12),
+                        const SizedBox(height: 12),
                         _buildSummaryRow('Punch Out Time', _formatTime(_punchOutTime)),
-                        SizedBox(height: 12),
+                        const SizedBox(height: 12),
                         _buildSummaryRow('Total Hours', _calculateWorkingHours()),
                       ] else ...[
-                        SizedBox(height: 12),
+                        const SizedBox(height: 12),
                         _buildSummaryRow('Working Hours', _calculateWorkingHours()),
                       ],
                     ] else ...[
-                      Center(
+                      const Center(
                         child: Text(
                           'No attendance recorded today',
                           style: TextStyle(
@@ -630,14 +632,14 @@ class _AttendanceScreenState extends State<AttendanceScreen> with TickerProvider
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white70,
             fontSize: 16,
           ),
         ),
         Text(
           value,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 16,
             fontWeight: FontWeight.bold,

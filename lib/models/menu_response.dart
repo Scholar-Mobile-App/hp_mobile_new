@@ -62,9 +62,9 @@ class MenuResponse {
     List<MenuItem> mobileMenus = [];
 
     // Add only level 3 mobile menus
-    level3.values.forEach((subMenus) {
+    for (var subMenus in level3.values) {
       mobileMenus.addAll(subMenus.values.where((menu) => menu.isMobile == 1));
-    });
+    }
 
     // Sort by sort_order
     mobileMenus.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));

@@ -588,7 +588,7 @@ class _OrganizationInfoTabState extends State<_OrganizationInfoTab> {
             final index = entry.key;
             final section = entry.value;
             return _buildOrgSectionCard(index, section);
-          }).toList(),
+          }),
           const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
@@ -726,7 +726,7 @@ class _OrganizationInfoTabState extends State<_OrganizationInfoTab> {
         Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF475569))),
         const SizedBox(height: 5),
         DropdownButtonFormField<String>(
-          value: value,
+          initialValue: value,
           items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
           onChanged: onChanged,
           decoration: InputDecoration(
@@ -938,7 +938,7 @@ class _DepartmentManagementTabState extends State<_DepartmentManagementTab> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Edit Sub-Department'),
+        title: const Text('Edit Sub-Department'),
         content: TextField(
           controller: controller,
           decoration: const InputDecoration(hintText: 'Sub-department name'),

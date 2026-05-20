@@ -95,7 +95,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
               'Completion',
               Icons.check_circle,
               [
-                Text(
+                const Text(
                   'User Completion Remark',
                   style: TextStyle(
                     fontSize: 16,
@@ -126,7 +126,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Text(
+                const Text(
                   'Task Status',
                   style: TextStyle(
                     fontSize: 16,
@@ -136,7 +136,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                 ),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
-                  value: _selectedTaskStatus,
+                  initialValue: _selectedTaskStatus,
                   items: ['PENDING', 'IN PROGRESS', 'COMPLETED'].map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -173,11 +173,12 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
             const SizedBox(height: 24),
 
             // Approval Section
+            if ((Provider.of<AuthProvider>(context, listen: false).currentUser?.userProfileName ?? '').toLowerCase().contains('admin'))
             _buildEditableCard(
               'Approval',
               Icons.approval,
               [
-                Text(
+                const Text(
                   'Approve Status',
                   style: TextStyle(
                     fontSize: 16,
@@ -187,7 +188,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                 ),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
-                  value: _selectedApproveStatus,
+                  initialValue: _selectedApproveStatus,
                   items: ['PENDING', 'APPROVED', 'REJECTED'].map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -220,7 +221,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Text(
+                const Text(
                   'Approve Remarks',
                   style: TextStyle(
                     fontSize: 16,
