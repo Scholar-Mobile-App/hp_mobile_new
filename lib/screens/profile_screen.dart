@@ -18,6 +18,7 @@ import 'competency_management/library_taxonomy/jobrole_screen.dart';
 import 'attendance/attendance_screen.dart';
 import 'organization_management/task_assignment_progress_screen.dart';
 import 'organization_management/organization_detail_screen.dart';
+import 'lms/courses_list_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -347,6 +348,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => const OrganizationDetailScreen(),
+        ),
+      );
+    } else if (menuItem.menuName.toLowerCase().contains('course') ||
+               menuItem.menuName.toLowerCase().contains('lms')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CoursesListScreen(menuItem: menuItem),
         ),
       );
     } else {

@@ -25,103 +25,106 @@ class AuthProvider with ChangeNotifier {
 
     debugPrint('Starting login for email: $email');
 
-    final apiService = ApiService();
-    // Load existing cookies if any
-    await apiService.loadCookies();
-    final basicUser = await apiService.login(email, password);
-    debugPrint('Basic login successful, token: ${basicUser.token}, user ID: ${basicUser.id}, user_name: ${basicUser.userName}');
-
-    // Store original token before getting XSRF token
-    _originalToken = basicUser.token;
-    debugPrint('Original token from login: $_originalToken');
-
-    // Get XSRF token from cookies
-    final xsrfToken = apiService.getXsrfToken();
-    final userToken = xsrfToken ?? basicUser.token;
-    _currentUser = User(
-      id: basicUser.id,
-      userName: basicUser.userName,
-      firstName: basicUser.firstName,
-      middleName: basicUser.middleName,
-      lastName: basicUser.lastName,
-      fullName: basicUser.fullName,
-      email: basicUser.email,
-      mobile: basicUser.mobile,
-      birthdate: basicUser.birthdate,
-      address: basicUser.address,
-      gender: basicUser.gender,
-      joinYear: basicUser.joinYear,
-      employeeNo: basicUser.employeeNo,
-      employeeId: basicUser.employeeId,
-      image: basicUser.image,
-      userProfileId: basicUser.userProfileId,
-      userProfileName: basicUser.userProfileName,
-      subInstituteId: basicUser.subInstituteId,
-      clientId: basicUser.clientId,
-      isAdmin: basicUser.isAdmin,
-      status: basicUser.status,
-      departmentId: basicUser.departmentId,
-      departmentName: basicUser.departmentName,
-      jobroleId: basicUser.jobroleId,
-      jobroleName: basicUser.jobroleName,
-      jobLevel: basicUser.jobLevel,
-      sequenceOrder: basicUser.sequenceOrder,
-      hasVerticalProgression: basicUser.hasVerticalProgression,
-      hasLateralMovement: basicUser.hasLateralMovement,
-      progressionType: basicUser.progressionType,
-      schoolName: basicUser.schoolName,
-      schoolShortCode: basicUser.schoolShortCode,
-      schoolLogo: basicUser.schoolLogo,
-      syear: basicUser.syear,
-      orgName: basicUser.orgName,
-      orgType: basicUser.orgType,
-      yearTitle: basicUser.yearTitle,
-      token: userToken,
-    );
-
-    // Store original token separately for APIs that need it
-    _originalToken = basicUser.token;
-    debugPrint('=== SESSION DATA AT LOGIN ===');
-    debugPrint('${_currentUser!.toJson()}');
-    debugPrint('=== END SESSION DATA ===');
-    // Fetch menu rights immediately after login
     try {
-      debugPrint('Fetching menu rights for user: ${basicUser.subInstituteId}, profile: ${basicUser.userProfileId}');
-      _menuResponse = await apiService.fetchMenuRights(_currentUser!, _originalToken ?? userToken);
-      debugPrint('Menu rights fetched successfully, mobile menus: ${_menuResponse?.getMobileMenus().length ?? 0}');
-    } catch (e) {
-      debugPrint('Failed to fetch menu rights: $e');
-      // Don't fail login if menu fetch fails
-    }
+      final apiService = ApiService();
+      // Load existing cookies if any
+      await apiService.loadCookies();
+      final basicUser = await apiService.login(email, password);
+      debugPrint('Basic login successful, token: ${basicUser.token}, user ID: ${basicUser.id}, user_name: ${basicUser.userName}');
 
-    // Initialize notifications and update FCM token
-    try {
-      debugPrint('Initializing notification service and updating FCM token');
-      final notificationService = NotificationService();
-      await notificationService.initialize();
-      await notificationService.updateTokenWithUser(_currentUser!.id.toString(), _originalToken ?? userToken);
-      debugPrint('FCM token updated successfully at login');
-    } catch (e) {
-      debugPrint('Failed to initialize notifications or update FCM token: $e');
-      // Don't fail login if notification setup fails
-    }
+      // Store original token before getting XSRF token
+      _originalToken = basicUser.token;
+      debugPrint('Original token from login: $_originalToken');
 
-    // Persist the finalized session user and menu response
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user', jsonEncode(_currentUser!.toJson()));
-    if (_originalToken != null) {
-      await prefs.setString('original_token', _originalToken!);
-      debugPrint('Saving original token to prefs');
+      // Get XSRF token from cookies
+      final xsrfToken = apiService.getXsrfToken();
+      final userToken = xsrfToken ?? basicUser.token;
+      _currentUser = User(
+        id: basicUser.id,
+        userName: basicUser.userName,
+        firstName: basicUser.firstName,
+        middleName: basicUser.middleName,
+        lastName: basicUser.lastName,
+        fullName: basicUser.fullName,
+        email: basicUser.email,
+        mobile: basicUser.mobile,
+        birthdate: basicUser.birthdate,
+        address: basicUser.address,
+        gender: basicUser.gender,
+        joinYear: basicUser.joinYear,
+        employeeNo: basicUser.employeeNo,
+        employeeId: basicUser.employeeId,
+        image: basicUser.image,
+        userProfileId: basicUser.userProfileId,
+        userProfileName: basicUser.userProfileName,
+        subInstituteId: basicUser.subInstituteId,
+        clientId: basicUser.clientId,
+        isAdmin: basicUser.isAdmin,
+        status: basicUser.status,
+        departmentId: basicUser.departmentId,
+        departmentName: basicUser.departmentName,
+        jobroleId: basicUser.jobroleId,
+        jobroleName: basicUser.jobroleName,
+        jobLevel: basicUser.jobLevel,
+        sequenceOrder: basicUser.sequenceOrder,
+        hasVerticalProgression: basicUser.hasVerticalProgression,
+        hasLateralMovement: basicUser.hasLateralMovement,
+        progressionType: basicUser.progressionType,
+        schoolName: basicUser.schoolName,
+        schoolShortCode: basicUser.schoolShortCode,
+        schoolLogo: basicUser.schoolLogo,
+        syear: basicUser.syear,
+        orgName: basicUser.orgName,
+        orgType: basicUser.orgType,
+        yearTitle: basicUser.yearTitle,
+        token: userToken,
+      );
+
+      // Store original token separately for APIs that need it
+      _originalToken = basicUser.token;
+      debugPrint('=== SESSION DATA AT LOGIN ===');
+      debugPrint('${_currentUser!.toJson()}');
+      debugPrint('=== END SESSION DATA ===');
+      // Fetch menu rights immediately after login
+      try {
+        debugPrint('Fetching menu rights for user: ${basicUser.subInstituteId}, profile: ${basicUser.userProfileId}');
+        _menuResponse = await apiService.fetchMenuRights(_currentUser!, _originalToken ?? userToken);
+        debugPrint('Menu rights fetched successfully, mobile menus: ${_menuResponse?.getMobileMenus().length ?? 0}');
+      } catch (e) {
+        debugPrint('Failed to fetch menu rights: $e');
+        // Don't fail login if menu fetch fails
+      }
+
+      // Initialize notifications and update FCM token
+      try {
+        debugPrint('Initializing notification service and updating FCM token');
+        final notificationService = NotificationService();
+        await notificationService.initialize();
+        await notificationService.updateTokenWithUser(_currentUser!.id.toString(), _originalToken ?? userToken);
+        debugPrint('FCM token updated successfully at login');
+      } catch (e) {
+        debugPrint('Failed to initialize notifications or update FCM token: $e');
+        // Don't fail login if notification setup fails
+      }
+
+      // Persist the finalized session user and menu response
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user', jsonEncode(_currentUser!.toJson()));
+      if (_originalToken != null) {
+        await prefs.setString('original_token', _originalToken!);
+        debugPrint('Saving original token to prefs');
+      }
+      if (_menuResponse != null) {
+        final menuJson = _menuResponse!.toJson();
+        debugPrint('Saving menu response to prefs: ${menuJson.length} keys');
+        await prefs.setString('menu_response', jsonEncode(menuJson));
+      } else {
+        debugPrint('No menu response to save');
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
-    if (_menuResponse != null) {
-      final menuJson = _menuResponse!.toJson();
-      debugPrint('Saving menu response to prefs: ${menuJson.length} keys');
-      await prefs.setString('menu_response', jsonEncode(menuJson));
-    } else {
-      debugPrint('No menu response to save');
-    }
-    _isLoading = false;
-    notifyListeners();
   }
 
   // Logout method

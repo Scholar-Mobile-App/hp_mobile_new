@@ -1191,4 +1191,159 @@ class ApiService {
       throw Exception('Failed to send reset email: ${response.statusCode}');
     }
   }
+
+  // Fetch LMS Courses
+  Future<List<dynamic>> fetchLmsCourses(User user, String token) async {
+    final url = 'https://hp.triz.co.in/lms/course_master?type=API&sub_institute_id=${user.subInstituteId}&syear=2025&user_id=${user.id}&user_profile_name=${Uri.encodeComponent(user.userProfileName)}&token=$token';
+
+    debugPrint('Fetching LMS courses from: $url');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(
+      Uri.parse(url),
+      headers: headers,
+    );
+
+    debugPrint('LMS courses response status: ${response.statusCode}');
+    debugPrint('LMS courses response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      debugPrint('LMS courses response data: $responseData');
+
+      // Handle the actual LMS response structure
+      if (responseData['lms_subject'] is Map) {
+        final lmsSubject = responseData['lms_subject'] as Map<String, dynamic>;
+        List<dynamic> allCourses = [];
+
+        lmsSubject.forEach((category, list) {
+          if (list is List) {
+            for (var item in list) {
+              if (item is Map) {
+                final mutable = Map<String, dynamic>.from(item);
+                mutable['content_category'] = category; // keep category for UI grouping
+                allCourses.add(mutable);
+              }
+            }
+          }
+        });
+
+        debugPrint('Flattened ${allCourses.length} LMS subjects from ${lmsSubject.keys.length} categories');
+        return allCourses;
+      }
+
+      // Fallbacks for other possible structures
+      if (responseData['data'] is List) {
+        return responseData['data'] as List<dynamic>;
+      } else if (responseData is List) {
+        return responseData;
+      } else if (responseData['courses'] is List) {
+        return responseData['courses'] as List<dynamic>;
+      } else {
+        return [];
+      }
+    } else {
+      debugPrint('Fetch LMS courses failed: ${response.body}');
+      throw Exception('Failed to fetch courses: ${response.statusCode}');
+    }
+  }
+
+  // Enroll in a course / subject (LMS)
+  Future<Map<String, dynamic>> enrollInCourse({
+    required int subjectId,
+    required int standardId,
+    int? courseId,
+    required User user,
+    required String token,
+  }) async {
+    const url = 'https://hp.triz.co.in/api/enroll';
+
+    final now = DateTime.now();
+    final startDate = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+    final endDate = "${now.year + 1}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}"; // 1 year validity as fallback
+
+    final payload = {
+      "user_id": user.id,
+      "sub_institute_id": user.subInstituteId,
+      "type": "API",
+      "subject_id": subjectId,
+      "standard_id": standardId,
+      "course_id": courseId ?? subjectId,
+      "start_date": startDate,
+      "end_date": endDate,
+      "status": "enrolled",
+      "token": token,
+    };
+
+    debugPrint('Enrolling in course: $url');
+    debugPrint('Enroll payload: $payload');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.post(
+      Uri.parse(url),
+      headers: headers,
+      body: json.encode(payload),
+    );
+
+    debugPrint('Enroll response status: ${response.statusCode}');
+    debugPrint('Enroll response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      debugPrint('Enroll response: $data');
+
+      if (data['status'] == '0' || data['message']?.toString().toLowerCase().contains('fail') == true) {
+        throw Exception(data['message'] ?? 'Enrollment failed');
+      }
+
+      return data;
+    } else {
+      debugPrint('Enroll failed: ${response.body}');
+      throw Exception('Failed to enroll: ${response.statusCode}');
+    }
+  }
+
+  // Fetch LMS Course Chapters & Content
+  Future<Map<String, dynamic>> fetchCourseChapters({
+    required int subjectId,
+    required int standardId,
+    required User user,
+    required String token,
+  }) async {
+    final url = 'https://hp.triz.co.in/lms/chapter_master?type=API&sub_institute_id=${user.subInstituteId}&syear=2025&user_profile_name=${Uri.encodeComponent(user.userProfileName)}&user_id=${user.id}&standard_id=$standardId&subject_id=$subjectId&token=$token';
+
+    debugPrint('Fetching course chapters from: $url');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(
+      Uri.parse(url),
+      headers: headers,
+    );
+
+    debugPrint('Course chapters response status: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      debugPrint('Course chapters response: $data');
+      return data;
+    } else {
+      debugPrint('Fetch course chapters failed: ${response.body}');
+      throw Exception('Failed to fetch course chapters: ${response.statusCode}');
+    }
+  }
 }
