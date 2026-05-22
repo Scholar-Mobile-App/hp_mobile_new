@@ -4,6 +4,8 @@ import '../services/auth_provider.dart';
 import '../services/api_service.dart';
 
 class ProfileDetailsScreen extends StatefulWidget {
+  const ProfileDetailsScreen({super.key});
+
   @override
   _ProfileDetailsScreenState createState() => _ProfileDetailsScreenState();
 }
@@ -61,18 +63,18 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Profile Details'),
-          backgroundColor: Color(0xFF1F2A6D),
+          title: const Text('Profile Details'),
+          backgroundColor: const Color(0xFF1F2A6D),
         ),
-        body: Center(child: CircularProgressIndicator()),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     if (_error != null || _userDetails == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Profile Details'),
-          backgroundColor: Color(0xFF1F2A6D),
+          title: const Text('Profile Details'),
+          backgroundColor: const Color(0xFF1F2A6D),
         ),
         body: Center(child: Text(_error ?? 'Failed to load profile details')),
       );
@@ -88,20 +90,20 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Profile Details',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color(0xFF1F2A6D),
+        backgroundColor: const Color(0xFF1F2A6D),
         elevation: 0,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF1F2A6D).withOpacity(0.1), Color(0xFF2E3A8C).withOpacity(0.05)],
+            colors: [const Color(0xFF1F2A6D).withOpacity(0.1), const Color(0xFF2E3A8C).withOpacity(0.05)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -116,24 +118,24 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                 backgroundImage: userData['image']?.isNotEmpty == true ? NetworkImage(
                   userData['image'].startsWith('http') ? userData['image'] : 'https://s3-triz.fra1.cdn.digitaloceanspaces.com/public/hp_user/' + userData['image']
                 ) : null,
-                backgroundColor: Color(0xFF1F2A6D),
-                child: userData['image']?.isEmpty != false ? Icon(
+                backgroundColor: const Color(0xFF1F2A6D),
+                child: userData['image']?.isEmpty != false ? const Icon(
                   Icons.person,
                   size: 60,
                   color: Colors.white,
                 ) : null,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Text(
                 '${userData['first_name'] ?? ''} ${userData['middle_name'] ?? ''} ${userData['last_name'] ?? ''}'.trim(),
-                style: TextStyle(
+                style: const TextStyle(
                   color: Color(0xFF1F2A6D),
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 userData['email'] ?? '',
                 style: TextStyle(
@@ -142,9 +144,9 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -152,7 +154,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.2),
                       blurRadius: 8,
-                      offset: Offset(0, 4),
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
@@ -160,32 +162,32 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildDetailRow('Phone', userData['mobile']?.toString() ?? ''),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildDetailRow('Email', userData['email']?.toString() ?? ''),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildDetailRow('Qualification', userData['qualification']?.toString() ?? ''),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildDetailRow('Occupation', userData['occupation']?.toString() ?? ''),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildDetailRow('Gender', userData['gender']?.toString() ?? ''),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildDetailRow('Date of Birth', userData['birthdate']?.toString() ?? ''),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildDetailRow('Address', userData['address']?.toString() ?? ''),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildDetailRow('City', userData['city']?.toString() ?? ''),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildDetailRow('State', userData['state']?.toString() ?? ''),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildDetailRow('Zip Code', userData['pincode']?.toString() ?? ''),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildDetailRow('Job Role', userData['userJobrole']?.toString() ?? ''),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildDetailRow('Department', userData['userDepartment']?.toString() ?? ''),
                   ],
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               if (skills.isNotEmpty) _buildListSection('Skills', skills),
               if (departments.isNotEmpty) _buildListSection('Departments', departments),
               if (jobRoles.isNotEmpty) _buildListSection('Job Roles', jobRoles),
@@ -205,7 +207,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
           width: 120,
           child: Text(
             '$label:',
-            style: TextStyle(
+            style: const TextStyle(
               color: Color(0xFF1F2A6D),
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -227,8 +229,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
   Widget _buildListSection(String title, List<dynamic> items) {
     return Container(
-      padding: EdgeInsets.all(20),
-      margin: EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -236,14 +238,14 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
           BoxShadow(
             color: Colors.grey.withOpacity(0.2),
             blurRadius: 8,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: ExpansionTile(
         title: Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: Color(0xFF1F2A6D),
           ),

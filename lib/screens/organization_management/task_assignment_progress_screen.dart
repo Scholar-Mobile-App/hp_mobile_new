@@ -651,7 +651,8 @@ class _TaskAssignmentProgressScreenState
                         ),
                       ),
                     ),
-                    _buildAssignTaskButton(),
+                    if ((Provider.of<AuthProvider>(context, listen: false).currentUser?.userProfileName ?? '').toLowerCase().contains('admin'))
+                      _buildAssignTaskButton(),
                   ],
                 ),
                 SizedBox(height: getResponsivePadding(context) * 1.4),
@@ -840,9 +841,9 @@ class _TaskAssignmentProgressScreenState
                                     child: _buildTaskMetaPanel(task),
                                   ),
                                   const SizedBox(width: 12),
-                                  Icon(
+                                  const Icon(
                                     Icons.chevron_right_rounded,
-                                    color: const Color(0xFF42558F),
+                                    color: Color(0xFF42558F),
                                     size: 28,
                                   ),
                                 ],
@@ -1014,9 +1015,9 @@ class _TaskAssignmentProgressScreenState
             ),
           ],
         ),
-        child: Row(
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
-          children: const [
+          children: [
             Icon(
               Icons.add_circle_outline_rounded,
               color: Color(0xFFF3C56A),
@@ -1351,7 +1352,7 @@ class _TaskAssignmentProgressScreenState
             child: isLoadingDepartments
                 ? const Center(child: CircularProgressIndicator())
                 : DropdownButtonFormField<String>(
-                    value: selectedDepartment,
+                    initialValue: selectedDepartment,
                     isExpanded: true,
                     decoration: _buildInputDecoration('Choose department'),
                     items: departments.map((String value) {
@@ -1395,7 +1396,7 @@ class _TaskAssignmentProgressScreenState
               child: isLoadingJobRoles
                   ? const Center(child: CircularProgressIndicator())
                   : DropdownButtonFormField<String>(
-                      value: selectedJobRole,
+                      initialValue: selectedJobRole,
                       isExpanded: true,
                       decoration: _buildInputDecoration('Choose job role'),
                       items: jobRoles.map((Map<String, dynamic> role) {
@@ -1667,7 +1668,7 @@ class _TaskAssignmentProgressScreenState
                                           ),
                                         ),
                                       );
-                                    }).toList(),
+                                    }),
                                   ],
                                 ),
                               ),
@@ -1719,7 +1720,7 @@ class _TaskAssignmentProgressScreenState
                     children: [
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: selectedRepeatDays,
+                          initialValue: selectedRepeatDays,
                           decoration: _buildInputDecoration('Repeat every'),
                           items: List.generate(10, (index) {
                             int days = index + 1;

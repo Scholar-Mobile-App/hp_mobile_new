@@ -9,10 +9,10 @@ class SkillDetailScreen extends StatefulWidget {
   final String skillTitle;
 
   const SkillDetailScreen({
-    Key? key,
+    super.key,
     required this.skillId,
     required this.skillTitle,
-  }) : super(key: key);
+  });
 
   @override
   _SkillDetailScreenState createState() => _SkillDetailScreenState();
@@ -56,39 +56,39 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
       appBar: AppBar(
         title: Text(
           widget.skillTitle,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color(0xFF1F2A6D),
+        backgroundColor: const Color(0xFF1F2A6D),
         elevation: 0,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF1F2A6D).withOpacity(0.1), Color(0xFF2E3A8C).withOpacity(0.05)],
+            colors: [const Color(0xFF1F2A6D).withOpacity(0.1), const Color(0xFF2E3A8C).withOpacity(0.05)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
         child: isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : error != null
                 ? Center(child: Text('Error: $error'))
                 : skillData == null
-                    ? Center(child: Text('No data available'))
+                    ? const Center(child: Text('No data available'))
                     : SingleChildScrollView(
-                        padding: EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             _buildBasicInfo(),
-                            SizedBox(height: 24),
+                            const SizedBox(height: 24),
                             _buildJobRoles(),
-                            SizedBox(height: 24),
+                            const SizedBox(height: 24),
                             _buildDetailedInfo(),
-                            SizedBox(height: 24),
+                            const SizedBox(height: 24),
                           ],
                         ),
                       ),
@@ -103,25 +103,25 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [Colors.white, Color(0xFFF8F9FA)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(12),
         ),
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(Icons.build, color: Color(0xFFFF6A00), size: 28),
-                SizedBox(width: 12),
+                const Icon(Icons.build, color: Color(0xFFFF6A00), size: 28),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     editData['title'] ?? 'No Title',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF1F2A6D),
@@ -130,8 +130,8 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               'Description',
               style: TextStyle(
                 fontSize: 18,
@@ -139,7 +139,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                 color: Color(0xFF1F2A6D),
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               editData['description'] ?? 'No Description',
               style: TextStyle(
@@ -148,7 +148,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                 height: 1.5,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildInfoRow('Department', editData['department']),
             _buildInfoRow('Category', editData['category']),
             _buildInfoRow('Sub Category', editData['sub_category']),
@@ -168,18 +168,18 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [Colors.white, Color(0xFFF8F9FA)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(12),
         ),
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
                 Icon(Icons.work, color: Color(0xFFFF6A00), size: 28),
                 SizedBox(width: 12),
@@ -193,10 +193,10 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ListView.builder(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: jobRoles.length,
               itemBuilder: (context, index) {
                 return _buildJobRoleItem(jobRoles[index], index == jobRoles.length - 1);
@@ -211,38 +211,38 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
   Widget _buildJobRoleItem(dynamic role, bool isLast) {
     return Container(
       margin: EdgeInsets.only(bottom: isLast ? 0 : 12),
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Color(0xFFFF6A00).withOpacity(0.08),
+        color: const Color(0xFFFF6A00).withOpacity(0.08),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Color(0xFFFF6A00).withOpacity(0.2)),
+        border: Border.all(color: const Color(0xFFFF6A00).withOpacity(0.2)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
+          const Icon(
             Icons.work_outline,
             color: Color(0xFFFF6A00),
             size: 20,
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   role['jobrole'] ?? 'No Job Role',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF1F2A6D),
                   ),
                 ),
-                SizedBox(height: 6),
+                const SizedBox(height: 6),
                 _buildRoleDetailRow('Sector', role['sector']),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 _buildRoleDetailRow('Track', role['track']),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 _buildRoleDetailRow('Proficiency Level', role['proficiency_level']),
               ],
             ),
@@ -253,7 +253,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
   }
 
   Widget _buildRoleDetailRow(String label, String? value) {
-    if (value == null || value.isEmpty) return SizedBox.shrink();
+    if (value == null || value.isEmpty) return const SizedBox.shrink();
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,7 +269,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
             ),
           ),
         ),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         Expanded(
           child: Text(
             value,
@@ -291,18 +291,18 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [Colors.white, Color(0xFFF8F9FA)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(12),
         ),
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
                 Icon(Icons.info, color: Color(0xFFFF6A00), size: 28),
                 SizedBox(width: 12),
@@ -316,7 +316,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildDetailSection('Related Skills', editData['related_skills']),
             _buildDetailSection('Custom Tags', editData['custom_tags']),
             _buildDetailSection('Learning Resources', editData['learning_resources']),
@@ -337,28 +337,28 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
   }
 
   Widget _buildDetailSection(String title, String? content) {
-    if (content == null || content.isEmpty || content == 'null') return SizedBox.shrink();
+    if (content == null || content.isEmpty || content == 'null') return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Color(0xFF1F2A6D),
           ),
         ),
-        SizedBox(height: 6),
+        const SizedBox(height: 6),
         Container(
           width: double.infinity,
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: Color(0xFFFF6A00).withOpacity(0.1),
+            color: const Color(0xFFFF6A00).withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Color(0xFFFF6A00).withOpacity(0.3)),
+            border: Border.all(color: const Color(0xFFFF6A00).withOpacity(0.3)),
           ),
           child: Text(
             _formatContent(content),
@@ -379,16 +379,16 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
   }
 
   Widget _buildInfoRow(String label, String? value) {
-    if (value == null || value.isEmpty || value == 'null') return SizedBox.shrink();
+    if (value == null || value.isEmpty || value == 'null') return const SizedBox.shrink();
 
     return Padding(
-      padding: EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '$label: ',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
               color: Color(0xFF1F2A6D),

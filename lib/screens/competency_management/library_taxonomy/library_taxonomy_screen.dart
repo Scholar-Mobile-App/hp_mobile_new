@@ -23,7 +23,7 @@ import 'attitude_screen.dart';
 class LibraryTaxonomyScreen extends StatefulWidget {
   final MenuItem menuItem;
 
-  const LibraryTaxonomyScreen({Key? key, required this.menuItem}) : super(key: key);
+  const LibraryTaxonomyScreen({super.key, required this.menuItem});
 
   @override
   _LibraryTaxonomyScreenState createState() => _LibraryTaxonomyScreenState();
@@ -116,19 +116,19 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setStateBottom) {
             return Container(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               height: MediaQuery.of(context).size.height * 0.6,
               child: Column(
                 children: [
-                  Text('Ability Filters', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1F2A6D))),
-                  SizedBox(height: 16),
+                  const Text('Ability Filters', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1F2A6D))),
+                  const SizedBox(height: 16),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
@@ -151,19 +151,19 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                           setStateBottom(() {});
                           Navigator.pop(context);
                         },
-                        child: Text('Clear All', style: TextStyle(color: Colors.red)),
+                        child: const Text('Clear All', style: TextStyle(color: Colors.red)),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       ElevatedButton(
                         onPressed: () {
                           setState(() {});
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFFFF6A00),
+                          backgroundColor: const Color(0xFFFF6A00),
                           foregroundColor: Colors.white,
                         ),
-                        child: Text('Apply'),
+                        child: const Text('Apply'),
                       ),
                     ],
                   ),
@@ -186,19 +186,19 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         builder: (context) {
           return StatefulBuilder(
             builder: (context, setStateBottom) {
               return Container(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 height: MediaQuery.of(context).size.height * 0.8,
                 child: Column(
                   children: [
-                    Text('Filters', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1F2A6D))),
-                    SizedBox(height: 16),
+                    const Text('Filters', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1F2A6D))),
+                    const SizedBox(height: 16),
                     Expanded(
                       child: SingleChildScrollView(
                         child: Column(
@@ -225,19 +225,19 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                             setStateBottom(() {});
                             Navigator.pop(context);
                           },
-                          child: Text('Clear All', style: TextStyle(color: Colors.red)),
+                          child: const Text('Clear All', style: TextStyle(color: Colors.red)),
                         ),
-                        Spacer(),
+                        const Spacer(),
                         ElevatedButton(
                           onPressed: () {
                             setState(() {});
                             Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFFFF6A00),
+                            backgroundColor: const Color(0xFFFF6A00),
                             foregroundColor: Colors.white,
                           ),
-                          child: Text('Apply'),
+                          child: const Text('Apply'),
                         ),
                       ],
                     ),
@@ -256,19 +256,19 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         builder: (context) {
           return StatefulBuilder(
             builder: (context, setStateBottom) {
               return Container(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 height: MediaQuery.of(context).size.height * 0.6,
                 child: Column(
                   children: [
-                    Text('Filters', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1F2A6D))),
-                    SizedBox(height: 16),
+                    const Text('Filters', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1F2A6D))),
+                    const SizedBox(height: 16),
                     Expanded(
                       child: SingleChildScrollView(
                         child: Column(
@@ -289,19 +289,19 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                             setStateBottom(() {});
                             Navigator.pop(context);
                           },
-                          child: Text('Clear All', style: TextStyle(color: Colors.red)),
+                          child: const Text('Clear All', style: TextStyle(color: Colors.red)),
                         ),
-                        Spacer(),
+                        const Spacer(),
                         ElevatedButton(
                           onPressed: () {
                             setState(() {});
                             Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFFFF6A00),
+                            backgroundColor: const Color(0xFFFF6A00),
                             foregroundColor: Colors.white,
                           ),
-                          child: Text('Apply'),
+                          child: const Text('Apply'),
                         ),
                       ],
                     ),
@@ -321,7 +321,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
@@ -347,19 +347,19 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
             }
 
             return Container(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               height: MediaQuery.of(context).size.height * 0.7,
               child: Column(
                 children: [
-                  Text('Behaviour Filters', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1F2A6D))),
-                  SizedBox(height: 16),
+                  const Text('Behaviour Filters', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1F2A6D))),
+                  const SizedBox(height: 16),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildFilterSection('Category', categories, selectedBehaviourCategories, setStateBottom),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           _buildFilterSection('Sub-Category', availableSubCategories, selectedBehaviourSubCategories, setStateBottom),
                         ],
                       ),
@@ -376,19 +376,19 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                           setStateBottom(() {});
                           Navigator.pop(context);
                         },
-                        child: Text('Clear All', style: TextStyle(color: Colors.red)),
+                        child: const Text('Clear All', style: TextStyle(color: Colors.red)),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       ElevatedButton(
                         onPressed: () {
                           setState(() {});
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFFFF6A00),
+                          backgroundColor: const Color(0xFFFF6A00),
                           foregroundColor: Colors.white,
                         ),
-                        child: Text('Apply'),
+                        child: const Text('Apply'),
                       ),
                     ],
                   ),
@@ -412,7 +412,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
@@ -438,19 +438,19 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
             }
 
             return Container(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               height: MediaQuery.of(context).size.height * 0.7,
               child: Column(
                 children: [
-                  Text('Knowledge Filters', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1F2A6D))),
-                  SizedBox(height: 16),
+                  const Text('Knowledge Filters', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1F2A6D))),
+                  const SizedBox(height: 16),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildFilterSection('Category', categories, selectedKnowledgeCategories, setStateBottom),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           _buildFilterSection('Sub-Category', availableSubCategories, selectedKnowledgeSubCategories, setStateBottom),
                         ],
                       ),
@@ -467,19 +467,19 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                           setStateBottom(() {});
                           Navigator.pop(context);
                         },
-                        child: Text('Clear All', style: TextStyle(color: Colors.red)),
+                        child: const Text('Clear All', style: TextStyle(color: Colors.red)),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       ElevatedButton(
                         onPressed: () {
                           setState(() {});
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFFFF6A00),
+                          backgroundColor: const Color(0xFFFF6A00),
                           foregroundColor: Colors.white,
                         ),
-                        child: Text('Apply'),
+                        child: const Text('Apply'),
                       ),
                     ],
                   ),
@@ -496,15 +496,15 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFF1F2A6D))),
-        SizedBox(height: 8),
+        Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFF1F2A6D))),
+        const SizedBox(height: 8),
         Wrap(
           spacing: 8,
           runSpacing: 8,
           children: options.map((option) {
             final isSelected = selected.contains(option);
             return FilterChip(
-              label: Text(option, style: TextStyle(color: isSelected ? Colors.white : Color(0xFF1F2A6D))),
+              label: Text(option, style: TextStyle(color: isSelected ? Colors.white : const Color(0xFF1F2A6D))),
               selected: isSelected,
               onSelected: (bool value) {
                 setStateBottom(() {
@@ -516,12 +516,12 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                 });
               },
               backgroundColor: Colors.grey[200],
-              selectedColor: Color(0xFFFF6A00),
+              selectedColor: const Color(0xFFFF6A00),
               checkmarkColor: Colors.white,
             );
           }).toList(),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
       ],
     );
   }
@@ -532,18 +532,18 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
       appBar: AppBar(
         title: Text(
           widget.menuItem.menuName,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color(0xFF1F2A6D),
+        backgroundColor: const Color(0xFF1F2A6D),
         elevation: 0,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF1F2A6D).withOpacity(0.1), Color(0xFF2E3A8C).withOpacity(0.05)],
+            colors: [const Color(0xFF1F2A6D).withOpacity(0.1), const Color(0xFF2E3A8C).withOpacity(0.05)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -552,13 +552,13 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
           children: [
             Expanded(
               child: AnimatedSwitcher(
-                duration: Duration(milliseconds: 500),
+                duration: const Duration(milliseconds: 500),
                 transitionBuilder: (Widget child, Animation<double> animation) {
                   return FadeTransition(
                     opacity: animation,
                     child: SlideTransition(
                       position: Tween<Offset>(
-                        begin: Offset(0.0, 0.1),
+                        begin: const Offset(0.0, 0.1),
                         end: Offset.zero,
                       ).animate(animation),
                       child: child,
@@ -581,7 +581,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
         future: _getSkills(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error loading skills: ${snapshot.error}'));
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -606,34 +606,34 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
             return Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
                       hintText: 'Search skill',
-                      prefixIcon: Icon(Icons.search, color: Color(0xFF1F2A6D)),
+                      prefixIcon: const Icon(Icons.search, color: Color(0xFF1F2A6D)),
                       suffixIcon: IconButton(
-                        icon: Icon(Icons.filter_list, color: Color(0xFF1F2A6D)),
+                        icon: const Icon(Icons.filter_list, color: Color(0xFF1F2A6D)),
                         onPressed: () => _showFilterDialog(context),
                       ),
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFF1F2A6D), width: 1),
+                        borderSide: const BorderSide(color: Color(0xFF1F2A6D), width: 1),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFF1F2A6D), width: 1),
+                        borderSide: const BorderSide(color: Color(0xFF1F2A6D), width: 1),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFFFF6A00), width: 2),
+                        borderSide: const BorderSide(color: Color(0xFFFF6A00), width: 2),
                       ),
                     ),
                     onChanged: (value) {
                       _debounceTimer?.cancel();
-                      _debounceTimer = Timer(Duration(milliseconds: 500), () {
+                      _debounceTimer = Timer(const Duration(milliseconds: 500), () {
                         setState(() {
                           _searchQuery = value;
                         });
@@ -643,7 +643,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: filteredSkills.length,
                     itemBuilder: (context, index) {
                       return _buildSkillCard(context, filteredSkills[index]);
@@ -653,7 +653,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
               ],
             );
           } else {
-            return Center(child: Text('No skills found'));
+            return const Center(child: Text('No skills found'));
           }
         },
       );
@@ -663,7 +663,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
         future: _getJobRoles(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error loading job roles: ${snapshot.error}'));
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -682,34 +682,34 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
             return Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
                       hintText: 'Search job roles',
-                      prefixIcon: Icon(Icons.search, color: Color(0xFF1F2A6D)),
+                      prefixIcon: const Icon(Icons.search, color: Color(0xFF1F2A6D)),
                       suffixIcon: IconButton(
-                        icon: Icon(Icons.filter_list, color: Color(0xFF1F2A6D)),
+                        icon: const Icon(Icons.filter_list, color: Color(0xFF1F2A6D)),
                         onPressed: () => _showFilterDialog(context),
                       ),
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFF1F2A6D), width: 1),
+                        borderSide: const BorderSide(color: Color(0xFF1F2A6D), width: 1),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFF1F2A6D), width: 1),
+                        borderSide: const BorderSide(color: Color(0xFF1F2A6D), width: 1),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFFFF6A00), width: 2),
+                        borderSide: const BorderSide(color: Color(0xFFFF6A00), width: 2),
                       ),
                     ),
                     onChanged: (value) {
                       _debounceTimer?.cancel();
-                      _debounceTimer = Timer(Duration(milliseconds: 500), () {
+                      _debounceTimer = Timer(const Duration(milliseconds: 500), () {
                         setState(() {
                           _searchQuery = value;
                         });
@@ -719,7 +719,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: filteredJobRoles.length,
                     itemBuilder: (context, index) {
                       return _buildJobRoleCard(context, filteredJobRoles[index]);
@@ -729,7 +729,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
               ],
             );
           } else {
-            return Center(child: Text('No job roles found'));
+            return const Center(child: Text('No job roles found'));
           }
         },
       );
@@ -739,7 +739,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
         future: _getUserKnowledge(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error loading knowledge: ${snapshot.error}'));
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -759,34 +759,34 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
             return Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
                       hintText: 'Search knowledge',
-                      prefixIcon: Icon(Icons.search, color: Color(0xFF1F2A6D)),
+                      prefixIcon: const Icon(Icons.search, color: Color(0xFF1F2A6D)),
                       suffixIcon: IconButton(
-                        icon: Icon(Icons.filter_list, color: Color(0xFF1F2A6D)),
+                        icon: const Icon(Icons.filter_list, color: Color(0xFF1F2A6D)),
                         onPressed: () => _showKnowledgeFilterDialog(context),
                       ),
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFF1F2A6D), width: 1),
+                        borderSide: const BorderSide(color: Color(0xFF1F2A6D), width: 1),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFF1F2A6D), width: 1),
+                        borderSide: const BorderSide(color: Color(0xFF1F2A6D), width: 1),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFFFF6A00), width: 2),
+                        borderSide: const BorderSide(color: Color(0xFFFF6A00), width: 2),
                       ),
                     ),
                     onChanged: (value) {
                       _debounceTimer?.cancel();
-                      _debounceTimer = Timer(Duration(milliseconds: 500), () {
+                      _debounceTimer = Timer(const Duration(milliseconds: 500), () {
                         setState(() {
                           _searchQuery = value;
                         });
@@ -796,7 +796,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: filteredKnowledge.length,
                     itemBuilder: (context, index) {
                       return _buildKnowledgeCard(context, filteredKnowledge[index]);
@@ -806,7 +806,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
               ],
             );
           } else {
-            return Center(child: Text('No knowledge found'));
+            return const Center(child: Text('No knowledge found'));
           }
         },
       );
@@ -816,7 +816,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
         future: _getUserAbility(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error loading abilities: ${snapshot.error}'));
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -836,34 +836,34 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
             return Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
                       hintText: 'Search abilities',
-                      prefixIcon: Icon(Icons.search, color: Color(0xFF1F2A6D)),
+                      prefixIcon: const Icon(Icons.search, color: Color(0xFF1F2A6D)),
                       suffixIcon: IconButton(
-                        icon: Icon(Icons.filter_list, color: Color(0xFF1F2A6D)),
+                        icon: const Icon(Icons.filter_list, color: Color(0xFF1F2A6D)),
                         onPressed: () => _showAbilityFilterDialog(context),
                       ),
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFF1F2A6D), width: 1),
+                        borderSide: const BorderSide(color: Color(0xFF1F2A6D), width: 1),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFF1F2A6D), width: 1),
+                        borderSide: const BorderSide(color: Color(0xFF1F2A6D), width: 1),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFFFF6A00), width: 2),
+                        borderSide: const BorderSide(color: Color(0xFFFF6A00), width: 2),
                       ),
                     ),
                     onChanged: (value) {
                       _debounceTimer?.cancel();
-                      _debounceTimer = Timer(Duration(milliseconds: 500), () {
+                      _debounceTimer = Timer(const Duration(milliseconds: 500), () {
                         setState(() {
                           _searchQuery = value;
                         });
@@ -873,7 +873,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: filteredAbilities.length,
                     itemBuilder: (context, index) {
                       return _buildAbilityCard(context, filteredAbilities[index]);
@@ -883,7 +883,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
               ],
             );
           } else {
-            return Center(child: Text('No abilities found'));
+            return const Center(child: Text('No abilities found'));
           }
         },
       );
@@ -893,7 +893,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
         future: _getUserBehaviour(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error loading behaviours: ${snapshot.error}'));
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -913,34 +913,34 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
             return Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
                       hintText: 'Search behaviours',
-                      prefixIcon: Icon(Icons.search, color: Color(0xFF1F2A6D)),
+                      prefixIcon: const Icon(Icons.search, color: Color(0xFF1F2A6D)),
                       suffixIcon: IconButton(
-                        icon: Icon(Icons.filter_list, color: Color(0xFF1F2A6D)),
+                        icon: const Icon(Icons.filter_list, color: Color(0xFF1F2A6D)),
                         onPressed: () => _showBehaviourFilterDialog(context),
                       ),
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFF1F2A6D), width: 1),
+                        borderSide: const BorderSide(color: Color(0xFF1F2A6D), width: 1),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFF1F2A6D), width: 1),
+                        borderSide: const BorderSide(color: Color(0xFF1F2A6D), width: 1),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFFFF6A00), width: 2),
+                        borderSide: const BorderSide(color: Color(0xFFFF6A00), width: 2),
                       ),
                     ),
                     onChanged: (value) {
                       _debounceTimer?.cancel();
-                      _debounceTimer = Timer(Duration(milliseconds: 500), () {
+                      _debounceTimer = Timer(const Duration(milliseconds: 500), () {
                         setState(() {
                           _searchQuery = value;
                         });
@@ -950,7 +950,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: filteredBehaviours.length,
                     itemBuilder: (context, index) {
                       return _buildBehaviourCard(context, filteredBehaviours[index]);
@@ -960,7 +960,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
               ],
             );
           } else {
-            return Center(child: Text('No behaviours found'));
+            return const Center(child: Text('No behaviours found'));
           }
         },
       );
@@ -970,7 +970,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
         future: _getUserAttitude(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error loading attitudes: ${snapshot.error}'));
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -988,30 +988,30 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
             return Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
                       hintText: 'Search attitudes',
-                      prefixIcon: Icon(Icons.search, color: Color(0xFF1F2A6D)),
+                      prefixIcon: const Icon(Icons.search, color: Color(0xFF1F2A6D)),
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFF1F2A6D), width: 1),
+                        borderSide: const BorderSide(color: Color(0xFF1F2A6D), width: 1),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFF1F2A6D), width: 1),
+                        borderSide: const BorderSide(color: Color(0xFF1F2A6D), width: 1),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFFFF6A00), width: 2),
+                        borderSide: const BorderSide(color: Color(0xFFFF6A00), width: 2),
                       ),
                     ),
                     onChanged: (value) {
                       _debounceTimer?.cancel();
-                      _debounceTimer = Timer(Duration(milliseconds: 500), () {
+                      _debounceTimer = Timer(const Duration(milliseconds: 500), () {
                         setState(() {
                           _searchQuery = value;
                         });
@@ -1021,7 +1021,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: filteredAttitudes.length,
                     itemBuilder: (context, index) {
                       return _buildAttitudeCard(context, filteredAttitudes[index]);
@@ -1031,7 +1031,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
               ],
             );
           } else {
-            return Center(child: Text('No attitudes found'));
+            return const Center(child: Text('No attitudes found'));
           }
         },
       );
@@ -1050,40 +1050,40 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
         _showJobRoleDetails(context, jobRole);
       },
       child: Card(
-        margin: EdgeInsets.symmetric(vertical: 8),
+        margin: const EdgeInsets.symmetric(vertical: 8),
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               colors: [Colors.white, Color(0xFFF8F9FA)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(12),
           ),
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Icon(Icons.work, color: Color(0xFFFF6A00), size: 24),
-                  SizedBox(width: 8),
+                  const Icon(Icons.work, color: Color(0xFFFF6A00), size: 24),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       jobRole.jobrole,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF1F2A6D),
                       ),
                     ),
                   ),
-                  Icon(Icons.arrow_forward_ios, color: Color(0xFF1F2A6D), size: 16),
+                  const Icon(Icons.arrow_forward_ios, color: Color(0xFF1F2A6D), size: 16),
                 ],
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 'Department: ${jobRole.department}',
                 style: TextStyle(
@@ -1091,7 +1091,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                   color: Colors.grey[700],
                 ),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
                 'Industry: ${jobRole.industries}',
                 style: TextStyle(
@@ -1100,7 +1100,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                 ),
               ),
               if (jobRole.description != null && jobRole.description!.isNotEmpty)
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
               if (jobRole.description != null && jobRole.description!.isNotEmpty)
                 Text(
                   jobRole.description!.length > 100
@@ -1133,40 +1133,40 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
         );
       },
       child: Card(
-        margin: EdgeInsets.symmetric(vertical: 8),
+        margin: const EdgeInsets.symmetric(vertical: 8),
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               colors: [Colors.white, Color(0xFFF8F9FA)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(12),
           ),
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Icon(Icons.build, color: Color(0xFFFF6A00), size: 24),
-                  SizedBox(width: 8),
+                  const Icon(Icons.build, color: Color(0xFFFF6A00), size: 24),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       skill['title'] ?? 'No Title',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF1F2A6D),
                       ),
                     ),
                   ),
-                  Icon(Icons.arrow_forward_ios, color: Color(0xFF1F2A6D), size: 16),
+                  const Icon(Icons.arrow_forward_ios, color: Color(0xFF1F2A6D), size: 16),
                 ],
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 skill['description'] ?? 'No Description',
                 style: TextStyle(
@@ -1175,11 +1175,11 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                   height: 1.4,
                 ),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Row(
                 children: [
                   _buildChip('Category: ${skill['category'] ?? ''}'),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   _buildChip('Level: ${skill['proficiency_level'] ?? ''}'),
                 ],
               ),
@@ -1196,40 +1196,40 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
         _showKnowledgeDetails(context, knowledge);
       },
       child: Card(
-        margin: EdgeInsets.symmetric(vertical: 8),
+        margin: const EdgeInsets.symmetric(vertical: 8),
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               colors: [Colors.white, Color(0xFFF8F9FA)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(12),
           ),
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Icon(Icons.school, color: Color(0xFFFF6A00), size: 24),
-                  SizedBox(width: 8),
+                  const Icon(Icons.school, color: Color(0xFFFF6A00), size: 24),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       knowledge.title ?? 'No Title',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF1F2A6D),
                       ),
                     ),
                   ),
-                  Icon(Icons.arrow_forward_ios, color: Color(0xFF1F2A6D), size: 16),
+                  const Icon(Icons.arrow_forward_ios, color: Color(0xFF1F2A6D), size: 16),
                 ],
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 knowledge.description ?? 'No Description',
                 style: TextStyle(
@@ -1238,13 +1238,13 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                   height: 1.4,
                 ),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Row(
                 children: [
                   if (knowledge.category != null)
                     _buildChip('Category: ${knowledge.category}'),
                   if (knowledge.complexityLevel != null) ...[
-                    if (knowledge.category != null) SizedBox(width: 8),
+                    if (knowledge.category != null) const SizedBox(width: 8),
                     _buildChip('Level: ${knowledge.complexityLevel}'),
                   ],
                 ],
@@ -1262,40 +1262,40 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
         _showAbilityDetails(context, ability);
       },
       child: Card(
-        margin: EdgeInsets.symmetric(vertical: 8),
+        margin: const EdgeInsets.symmetric(vertical: 8),
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               colors: [Colors.white, Color(0xFFF8F9FA)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(12),
           ),
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Icon(Icons.accessibility, color: Color(0xFFFF6A00), size: 24),
-                  SizedBox(width: 8),
+                  const Icon(Icons.accessibility, color: Color(0xFFFF6A00), size: 24),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       ability.title ?? 'No Title',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF1F2A6D),
                       ),
                     ),
                   ),
-                  Icon(Icons.arrow_forward_ios, color: Color(0xFF1F2A6D), size: 16),
+                  const Icon(Icons.arrow_forward_ios, color: Color(0xFF1F2A6D), size: 16),
                 ],
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 ability.description ?? 'No Description',
                 style: TextStyle(
@@ -1304,13 +1304,13 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                   height: 1.4,
                 ),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Row(
                 children: [
                   if (ability.category != null)
                     _buildChip('Category: ${ability.category}'),
                   if (ability.importanceLevel != null) ...[
-                    if (ability.category != null) SizedBox(width: 8),
+                    if (ability.category != null) const SizedBox(width: 8),
                     _buildChip('Level: ${ability.importanceLevel}'),
                   ],
                 ],
@@ -1328,40 +1328,40 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
         _showBehaviourDetails(context, behaviour);
       },
       child: Card(
-        margin: EdgeInsets.symmetric(vertical: 8),
+        margin: const EdgeInsets.symmetric(vertical: 8),
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               colors: [Colors.white, Color(0xFFF8F9FA)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(12),
           ),
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Icon(Icons.people, color: Color(0xFFFF6A00), size: 24),
-                  SizedBox(width: 8),
+                  const Icon(Icons.people, color: Color(0xFFFF6A00), size: 24),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       behaviour.title ?? 'No Title',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF1F2A6D),
                       ),
                     ),
                   ),
-                  Icon(Icons.arrow_forward_ios, color: Color(0xFF1F2A6D), size: 16),
+                  const Icon(Icons.arrow_forward_ios, color: Color(0xFF1F2A6D), size: 16),
                 ],
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 behaviour.description ?? 'No Description',
                 style: TextStyle(
@@ -1370,13 +1370,13 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                   height: 1.4,
                 ),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Row(
                 children: [
                   if (behaviour.category != null)
                     _buildChip('Category: ${behaviour.category}'),
                   if (behaviour.subCategory != null) ...[
-                    if (behaviour.category != null) SizedBox(width: 8),
+                    if (behaviour.category != null) const SizedBox(width: 8),
                     _buildChip('Sub: ${behaviour.subCategory}'),
                   ],
                 ],
@@ -1394,40 +1394,40 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
         _showAttitudeDetails(context, attitude);
       },
       child: Card(
-        margin: EdgeInsets.symmetric(vertical: 8),
+        margin: const EdgeInsets.symmetric(vertical: 8),
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               colors: [Colors.white, Color(0xFFF8F9FA)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(12),
           ),
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Icon(Icons.mood, color: Color(0xFFFF6A00), size: 24),
-                  SizedBox(width: 8),
+                  const Icon(Icons.mood, color: Color(0xFFFF6A00), size: 24),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       attitude.title ?? 'No Title',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF1F2A6D),
                       ),
                     ),
                   ),
-                  Icon(Icons.arrow_forward_ios, color: Color(0xFF1F2A6D), size: 16),
+                  const Icon(Icons.arrow_forward_ios, color: Color(0xFF1F2A6D), size: 16),
                 ],
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 attitude.description ?? 'No Description',
                 style: TextStyle(
@@ -1436,13 +1436,13 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                   height: 1.4,
                 ),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Row(
                 children: [
                   if (attitude.category != null)
                     _buildChip('Category: ${attitude.category}'),
                   if (attitude.subCategory != null) ...[
-                    if (attitude.category != null) SizedBox(width: 8),
+                    if (attitude.category != null) const SizedBox(width: 8),
                     _buildChip('Sub: ${attitude.subCategory}'),
                   ],
                 ],
@@ -1456,15 +1456,15 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
 
   Widget _buildChip(String label) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Color(0xFFFF6A00).withOpacity(0.1),
+        color: const Color(0xFFFF6A00).withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Color(0xFFFF6A00).withOpacity(0.3)),
+        border: Border.all(color: const Color(0xFFFF6A00).withOpacity(0.3)),
       ),
       child: Text(
         label,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 10,
           color: Color(0xFFFF6A00),
           fontWeight: FontWeight.w500,
@@ -1512,22 +1512,22 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (behaviour.description != null) ...[
-                Text('Description:', style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 4),
+                const Text('Description:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
                 Text(behaviour.description!),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
               ],
               if (behaviour.category != null) ...[
                 Text('Category: ${behaviour.category}'),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
               ],
               if (behaviour.subCategory != null) ...[
                 Text('Sub-Category: ${behaviour.subCategory}'),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
               ],
               if (behaviour.businessLink != null) ...[
                 Text('Business Link: ${behaviour.businessLink}'),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
               ],
             ],
           ),
@@ -1535,7 +1535,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Close'),
+            child: const Text('Close'),
           ),
         ],
       ),
@@ -1553,22 +1553,22 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (attitude.description != null) ...[
-                Text('Description:', style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 4),
+                const Text('Description:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
                 Text(attitude.description!),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
               ],
               if (attitude.category != null) ...[
                 Text('Category: ${attitude.category}'),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
               ],
               if (attitude.subCategory != null) ...[
                 Text('Sub-Category: ${attitude.subCategory}'),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
               ],
               if (attitude.businessLink != null) ...[
                 Text('Business Link: ${attitude.businessLink}'),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
               ],
             ],
           ),
@@ -1576,7 +1576,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Close'),
+            child: const Text('Close'),
           ),
         ],
       ),
@@ -1591,12 +1591,12 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
         children: [
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: Color(0xFFFF6A00),
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(value),
         ],
       ),
@@ -1615,10 +1615,10 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
     ];
 
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
         ),
@@ -1626,7 +1626,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
           BoxShadow(
             color: Colors.grey.withOpacity(0.3),
             blurRadius: 10,
-            offset: Offset(0, -2),
+            offset: const Offset(0, -2),
           ),
         ],
       ),
@@ -1642,14 +1642,14 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
   Widget _buildFooterMenuItem(BuildContext context, String title, IconData icon) {
     bool isSelected = selectedMenu == title;
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 6),
+      margin: const EdgeInsets.symmetric(horizontal: 6),
       child: TweenAnimationBuilder<double>(
         tween: Tween<double>(begin: 0, end: 1),
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
         builder: (context, value, child) {
           double scale = isSelected ? 1.0 + (0.1 * value) : 1.0 - (0.05 * (1 - value));
-          Color bgColor = Color.lerp(Color(0xFF1F2A6D), Color(0xFFFF6A00), isSelected ? value : 1 - value)!;
+          Color bgColor = Color.lerp(const Color(0xFF1F2A6D), const Color(0xFFFF6A00), isSelected ? value : 1 - value)!;
           double elevation = isSelected ? 4 + (4 * value) : 4 - (2 * (1 - value));
 
           return Transform.scale(
@@ -1673,7 +1673,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AttitudeScreen(),
+                      builder: (context) => const AttitudeScreen(),
                     ),
                   );
                 } else {
@@ -1684,12 +1684,12 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
               },
               borderRadius: BorderRadius.circular(16),
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: isSelected
-                        ? [Color(0xFFFF6A00), Color(0xFFFF7A1A)]
-                        : [Color(0xFF1F2A6D), Color(0xFF2E3A8C)],
+                        ? [const Color(0xFFFF6A00), const Color(0xFFFF7A1A)]
+                        : [const Color(0xFF1F2A6D), const Color(0xFF2E3A8C)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -1703,7 +1703,7 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                     ),
                     if (isSelected)
                       BoxShadow(
-                        color: Color(0xFFFF6A00).withOpacity(0.6),
+                        color: const Color(0xFFFF6A00).withOpacity(0.6),
                         blurRadius: 12,
                         spreadRadius: 2,
                       ),
@@ -1717,10 +1717,10 @@ class _LibraryTaxonomyScreenState extends State<LibraryTaxonomyScreen> {
                       color: Colors.white,
                       size: 20,
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       title,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,

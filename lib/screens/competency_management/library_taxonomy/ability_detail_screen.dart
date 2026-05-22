@@ -4,7 +4,7 @@ import '../../../models/user_ability.dart';
 class AbilityDetailScreen extends StatelessWidget {
   final UserAbility ability;
 
-  const AbilityDetailScreen({Key? key, required this.ability}) : super(key: key);
+  const AbilityDetailScreen({super.key, required this.ability});
 
   @override
   Widget build(BuildContext context) {
@@ -12,35 +12,35 @@ class AbilityDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           ability.title ?? 'Ability Details',
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color(0xFF1F2A6D),
+        backgroundColor: const Color(0xFF1F2A6D),
         elevation: 0,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF1F2A6D).withOpacity(0.1), Color(0xFF2E3A8C).withOpacity(0.05)],
+            colors: [const Color(0xFF1F2A6D).withOpacity(0.1), const Color(0xFF2E3A8C).withOpacity(0.05)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildBasicInfo(),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               _buildAssessmentInfo(),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               _buildElementsInfo(),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               _buildImprovementInfo(),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
             ],
           ),
         ),
@@ -54,25 +54,25 @@ class AbilityDetailScreen extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [Colors.white, Color(0xFFF8F9FA)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(12),
         ),
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(Icons.accessibility, color: Color(0xFFFF6A00), size: 28),
-                SizedBox(width: 12),
+                const Icon(Icons.accessibility, color: Color(0xFFFF6A00), size: 28),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     ability.title ?? 'No Title',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF1F2A6D),
@@ -81,9 +81,9 @@ class AbilityDetailScreen extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             if (ability.description != null && ability.description!.isNotEmpty) ...[
-              Text(
+              const Text(
                 'Description',
                 style: TextStyle(
                   fontSize: 18,
@@ -91,7 +91,7 @@ class AbilityDetailScreen extends StatelessWidget {
                   color: Color(0xFF1F2A6D),
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 ability.description!,
                 style: TextStyle(
@@ -100,7 +100,7 @@ class AbilityDetailScreen extends StatelessWidget {
                   height: 1.5,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
             ],
             _buildInfoRow('Category', ability.category),
             _buildInfoRow('Sub-Category', ability.subCategory),
@@ -118,18 +118,18 @@ class AbilityDetailScreen extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [Colors.white, Color(0xFFF8F9FA)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(12),
         ),
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
                 Icon(Icons.assessment, color: Color(0xFFFF6A00), size: 28),
                 SizedBox(width: 12),
@@ -143,7 +143,7 @@ class AbilityDetailScreen extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildDetailSection('Assessment Method', ability.assessmentMethod),
             _buildDetailSection('Measurement Metrics', ability.measurementMetrics),
           ],
@@ -158,18 +158,18 @@ class AbilityDetailScreen extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [Colors.white, Color(0xFFF8F9FA)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(12),
         ),
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
                 Icon(Icons.psychology, color: Color(0xFFFF6A00), size: 28),
                 SizedBox(width: 12),
@@ -183,7 +183,7 @@ class AbilityDetailScreen extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildDetailSection('Cognitive Elements', ability.cognitiveElements),
             _buildDetailSection('Psychomotor Elements', ability.psychomotorElements),
           ],
@@ -198,18 +198,18 @@ class AbilityDetailScreen extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [Colors.white, Color(0xFFF8F9FA)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(12),
         ),
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
                 Icon(Icons.trending_up, color: Color(0xFFFF6A00), size: 28),
                 SizedBox(width: 12),
@@ -223,7 +223,7 @@ class AbilityDetailScreen extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildDetailSection('Common Challenges', ability.commonChallenges),
             _buildDetailSection('Improvement Tips', ability.improvementTips),
             _buildDetailSection('Business Link', ability.businessLink),
@@ -234,28 +234,28 @@ class AbilityDetailScreen extends StatelessWidget {
   }
 
   Widget _buildDetailSection(String title, String? content) {
-    if (content == null || content.isEmpty) return SizedBox.shrink();
+    if (content == null || content.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Color(0xFF1F2A6D),
           ),
         ),
-        SizedBox(height: 6),
+        const SizedBox(height: 6),
         Container(
           width: double.infinity,
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: Color(0xFFFF6A00).withOpacity(0.1),
+            color: const Color(0xFFFF6A00).withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Color(0xFFFF6A00).withOpacity(0.3)),
+            border: Border.all(color: const Color(0xFFFF6A00).withOpacity(0.3)),
           ),
           child: Text(
             content,
@@ -271,16 +271,16 @@ class AbilityDetailScreen extends StatelessWidget {
   }
 
   Widget _buildInfoRow(String label, String? value) {
-    if (value == null || value.isEmpty) return SizedBox.shrink();
+    if (value == null || value.isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '$label: ',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
               color: Color(0xFF1F2A6D),

@@ -26,6 +26,8 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -37,21 +39,21 @@ class MyApp extends StatelessWidget {
           navigatorKey: navigatorKey,
           theme: ThemeData(
             useMaterial3: true,
-            appBarTheme: AppBarTheme(
+            appBarTheme: const AppBarTheme(
               iconTheme: IconThemeData(color: Colors.white),
             ),
             colorScheme: ColorScheme(
-              primary: Color(0xFF1F2A6D), // Dark Blue
+              primary: const Color(0xFF1F2A6D), // Dark Blue
               onPrimary: Colors.white,
-              primaryContainer: Color(0xFF2E3A8C),
+              primaryContainer: const Color(0xFF2E3A8C),
               onPrimaryContainer: Colors.white,
-              secondary: Color(0xFFFF6A00), // Bright Orange
+              secondary: const Color(0xFFFF6A00), // Bright Orange
               onSecondary: Colors.white,
-              secondaryContainer: Color(0xFFFF7A1A),
+              secondaryContainer: const Color(0xFFFF7A1A),
               onSecondaryContainer: Colors.white,
               surface: Colors.white,
               onSurface: Colors.black,
-              surfaceVariant: Colors.grey[100]!,
+              surfaceContainerHighest: Colors.grey[100]!,
               onSurfaceVariant: Colors.grey[700]!,
               outline: Colors.grey[400]!,
               error: Colors.red,

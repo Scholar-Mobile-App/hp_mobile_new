@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 
 class GoalsScreen extends StatelessWidget {
+  const GoalsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Goals',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color(0xFF1F2A6D),
+        backgroundColor: const Color(0xFF1F2A6D),
         elevation: 0,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF1F2A6D).withOpacity(0.1), Color(0xFF2E3A8C).withOpacity(0.05)],
+            colors: [const Color(0xFF1F2A6D).withOpacity(0.1), const Color(0xFF2E3A8C).withOpacity(0.05)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -28,7 +30,7 @@ class GoalsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Your Development Goals',
                 style: TextStyle(
                   color: Color(0xFF1F2A6D),
@@ -36,7 +38,7 @@ class GoalsScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 'Set, track, and achieve your professional objectives',
                 style: TextStyle(
@@ -44,7 +46,7 @@ class GoalsScreen extends StatelessWidget {
                   fontSize: 16,
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               _buildGoalCard(
                 'Complete Leadership Training',
                 'Enhance your management skills through our comprehensive leadership program',
@@ -52,7 +54,7 @@ class GoalsScreen extends StatelessWidget {
                 '3/4 modules completed',
                 Icons.leaderboard,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               _buildGoalCard(
                 'Improve Project Management',
                 'Master agile methodologies and project planning techniques',
@@ -60,7 +62,7 @@ class GoalsScreen extends StatelessWidget {
                 '2/5 courses finished',
                 Icons.work,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               _buildGoalCard(
                 'Expand Technical Knowledge',
                 'Learn new technologies and stay current with industry trends',
@@ -68,7 +70,7 @@ class GoalsScreen extends StatelessWidget {
                 '6/10 certifications earned',
                 Icons.computer,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               _buildGoalCard(
                 'Build Team Collaboration',
                 'Develop stronger relationships and communication skills',
@@ -76,9 +78,9 @@ class GoalsScreen extends StatelessWidget {
                 '17/20 team projects completed',
                 Icons.group,
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -86,14 +88,14 @@ class GoalsScreen extends StatelessWidget {
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.2),
                       blurRadius: 8,
-                      offset: Offset(0, 4),
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Goal Setting Tips',
                       style: TextStyle(
                         color: Color(0xFF1F2A6D),
@@ -101,7 +103,7 @@ class GoalsScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     _buildTipItem('Set SMART goals: Specific, Measurable, Achievable, Relevant, Time-bound'),
                     _buildTipItem('Break large goals into smaller, manageable milestones'),
                     _buildTipItem('Regularly review and adjust your goals based on progress'),
@@ -110,11 +112,11 @@ class GoalsScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [Color(0xFFFF6A00), Color(0xFFFF7A1A)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -122,16 +124,16 @@ class GoalsScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Color(0xFFFF6A00).withOpacity(0.3),
+                      color: const Color(0xFFFF6A00).withOpacity(0.3),
                       blurRadius: 10,
-                      offset: Offset(0, 5),
+                      offset: const Offset(0, 5),
                     ),
                   ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Upcoming Goals',
                       style: TextStyle(
                         color: Colors.white,
@@ -139,7 +141,7 @@ class GoalsScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     _buildUpcomingGoal('Q4 2024: Complete Advanced Analytics Certification'),
                     _buildUpcomingGoal('Q1 2025: Lead Cross-functional Team Project'),
                     _buildUpcomingGoal('Q2 2025: Mentor Junior Team Members'),
@@ -155,7 +157,7 @@ class GoalsScreen extends StatelessWidget {
 
   Widget _buildGoalCard(String title, String description, double progress, String status, IconData icon) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -163,7 +165,7 @@ class GoalsScreen extends StatelessWidget {
           BoxShadow(
             color: Colors.grey.withOpacity(0.2),
             blurRadius: 8,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -174,14 +176,14 @@ class GoalsScreen extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                color: Color(0xFFFF6A00),
+                color: const Color(0xFFFF6A00),
                 size: 28,
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Color(0xFF1F2A6D),
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -190,7 +192,7 @@ class GoalsScreen extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             description,
             style: TextStyle(
@@ -199,7 +201,7 @@ class GoalsScreen extends StatelessWidget {
               height: 1.4,
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -212,7 +214,7 @@ class GoalsScreen extends StatelessWidget {
               ),
               Text(
                 '${(progress * 100).toInt()}%',
-                style: TextStyle(
+                style: const TextStyle(
                   color: Color(0xFF1F2A6D),
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -220,11 +222,11 @@ class GoalsScreen extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           LinearProgressIndicator(
             value: progress,
             backgroundColor: Colors.grey[300],
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF6A00)),
+            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFFF6A00)),
           ),
         ],
       ),
@@ -237,12 +239,12 @@ class GoalsScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
+          const Icon(
             Icons.check_circle,
             color: Color(0xFFFF6A00),
             size: 16,
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
               tip,
@@ -263,16 +265,16 @@ class GoalsScreen extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.radio_button_unchecked,
             color: Colors.white70,
             size: 16,
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               goal,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 14,
               ),

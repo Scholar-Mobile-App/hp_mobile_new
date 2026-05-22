@@ -6,6 +6,8 @@ import 'login_screen.dart';
 import 'profile_screen.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -37,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
     // Logo animations
     _logoController = AnimationController(
-      duration: Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
 
@@ -46,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _logoController,
-      curve: Interval(0.0, 0.6, curve: Curves.easeOut),
+      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
     ));
 
     _logoScaleAnimation = Tween<double>(
@@ -54,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _logoController,
-      curve: Interval(0.2, 1.0, curve: Curves.elasticOut),
+      curve: const Interval(0.2, 1.0, curve: Curves.elasticOut),
     ));
 
     _logoRotationAnimation = Tween<double>(
@@ -62,7 +64,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       end: 0.0,
     ).animate(CurvedAnimation(
       parent: _logoController,
-      curve: Interval(0.0, 0.6, curve: Curves.easeOutBack),
+      curve: const Interval(0.0, 0.6, curve: Curves.easeOutBack),
     ));
 
     _logoGlowAnimation = Tween<double>(
@@ -70,7 +72,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _logoController,
-      curve: Interval(0.5, 1.0, curve: Curves.easeOut),
+      curve: const Interval(0.5, 1.0, curve: Curves.easeOut),
     ));
 
     _logoFloatAnimation = Tween<double>(
@@ -78,18 +80,18 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       end: -10.0,
     ).animate(CurvedAnimation(
       parent: _logoController,
-      curve: Interval(0.6, 1.0, curve: Curves.easeInOutSine),
+      curve: const Interval(0.6, 1.0, curve: Curves.easeInOutSine),
     ));
 
     _continuousRotationController = AnimationController(
-      duration: Duration(seconds: 20),
+      duration: const Duration(seconds: 20),
       vsync: this,
     )..repeat();
 
     _continuousRotationAnimation = Tween<double>(begin: 0.0, end: 0.05).animate(_continuousRotationController);
 
     _glowPulseController = AnimationController(
-      duration: Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 2000),
       vsync: this,
     )..repeat(reverse: true);
 
@@ -97,12 +99,12 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
     // Text slide animation
     _textController = AnimationController(
-      duration: Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
 
     _textSlideAnimation = Tween<Offset>(
-      begin: Offset(0, 1),
+      begin: const Offset(0, 1),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _textController,
@@ -119,17 +121,17 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
     _titleAnimation = IntTween(begin: 0, end: 'Gaps To Growth'.length).animate(CurvedAnimation(
       parent: _textController,
-      curve: Interval(0.0, 0.8, curve: Curves.easeIn),
+      curve: const Interval(0.0, 0.8, curve: Curves.easeIn),
     ));
 
     _subtitleAnimation = IntTween(begin: 0, end: 'Your Journey to Excellence'.length).animate(CurvedAnimation(
       parent: _textController,
-      curve: Interval(0.2, 1.0, curve: Curves.easeIn),
+      curve: const Interval(0.2, 1.0, curve: Curves.easeIn),
     ));
 
     // Progress animation
     _progressController = AnimationController(
-      duration: Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
 
@@ -155,12 +157,12 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     _logoController.forward();
 
     // Start text animation after logo
-    Future.delayed(Duration(milliseconds: 800), () {
+    Future.delayed(const Duration(milliseconds: 800), () {
       _textController.forward();
     });
 
     // Start progress animation
-    Future.delayed(Duration(milliseconds: 1200), () {
+    Future.delayed(const Duration(milliseconds: 1200), () {
       _progressController.forward();
     });
   }
@@ -177,7 +179,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
   Future<void> _initializeApp() async {
     // Simulate some loading time for splash
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 3));
 
     // Check if widget is still mounted
     if (!mounted) return;
@@ -207,7 +209,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
               Color(0xFF1F2A6D),
@@ -246,7 +248,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                                   spreadRadius: 5,
                                 ),
                               BoxShadow(
-                                color: Color(0xFFFFE4B5).withOpacity(_logoGlowAnimation.value * _glowPulseAnimation.value * 0.6),
+                                color: const Color(0xFFFFE4B5).withOpacity(_logoGlowAnimation.value * _glowPulseAnimation.value * 0.6),
                                 blurRadius: 30,
                                 spreadRadius: _logoGlowAnimation.value * 10,
                               ),
@@ -258,14 +260,14 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                                 height: 120,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  gradient: LinearGradient(
+                                  gradient: const LinearGradient(
                                     colors: [Color(0xFFFFE4B5), Color(0xFFFFF0D6)],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Color(0xFFFFE4B5).withOpacity(0.5),
+                                      color: const Color(0xFFFFE4B5).withOpacity(0.5),
                                       blurRadius: 15,
                                       spreadRadius: 2,
                                     ),
@@ -288,7 +290,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                   );
                 },
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               // Animated Text
               AnimatedBuilder(
                 animation: _textController,
@@ -305,17 +307,17 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                           children: [
                             Text(
                               _displayedTitle,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                                 letterSpacing: 1.2,
                               ),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             Text(
                               _displayedSubtitle,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
                                 color: Colors.white70,
                                 letterSpacing: 0.5,
@@ -328,25 +330,25 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                   );
                 },
               ),
-              SizedBox(height: 60),
+              const SizedBox(height: 60),
               // Animated Progress Indicator
               AnimatedBuilder(
                 animation: _progressController,
                 builder: (context, child) {
                   return Column(
                     children: [
-                      Container(
+                      SizedBox(
                         width: 60,
                         height: 60,
                         child: CircularProgressIndicator(
                           value: _progressAnimation.value,
                           backgroundColor: Colors.white24,
-                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF6A00)),
+                          valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFFF6A00)),
                           strokeWidth: 6,
                         ),
                       ),
-                      SizedBox(height: 16),
-                      Text(
+                      const SizedBox(height: 16),
+                      const Text(
                         'Loading...',
                         style: TextStyle(
                           color: Colors.white70,

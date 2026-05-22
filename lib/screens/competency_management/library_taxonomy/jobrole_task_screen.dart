@@ -8,7 +8,7 @@ import '../../../services/api_service.dart';
 class JobRoleTaskScreen extends StatefulWidget {
   final String sector;
 
-  const JobRoleTaskScreen({Key? key, required this.sector}) : super(key: key);
+  const JobRoleTaskScreen({super.key, required this.sector});
 
   @override
   _JobRoleTaskScreenState createState() => _JobRoleTaskScreenState();
@@ -121,7 +121,7 @@ class _JobRoleTaskScreenState extends State<JobRoleTaskScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
@@ -140,12 +140,12 @@ class _JobRoleTaskScreenState extends State<JobRoleTaskScreen> {
                     .map((t) => t.criticalWorkFunction).toSet().toList()..sort();
 
             return Container(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               height: MediaQuery.of(context).size.height * 0.8,
               child: Column(
                 children: [
-                  Text('Filters', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1F2A6D))),
-                  SizedBox(height: 16),
+                  const Text('Filters', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1F2A6D))),
+                  const SizedBox(height: 16),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
@@ -175,9 +175,9 @@ class _JobRoleTaskScreenState extends State<JobRoleTaskScreen> {
                           setStateBottom(() {});
                           Navigator.pop(context);
                         },
-                        child: Text('Clear All', style: TextStyle(color: Colors.red)),
+                        child: const Text('Clear All', style: TextStyle(color: Colors.red)),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       ElevatedButton(
                         onPressed: () {
                           setState(() {
@@ -186,10 +186,10 @@ class _JobRoleTaskScreenState extends State<JobRoleTaskScreen> {
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFFFF6A00),
+                          backgroundColor: const Color(0xFFFF6A00),
                           foregroundColor: Colors.white,
                         ),
-                        child: Text('Apply'),
+                        child: const Text('Apply'),
                       ),
                     ],
                   ),
@@ -206,15 +206,15 @@ class _JobRoleTaskScreenState extends State<JobRoleTaskScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFF1F2A6D))),
-        SizedBox(height: 8),
+        Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFF1F2A6D))),
+        const SizedBox(height: 8),
         Wrap(
           spacing: 8,
           runSpacing: 8,
           children: options.map((option) {
             final isSelected = selected.contains(option);
             return FilterChip(
-              label: Text(option, style: TextStyle(color: isSelected ? Colors.white : Color(0xFF1F2A6D))),
+              label: Text(option, style: TextStyle(color: isSelected ? Colors.white : const Color(0xFF1F2A6D))),
               selected: isSelected,
               onSelected: (bool value) {
                 setStateBottom(() {
@@ -226,12 +226,12 @@ class _JobRoleTaskScreenState extends State<JobRoleTaskScreen> {
                 });
               },
               backgroundColor: Colors.grey[200],
-              selectedColor: Color(0xFFFF6A00),
+              selectedColor: const Color(0xFFFF6A00),
               checkmarkColor: Colors.white,
             );
           }).toList(),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
       ],
     );
   }
@@ -241,57 +241,57 @@ class _JobRoleTaskScreenState extends State<JobRoleTaskScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Job Role Tasks - ${widget.sector}'),
-        backgroundColor: Color(0xFF1F2A6D),
+        backgroundColor: const Color(0xFF1F2A6D),
         foregroundColor: Colors.white,
       ),
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Search tasks, job roles, or work functions',
-                prefixIcon: Icon(Icons.search, color: Color(0xFF1F2A6D)),
+                prefixIcon: const Icon(Icons.search, color: Color(0xFF1F2A6D)),
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.filter_list, color: Color(0xFF1F2A6D)),
+                  icon: const Icon(Icons.filter_list, color: Color(0xFF1F2A6D)),
                   onPressed: () => _showFilterDialog(context),
                 ),
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Color(0xFF1F2A6D), width: 1),
+                  borderSide: const BorderSide(color: Color(0xFF1F2A6D), width: 1),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Color(0xFF1F2A6D), width: 1),
+                  borderSide: const BorderSide(color: Color(0xFF1F2A6D), width: 1),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Color(0xFFFF6A00), width: 2),
+                  borderSide: const BorderSide(color: Color(0xFFFF6A00), width: 2),
                 ),
               ),
             ),
           ),
           Expanded(
             child: _isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : _error != null
                     ? Center(child: Text('Error: $_error'))
                     : filteredTasks.isEmpty
-                        ? Center(child: Text('No tasks found'))
+                        ? const Center(child: Text('No tasks found'))
                         : ListView.builder(
                             itemCount: filteredTasks.length,
                             itemBuilder: (context, index) {
                               final task = filteredTasks[index];
                               return Card(
-                                margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                 elevation: 4,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    gradient: LinearGradient(
+                                    gradient: const LinearGradient(
                                       colors: [Colors.white, Color(0xFFE8F4FD)],
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
@@ -299,7 +299,7 @@ class _JobRoleTaskScreenState extends State<JobRoleTaskScreen> {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Padding(
-                                    padding: EdgeInsets.all(16),
+                                    padding: const EdgeInsets.all(16),
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
@@ -308,7 +308,7 @@ class _JobRoleTaskScreenState extends State<JobRoleTaskScreen> {
                                             Expanded(
                                               child: Text(
                                                 task.jobrole,
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16,
                                                   color: Color(0xFF1F2A6D),
@@ -316,7 +316,7 @@ class _JobRoleTaskScreenState extends State<JobRoleTaskScreen> {
                                               ),
                                             ),
                                             Container(
-                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                               decoration: BoxDecoration(
                                                 color: task.taskType == 'High'
                                                     ? Colors.red.withOpacity(0.1)
@@ -340,7 +340,7 @@ class _JobRoleTaskScreenState extends State<JobRoleTaskScreen> {
                                             ),
                                           ],
                                         ),
-                                        SizedBox(height: 8),
+                                        const SizedBox(height: 8),
                                         Text(
                                           'Track: ${task.track}',
                                           style: TextStyle(
@@ -348,15 +348,15 @@ class _JobRoleTaskScreenState extends State<JobRoleTaskScreen> {
                                             color: Colors.grey[700],
                                           ),
                                         ),
-                                        SizedBox(height: 8),
-                                        Text(
+                                        const SizedBox(height: 8),
+                                        const Text(
                                           'Critical Work Function:',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: Color(0xFFFF6A00),
                                           ),
                                         ),
-                                        SizedBox(height: 4),
+                                        const SizedBox(height: 4),
                                         Text(
                                           task.criticalWorkFunction,
                                           style: TextStyle(
@@ -364,24 +364,24 @@ class _JobRoleTaskScreenState extends State<JobRoleTaskScreen> {
                                             color: Colors.grey[800],
                                           ),
                                         ),
-                                        SizedBox(height: 12),
-                                        Text(
+                                        const SizedBox(height: 12),
+                                        const Text(
                                           'Task:',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: Color(0xFF1F2A6D),
                                           ),
                                         ),
-                                        SizedBox(height: 4),
+                                        const SizedBox(height: 4),
                                         Text(
                                           task.task,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontSize: 14,
                                             height: 1.4,
                                           ),
                                         ),
                                         if (task.taskCategory != null && task.taskCategory!.isNotEmpty) ...[
-                                          SizedBox(height: 8),
+                                          const SizedBox(height: 8),
                                           Text(
                                             'Category: ${task.taskCategory}',
                                             style: TextStyle(

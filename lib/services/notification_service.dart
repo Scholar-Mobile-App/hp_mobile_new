@@ -220,7 +220,7 @@ class NotificationService {
     debugPrint('🔔 Navigating to Task Assignment screen for task notification');
     navigatorKey.currentState?.push(
       MaterialPageRoute(
-        builder: (context) => TaskAssignmentProgressScreen(),
+        builder: (context) => const TaskAssignmentProgressScreen(),
       ),
     );
   }
@@ -258,17 +258,12 @@ class NotificationService {
         orElse: () => null as Task,
       );
 
-      if (task != null) {
-        navigatorKey.currentState?.push(
-          MaterialPageRoute(
-            builder: (context) => TaskDetailsScreen(task: task),
-          ),
-        );
-      } else {
-        debugPrint('❌ Task not found, navigating to task list');
-        _navigateToTaskScreen();
-      }
-    } catch (e) {
+      navigatorKey.currentState?.push(
+        MaterialPageRoute(
+          builder: (context) => TaskDetailsScreen(task: task),
+        ),
+      );
+        } catch (e) {
       debugPrint('❌ Error fetching task details: $e');
       // Fallback to task list
       _navigateToTaskScreen();
@@ -335,7 +330,7 @@ void _handleMessageOpenedApp(RemoteMessage message) {
       // Fallback to task list screen
       navigatorKey.currentState?.push(
         MaterialPageRoute(
-          builder: (context) => TaskAssignmentProgressScreen(),
+          builder: (context) => const TaskAssignmentProgressScreen(),
         ),
       );
     }

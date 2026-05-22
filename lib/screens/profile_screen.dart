@@ -17,8 +17,12 @@ import 'competency_management/library_taxonomy/library_taxonomy_screen.dart';
 import 'competency_management/library_taxonomy/jobrole_screen.dart';
 import 'attendance/attendance_screen.dart';
 import 'organization_management/task_assignment_progress_screen.dart';
+import 'organization_management/organization_detail_screen.dart';
+import 'lms/courses_list_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
@@ -67,20 +71,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: level == 1
-                ? [Color(0xFFFF6A00), Color(0xFFFF7A1A)]
+                ? [const Color(0xFFFF6A00), const Color(0xFFFF7A1A)]
                 : level == 2
-                    ? [Color(0xFF1F2A6D), Color(0xFF2E3A8C)]
-                    : [Colors.white, Color(0xFFF8F9FA)],
+                    ? [const Color(0xFF1F2A6D), const Color(0xFF2E3A8C)]
+                    : [Colors.white, const Color(0xFFF8F9FA)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(16),
-          border: level == 3 ? Border.all(color: Color(0xFF1F2A6D).withOpacity(0.2), width: 1) : null,
+          border: level == 3 ? Border.all(color: const Color(0xFF1F2A6D).withOpacity(0.2), width: 1) : null,
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.2),
               blurRadius: 8,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -98,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Icon(
                   icon,
                   size: iconSize,
-                  color: level == 1 || level == 2 ? Colors.white : Color(0xFFFF6A00),
+                  color: level == 1 || level == 2 ? Colors.white : const Color(0xFFFF6A00),
                 ),
                 SizedBox(height: isCompactCard ? 6 : 12),
                 Flexible(
@@ -108,7 +112,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: TextStyle(
                       fontSize: titleFontSize,
                       fontWeight: FontWeight.bold,
-                      color: level == 1 || level == 2 ? Colors.white : Color(0xFF1F2A6D),
+                      color: level == 1 || level == 2 ? Colors.white : const Color(0xFF1F2A6D),
                       height: 1.15,
                     ),
                     textAlign: TextAlign.center,
@@ -149,14 +153,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 14,
               ),
             ),
             Text(
               value,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -164,11 +168,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
-        SizedBox(height: 6),
+        const SizedBox(height: 6),
         LinearProgressIndicator(
           value: progress,
           backgroundColor: Colors.white24,
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
         ),
       ],
     );
@@ -322,7 +326,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => JobRoleScreen(),
+          builder: (context) => const JobRoleScreen(),
         ),
       );
     } else if (menuItem.menuName == "My Attendance") {
@@ -336,7 +340,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => TaskAssignmentProgressScreen(),
+          builder: (context) => const TaskAssignmentProgressScreen(),
+        ),
+      );
+    } else if (menuItem.menuName == "Add Organization Detail") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const OrganizationDetailScreen(),
+        ),
+      );
+    } else if (menuItem.menuName.toLowerCase().contains('course') ||
+               menuItem.menuName.toLowerCase().contains('lms')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CoursesListScreen(menuItem: menuItem),
         ),
       );
     } else {
@@ -387,7 +406,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         childAspectRatio: childAspectRatio,
       ),
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       children: [
         _buildQuickActionCard(
           context,
@@ -462,11 +481,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         childAspectRatio: childAspectRatio,
       ),
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: mobileMenus.length,
       itemBuilder: (context, index) {
         final menuItem = mobileMenus[index];
-        debugPrint('Menu item ${index}: ${menuItem.menuName}, icon: ${menuItem.icon}');
+        debugPrint('Menu item $index: ${menuItem.menuName}, icon: ${menuItem.icon}');
         return _buildQuickActionCard(
           context,
           menuItem.menuName,
@@ -489,30 +508,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
     debugPrint('Dashboard user image: ${user?.image}');
 
     if (user == null) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(child: Text('No user logged in')),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Dashboard',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color(0xFF1F2A6D),
+        backgroundColor: const Color(0xFF1F2A6D),
         elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh, color: Colors.white),
+            icon: const Icon(Icons.refresh, color: Colors.white),
             onPressed: () async {
               debugPrint('Refresh button pressed');
               await context.read<AuthProvider>().fetchMenuRights();
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Menu updated')),
+                const SnackBar(content: Text('Menu updated')),
               );
             },
           ),
@@ -520,7 +539,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       drawer: Drawer(
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0xFF1F2A6D), Color(0xFF2E3A8C)],
               begin: Alignment.topCenter,
@@ -531,7 +550,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: EdgeInsets.zero,
             children: [
               DrawerHeader(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Color(0xFFFF6A00), Color(0xFFFF7A1A)],
                     begin: Alignment.topLeft,
@@ -545,28 +564,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       CircleAvatar(
                         radius: 35,
                         backgroundImage: user.image.isNotEmpty ? NetworkImage(
-                          user.image.startsWith('http') ? user.image : 'https://s3-triz.fra1.cdn.digitaloceanspaces.com/public/hp_user/' + user.image
+                          user.image.startsWith('http') ? user.image : 'https://s3-triz.fra1.cdn.digitaloceanspaces.com/public/hp_user/${user.image}'
                         ) : null,
                         backgroundColor: Colors.white,
-                        child: user.image.isEmpty ? Icon(
+                        child: user.image.isEmpty ? const Icon(
                           Icons.person,
                           size: 35,
                           color: Color(0xFF1F2A6D),
                         ) : null,
                       ),
-                      SizedBox(height: 12),
+                      const SizedBox(height: 12),
                       Text(
                         user.fullName,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         user.email,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white70,
                           fontSize: 14,
                         ),
@@ -578,8 +597,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                Container(
                  color: Colors.white.withOpacity(0.1),
                  child: ListTile(
-                   leading: Icon(Icons.logout, color: Colors.white),
-                   title: Text(
+                   leading: const Icon(Icons.logout, color: Colors.white),
+                   title: const Text(
                      'Logout',
                      style: TextStyle(color: Colors.white, fontSize: 16),
                    ),
@@ -605,7 +624,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFF1F2A6D).withOpacity(0.1), Color(0xFF2E3A8C).withOpacity(0.05)],
+              colors: [const Color(0xFF1F2A6D).withOpacity(0.1), const Color(0xFF2E3A8C).withOpacity(0.05)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -617,9 +636,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       colors: [Color(0xFFFF6A00), Color(0xFFFF7A1A)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -627,36 +646,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Color(0xFFFF6A00).withOpacity(0.3),
+                        color: const Color(0xFFFF6A00).withOpacity(0.3),
                         blurRadius: 10,
-                        offset: Offset(0, 5),
+                        offset: const Offset(0, 5),
                       ),
                     ],
                   ),
                   child: Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.waving_hand,
                         color: Colors.white,
                         size: 32,
                       ),
-                      SizedBox(width: 16),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               'Welcome, ${user.firstName}!',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Text(
                               'Logged in as ${user.userProfileName} at ${user.orgName}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white70,
                                 fontSize: 14,
                               ),
@@ -667,8 +686,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                 ),
-                SizedBox(height: 24),
-                Text(
+                const SizedBox(height: 24),
+                const Text(
                   'Dashboard',
                   style: TextStyle(
                     color: Color(0xFF1F2A6D),
@@ -676,7 +695,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 InkWell(
                   onTap: () {
                     Navigator.push(
@@ -685,7 +704,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     );
                   },
                   child: Container(
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
@@ -693,7 +712,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.2),
                           blurRadius: 8,
-                          offset: Offset(0, 4),
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
@@ -702,29 +721,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         CircleAvatar(
                           radius: 30,
                           backgroundImage: user.image.isNotEmpty ? NetworkImage(
-                            user.image.startsWith('http') ? user.image : 'https://s3-triz.fra1.cdn.digitaloceanspaces.com/public/hp_user/' + user.image
+                            user.image.startsWith('http') ? user.image : 'https://s3-triz.fra1.cdn.digitaloceanspaces.com/public/hp_user/${user.image}'
                           ) : null,
-                          backgroundColor: Color(0xFF1F2A6D),
-                          child: user.image.isEmpty ? Icon(
+                          backgroundColor: const Color(0xFF1F2A6D),
+                          child: user.image.isEmpty ? const Icon(
                             Icons.person,
                             size: 30,
                             color: Colors.white,
                           ) : null,
                         ),
-                        SizedBox(width: 16),
+                        const SizedBox(width: 16),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 user.fullName,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Color(0xFF1F2A6D),
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(height: 4),
+                              const SizedBox(height: 4),
                               Text(
                                 user.email,
                                 style: TextStyle(
@@ -732,8 +751,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   fontSize: 14,
                                 ),
                               ),
-                              SizedBox(height: 4),
-                              Text(
+                              const SizedBox(height: 4),
+                              const Text(
                                 'Tap to view full profile',
                                 style: TextStyle(
                                   color: Color(0xFFFF6A00),
@@ -744,7 +763,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ],
                           ),
                         ),
-                        Icon(
+                        const Icon(
                           Icons.arrow_forward_ios,
                           color: Color(0xFF1F2A6D),
                           size: 16,
@@ -753,8 +772,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: 24),
-                Text(
+                const SizedBox(height: 24),
+                const Text(
                   'Quick Actions',
                   style: TextStyle(
                     color: Color(0xFF1F2A6D),
@@ -762,12 +781,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 mobileMenus.isEmpty
                     ? _buildDefaultQuickActions(context)
                     : _buildDynamicQuickActions(context, mobileMenus),
-                SizedBox(height: 24),
-                Text(
+                const SizedBox(height: 24),
+                const Text(
                   'Recent Announcements',
                   style: TextStyle(
                     color: Color(0xFF1F2A6D),
@@ -775,9 +794,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Container(
-                  padding: EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
@@ -785,14 +804,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.2),
                         blurRadius: 8,
-                        offset: Offset(0, 4),
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      const Row(
                         children: [
                           Icon(Icons.campaign, color: Color(0xFFFF6A00), size: 24),
                           SizedBox(width: 12),
@@ -806,7 +825,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 12),
+                      const SizedBox(height: 12),
                       Text(
                         'Your journey to professional development starts here. Set goals, track progress, and achieve your career aspirations with our comprehensive tools.',
                         style: TextStyle(
@@ -815,8 +834,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           height: 1.5,
                         ),
                       ),
-                      SizedBox(height: 16),
-                      Text(
+                      const SizedBox(height: 16),
+                      const Text(
                         'Recent Update: New training modules available',
                         style: TextStyle(
                           color: Color(0xFFFF6A00),
@@ -827,8 +846,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                 ),
-                SizedBox(height: 24),
-                Text(
+                const SizedBox(height: 24),
+                const Text(
                   'Progress Overview',
                   style: TextStyle(
                     color: Color(0xFF1F2A6D),
@@ -836,11 +855,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Container(
-                  padding: EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       colors: [Color(0xFFFF6A00), Color(0xFFFF7A1A)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -848,16 +867,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Color(0xFFFF6A00).withOpacity(0.3),
+                        color: const Color(0xFFFF6A00).withOpacity(0.3),
                         blurRadius: 10,
-                        offset: Offset(0, 5),
+                        offset: const Offset(0, 5),
                       ),
                     ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Your Development Progress',
                         style: TextStyle(
                           color: Colors.white,
@@ -865,14 +884,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       _buildProgressItem('Goals Completed', '3/5', 0.6),
-                      SizedBox(height: 12),
+                      const SizedBox(height: 12),
                       _buildProgressItem('Courses Started', '2/8', 0.25),
-                      SizedBox(height: 12),
+                      const SizedBox(height: 12),
                       _buildProgressItem('Achievements Unlocked', '7/15', 0.47),
-                      SizedBox(height: 16),
-                      Text(
+                      const SizedBox(height: 16),
+                      const Text(
                         'Keep up the great work! You\'re making excellent progress.',
                         style: TextStyle(
                           color: Colors.white70,

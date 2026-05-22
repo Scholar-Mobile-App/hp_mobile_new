@@ -4,27 +4,27 @@ import '../../../models/user_attitude.dart';
 class AttitudeDetailScreen extends StatelessWidget {
   final UserAttitude attitude;
 
-  const AttitudeDetailScreen({Key? key, required this.attitude}) : super(key: key);
+  const AttitudeDetailScreen({super.key, required this.attitude});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(attitude.title ?? 'Attitude Details'),
-        backgroundColor: Color(0xFF1F2A6D),
+        backgroundColor: const Color(0xFF1F2A6D),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF1F2A6D).withOpacity(0.05), Color(0xFFE8F4FD).withOpacity(0.3)],
+            colors: [const Color(0xFF1F2A6D).withOpacity(0.05), const Color(0xFFE8F4FD).withOpacity(0.3)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -33,9 +33,9 @@ class AttitudeDetailScreen extends StatelessWidget {
                 elevation: 8,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 child: Container(
-                  padding: EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       colors: [Colors.white, Color(0xFFF8F9FA)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -47,12 +47,12 @@ class AttitudeDetailScreen extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.mood, color: Color(0xFFFF6A00), size: 32),
-                          SizedBox(width: 12),
+                          const Icon(Icons.mood, color: Color(0xFFFF6A00), size: 32),
+                          const SizedBox(width: 12),
                           Expanded(
                             child: Text(
                               attitude.title ?? 'No Title',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xFF1F2A6D),
@@ -61,7 +61,7 @@ class AttitudeDetailScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       _buildChip('Category: ${attitude.category ?? 'N/A'}'),
                       if (attitude.subCategory != null && attitude.subCategory!.isNotEmpty)
                         Padding(
@@ -72,7 +72,7 @@ class AttitudeDetailScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
 
               // Description Section
               if (attitude.description != null && attitude.description!.isNotEmpty)
@@ -80,7 +80,7 @@ class AttitudeDetailScreen extends StatelessWidget {
                   'Description',
                   attitude.description!,
                   Icons.description,
-                  Color(0xFF1F2A6D),
+                  const Color(0xFF1F2A6D),
                 ),
 
               // Business Link
@@ -89,7 +89,7 @@ class AttitudeDetailScreen extends StatelessWidget {
                   'Business Link',
                   attitude.businessLink!,
                   Icons.link,
-                  Color(0xFF2196F3),
+                  const Color(0xFF2196F3),
                 ),
 
               // Assessment Method
@@ -98,7 +98,7 @@ class AttitudeDetailScreen extends StatelessWidget {
                   'Assessment Method',
                   attitude.assessmentMethod!,
                   Icons.assessment,
-                  Color(0xFF4CAF50),
+                  const Color(0xFF4CAF50),
                 ),
 
               // Attitude Tags
@@ -107,7 +107,7 @@ class AttitudeDetailScreen extends StatelessWidget {
                   'Attitude Tags',
                   attitude.attitudeTags!,
                   Icons.tag,
-                  Color(0xFFFF6A00),
+                  const Color(0xFFFF6A00),
                 ),
 
               // Development Methods
@@ -116,7 +116,7 @@ class AttitudeDetailScreen extends StatelessWidget {
                   'Development Methods',
                   attitude.developmentMethods!,
                   Icons.school,
-                  Color(0xFF9C27B0),
+                  const Color(0xFF9C27B0),
                 ),
 
               // Negative Indicators
@@ -125,7 +125,7 @@ class AttitudeDetailScreen extends StatelessWidget {
                   'Negative Indicators',
                   attitude.negativeIndicators!,
                   Icons.warning,
-                  Color(0xFFF44336),
+                  const Color(0xFFF44336),
                 ),
 
               // Improvement Strategies
@@ -134,7 +134,7 @@ class AttitudeDetailScreen extends StatelessWidget {
                   'Improvement Strategies',
                   attitude.improvementStrategies!,
                   Icons.trending_up,
-                  Color(0xFF009688),
+                  const Color(0xFF009688),
                 ),
 
               // Cultural Alignment
@@ -143,10 +143,10 @@ class AttitudeDetailScreen extends StatelessWidget {
                   'Cultural Alignment',
                   attitude.culturalAlignment!,
                   Icons.public,
-                  Color(0xFF607D8B),
+                  const Color(0xFF607D8B),
                 ),
 
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
             ],
           ),
         ),
@@ -157,17 +157,17 @@ class AttitudeDetailScreen extends StatelessWidget {
   Widget _buildDetailCard(String title, String content, IconData icon, Color iconColor) {
     return Card(
       elevation: 4,
-      margin: EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(icon, color: iconColor, size: 24),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Text(
                   title,
                   style: TextStyle(
@@ -178,7 +178,7 @@ class AttitudeDetailScreen extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
               content,
               style: TextStyle(
@@ -195,15 +195,15 @@ class AttitudeDetailScreen extends StatelessWidget {
 
   Widget _buildChip(String label) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Color(0xFFFF6A00).withOpacity(0.1),
+        color: const Color(0xFFFF6A00).withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Color(0xFFFF6A00).withOpacity(0.3)),
+        border: Border.all(color: const Color(0xFFFF6A00).withOpacity(0.3)),
       ),
       child: Text(
         label,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 12,
           color: Color(0xFFFF6A00),
           fontWeight: FontWeight.w500,
