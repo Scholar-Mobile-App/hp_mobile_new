@@ -975,19 +975,59 @@ class _AssessmentPlayerScreenState extends State<AssessmentPlayerScreen> {
     );
   }
 
-  void _submitAssessment(List<Question> questions) {
+  void _submitAssessment(List<Question> questions) async {
     int correctCount = 0;
+    final Map<int, List<int>> selectedMap = {};
+    final Map<int, Map<int, int>> correctFlagMap = {};
+
     for (final q in questions) {
       final selected = _selectedAnswers[q.id] ?? <int>{};
+      selectedMap[q.id] = selected.toList();
+
+      final flagMap = <int, int>{};
+      for (final ans in q.answers) {
+        flagMap[ans.id] = ans.correctAnswer ?? 0;
+      }
+      correctFlagMap[q.id] = flagMap;
+
       final correctIds = q.answers.where((a) => a.correctAnswer == 1).map((a) => a.id).toSet();
       if (selected.length == correctIds.length && selected.containsAll(correctIds)) {
         correctCount++;
       }
     }
+
     final percent = questions.isNotEmpty ? (correctCount * 100 / questions.length).round() : 0;
+
     setState(() {
       _submitted = true;
       _score = percent;
     });
+
+    // Call real backend submit API
+    try {
+      final auth = Provider.of<AuthProvider>(context, listen: false);
+      final user = auth.currentUser;
+      final token = auth.originalToken ?? user?.token ?? '';
+
+      if (user != null) {
+        final api = ApiService();
+        await api.loadCookies();
+
+        final timeLimit = widget.assessment.timeAllowed ?? 60;
+
+        await api.submitOnlineExam(
+          questionpaperId: widget.assessment.id,
+          userId: user.id,
+          subInstituteId: user.subInstituteId ?? 3,
+          token: token,
+          questionpaperTime: timeLimit,
+          selectedAnswers: selectedMap,
+          answerCorrectMap: correctFlagMap,
+        );
+      }
+    } catch (e) {
+      debugPrint('Online exam submit API failed: $e');
+      // Local score is still shown even if API fails
+    }
   }
 }

@@ -16,6 +16,7 @@ import 'content_screen.dart';
 import 'competency_management/library_taxonomy/library_taxonomy_screen.dart';
 import 'competency_management/library_taxonomy/jobrole_screen.dart';
 import 'attendance/attendance_screen.dart';
+import 'attendance/attendance_report_screen.dart';
 import 'organization_management/task_assignment_progress_screen.dart';
 import 'organization_management/organization_detail_screen.dart';
 import 'lms/courses_list_screen.dart';
@@ -336,6 +337,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => AttendanceScreen(),
+        ),
+      );
+    } else if (menuItem.menuName.toLowerCase().contains('attendance') &&
+               menuItem.menuName.toLowerCase().contains('report')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const AttendanceReportScreen(),
         ),
       );
     } else if (menuItem.menuName == "Task Assignment & Progress") {

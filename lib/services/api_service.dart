@@ -845,6 +845,45 @@ class ApiService {
     }
   }
 
+  // Fetch Employee Attendance Monthly Report
+  Future<Map<String, dynamic>> fetchEmployeeAttendanceMonthlyReport({
+    required int userId,
+    required int subInstituteId,
+    required String token,
+    required String month,
+  }) async {
+    final uri = Uri.parse('https://hp.triz.co.in/api/employee-attendance-monthly-report').replace(
+      queryParameters: {
+        'sub_institute_id': subInstituteId.toString(),
+        'user_id': userId.toString(),
+        'month': month,
+        'type': 'API',
+        'token': token,
+      },
+    );
+
+    debugPrint('Fetching employee attendance monthly report from: $uri');
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(uri, headers: headers);
+
+    debugPrint('Monthly attendance report status: ${response.statusCode}');
+    debugPrint('Monthly attendance report body: ${response.body.substring(0, response.body.length > 500 ? 500 : response.body.length)}...');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      debugPrint('Employee attendance monthly report fetch successful');
+      return data;
+    } else {
+      debugPrint('Employee attendance monthly report failed: ${response.body}');
+      throw Exception('Failed to fetch attendance report: ${response.statusCode}');
+    }
+  }
+
   // Fetch user skills
   Future<List<Map<String, dynamic>>> fetchUserSkills(User user, String token) async {
     final url = 'https://hp.triz.co.in/api/user-skills/${user.id}?type=API&token=$token&sub_institute_id=${user.subInstituteId}';
@@ -1466,6 +1505,67 @@ class ApiService {
     } else {
       debugPrint('Fetch AI assessments failed: ${response.body}');
       throw Exception('Failed to fetch assessments: ${response.statusCode}');
+    }
+  }
+
+  // Submit Online Exam (LMS assessment)
+  Future<Map<String, dynamic>> submitOnlineExam({
+    required int questionpaperId,
+    required int userId,
+    required int subInstituteId,
+    required String token,
+    required int questionpaperTime,
+    required Map<int, List<int>> selectedAnswers, // questionId -> list of selected answerIds
+    required Map<int, Map<int, int>> answerCorrectMap, // questionId -> {answerId: correctAnswerFlag}
+    String? hidSessionQuiz,
+  }) async {
+    const url = 'https://hp.triz.co.in/lms/online_exam';
+
+    final sessionTime = hidSessionQuiz ?? DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+
+    final Map<String, String> body = {
+      'type': 'API',
+      'hid_session_quiz': sessionTime,
+      'questionpaper_time': questionpaperTime.toString(),
+      'questionpaper_id': questionpaperId.toString(),
+      'sub_institute_id': subInstituteId.toString(),
+      'user_id': userId.toString(),
+    };
+
+    // Build answer_single entries
+    selectedAnswers.forEach((qId, selectedIds) {
+      if (selectedIds.isNotEmpty) {
+        final firstAnswerId = selectedIds.first;
+        final correctFlag = answerCorrectMap[qId]?[firstAnswerId] ?? 0;
+        body['answer_single[$qId]'] = '$firstAnswerId##$correctFlag';
+      }
+    });
+
+    debugPrint('Submitting online exam to: $url');
+    debugPrint('Online exam payload: $body');
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.post(
+      Uri.parse(url),
+      headers: headers,
+      body: body,
+    );
+
+    debugPrint('Online exam submit response status: ${response.statusCode}');
+    debugPrint('Online exam submit response: ${response.body}');
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      try {
+        return json.decode(response.body) as Map<String, dynamic>;
+      } catch (_) {
+        return {'status': 'success', 'raw': response.body};
+      }
+    } else {
+      throw Exception('Failed to submit exam: ${response.statusCode}');
     }
   }
 }
