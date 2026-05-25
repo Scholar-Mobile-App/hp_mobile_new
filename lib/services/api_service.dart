@@ -13,6 +13,7 @@ import '../models/user_knowledge.dart';
 import '../models/user_ability.dart';
 import '../models/user_behaviour.dart';
 import '../models/task.dart';
+import '../models/lms/assessment_model.dart';
 import '../config/api_config.dart';
 
 class OrgSectionForSubmit {
@@ -880,6 +881,95 @@ class ApiService {
     }
   }
 
+  // Fetch Skill Development Progress (for My Learning Dashboard)
+  Future<Map<String, dynamic>> fetchSkillDevelopmentProgress(User user, String token) async {
+    final url = 'https://hp.triz.co.in/api/skill-development/progress?type=API&token=$token&sub_institute_id=${user.subInstituteId}&user_id=${user.id}';
+
+    debugPrint('Fetching skill development progress from: $url');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(Uri.parse(url), headers: headers);
+
+    debugPrint('Skill progress response status: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      debugPrint('Skill progress fetch successful');
+      return Map<String, dynamic>.from(data);
+    } else {
+      debugPrint('Skill progress fetch failed: ${response.body}');
+      throw Exception('Failed to fetch skill development progress: ${response.statusCode}');
+    }
+  }
+
+  // Fetch Skill Development Calendar (for My Learning Dashboard)
+  Future<Map<String, dynamic>> fetchSkillDevelopmentCalendar(User user, String token, {String? month, String? year}) async {
+    final now = DateTime.now();
+    final m = month ?? now.month.toString().padLeft(2, '0');
+    final y = year ?? now.year.toString();
+
+    final url = 'https://hp.triz.co.in/api/skill-development/calendar?type=API&token=$token&sub_institute_id=${user.subInstituteId}&user_id=${user.id}&month=$m&year=$y';
+
+    debugPrint('Fetching skill development calendar from: $url');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(Uri.parse(url), headers: headers);
+
+    debugPrint('Skill calendar response status: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      debugPrint('Skill calendar fetch successful');
+      return Map<String, dynamic>.from(data);
+    } else {
+      debugPrint('Skill calendar fetch failed: ${response.body}');
+      throw Exception('Failed to fetch skill development calendar: ${response.statusCode}');
+    }
+  }
+
+  // Fetch Enrolled Courses (dedicated endpoint for My Learning Dashboard)
+  Future<List<dynamic>> fetchEnrolledCourses(User user, String token) async {
+    final url = 'https://hp.triz.co.in/api/enrolled_courses?user_id=${user.id}&type=API&token=$token&sub_institute_id=${user.subInstituteId}';
+
+    debugPrint('Fetching enrolled courses from: $url');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(Uri.parse(url), headers: headers);
+
+    debugPrint('Enrolled courses response status: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      debugPrint('Enrolled courses fetch successful');
+
+      if (responseData['data'] is List) {
+        return List<dynamic>.from(responseData['data']);
+      } else if (responseData is List) {
+        return responseData;
+      } else {
+        return [];
+      }
+    } else {
+      debugPrint('Enrolled courses fetch failed: ${response.body}');
+      throw Exception('Failed to fetch enrolled courses: ${response.statusCode}');
+    }
+  }
+
   // Fetch supervisor
   Future<Map<String, dynamic>> fetchSupervisor(int userId, int subInstituteId) async {
     final url = 'https://hp.triz.co.in/getSupervisor?user_id=$userId&sub_institute_id=$subInstituteId';
@@ -1344,6 +1434,38 @@ class ApiService {
     } else {
       debugPrint('Fetch course chapters failed: ${response.body}');
       throw Exception('Failed to fetch course chapters: ${response.statusCode}');
+    }
+  }
+
+  // Fetch AI Generated Assessments
+  Future<List<Assessment>> fetchAiGeneratedAssessments(User user, String token) async {
+    final subInstituteId = user.subInstituteId ?? 3;
+    final url = 'https://hp.triz.co.in/api/ai-generated-assessment/assessment/index?sub_institute_id=$subInstituteId&type=API&token=$token';
+
+    debugPrint('Fetching AI assessments from: $url');
+
+    await loadCookies();
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(
+      Uri.parse(url),
+      headers: headers,
+    );
+
+    debugPrint('AI Assessments response status: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      final listResponse = AssessmentListResponse.fromJson(jsonData);
+      return listResponse.data;
+    } else {
+      debugPrint('Fetch AI assessments failed: ${response.body}');
+      throw Exception('Failed to fetch assessments: ${response.statusCode}');
     }
   }
 }

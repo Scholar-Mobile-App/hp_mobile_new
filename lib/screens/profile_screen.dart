@@ -19,6 +19,8 @@ import 'attendance/attendance_screen.dart';
 import 'organization_management/task_assignment_progress_screen.dart';
 import 'organization_management/organization_detail_screen.dart';
 import 'lms/courses_list_screen.dart';
+import 'lms/my_learning_dashboard_screen.dart';
+import 'lms/assessment_list_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -348,6 +350,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => const OrganizationDetailScreen(),
+        ),
+      );
+    } else if (menuItem.menuName == "My Learning Dashboard") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MyLearningDashboardScreen(menuItem: menuItem),
+        ),
+      );
+    } else if (menuItem.menuName == "Assessment List") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AssessmentListScreen(menuItem: menuItem),
         ),
       );
     } else if (menuItem.menuName.toLowerCase().contains('course') ||
