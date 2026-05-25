@@ -884,6 +884,160 @@ class ApiService {
     }
   }
 
+  // Fetch leave types for Apply Leave
+  Future<List<Map<String, dynamic>>> fetchLeaveTypes({
+    required int subInstituteId,
+    required String token,
+  }) async {
+    final url = 'https://hp.triz.co.in/leave-type?type=API&sub_institute_id=$subInstituteId&token=$token';
+
+    debugPrint('Fetching leave types from: $url');
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(Uri.parse(url), headers: headers);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      final list = data['LeaveTypeLists'] as List<dynamic>? ?? [];
+      debugPrint('Leave types fetch successful: ${list.length} types');
+      return list.map((e) => Map<String, dynamic>.from(e)).toList();
+    } else {
+      debugPrint('Leave types fetch failed: ${response.body}');
+      throw Exception('Failed to fetch leave types: ${response.statusCode}');
+    }
+  }
+
+  // Apply Leave - POST to leave-apply
+  Future<Map<String, dynamic>> applyLeave({
+    required int subInstituteId,
+    required String token,
+    required int userId,
+    required String leaveTypeId,       // numeric id from leave type list (e.g. "4")
+    required String dayType,           // "full" or "half"
+    required String fromDate,          // yyyy-MM-dd
+    required String toDate,            // yyyy-MM-dd
+    String? slot,                      // "first" or "second" (only for half day)
+    required String comment,
+  }) async {
+    const url = 'https://hp.triz.co.in/leave-apply';
+
+    final payload = {
+      'type': 'API',
+      'sub_institute_id': subInstituteId,
+      'token': token,
+      'user_id': userId,
+      'leave_type': leaveTypeId,
+      'leave_type_id': leaveTypeId,
+      'day_type': dayType,
+      'from_date': fromDate,
+      'to_date': toDate,
+      'comment': comment,
+    };
+
+    if (slot != null && slot.isNotEmpty) {
+      payload['slot'] = slot;
+    }
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    debugPrint('Applying leave to: $url');
+    debugPrint('Leave apply payload: $payload');
+
+    final response = await _httpClient.post(
+      Uri.parse(url),
+      headers: headers,
+      body: json.encode(payload),
+    );
+
+    debugPrint('Leave apply response status: ${response.statusCode}');
+    debugPrint('Leave apply response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['status'] == 1 || data['status'] == '1' || data['status'] == true) {
+        debugPrint('Leave application successful');
+        return data;
+      } else {
+        throw Exception(data['message'] ?? 'Failed to apply leave');
+      }
+    } else {
+      throw Exception('Failed to apply leave: ${response.statusCode}');
+    }
+  }
+
+  // Fetch leave data for My Leave screen (history + types + balances)
+  Future<Map<String, dynamic>> fetchLeaveApplyData({
+    required int subInstituteId,
+    required String token,
+    required int userId,
+    required String syear,
+  }) async {
+    final url = 'https://hp.triz.co.in/leave-apply?type=API&sub_institute_id=$subInstituteId&token=$token&user_id=$userId';
+
+    debugPrint('Fetching leave data from: $url');
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(Uri.parse(url), headers: headers);
+
+    debugPrint('Leave data response status: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      debugPrint('Leave data fetch successful: ${(data['leaveHistory'] as List?)?.length ?? 0} history items');
+      return data;
+    } else {
+      debugPrint('Leave data fetch failed: ${response.body}');
+      throw Exception('Failed to fetch leave data: ${response.statusCode}');
+    }
+  }
+
+  // Fetch my leaves - simple list from /get-leave
+  Future<List<Map<String, dynamic>>> fetchMyLeaves({
+    required int subInstituteId,
+    required String token,
+    required int userId,
+  }) async {
+    final url = 'https://hp.triz.co.in/get-leave?type=API&user_id=$userId&sub_institute_id=$subInstituteId';
+
+    debugPrint('Fetching my leaves from: $url');
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(Uri.parse(url), headers: headers);
+
+    debugPrint('My leaves response status: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data is List) {
+        debugPrint('My leaves fetch successful: ${data.length} items');
+        return data.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+      } else if (data is Map && data['data'] is List) {
+        final list = data['data'] as List;
+        return list.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+      }
+      return [];
+    } else {
+      debugPrint('My leaves fetch failed: ${response.body}');
+      throw Exception('Failed to fetch leaves: ${response.statusCode}');
+    }
+  }
+
   // Fetch user skills
   Future<List<Map<String, dynamic>>> fetchUserSkills(User user, String token) async {
     final url = 'https://hp.triz.co.in/api/user-skills/${user.id}?type=API&token=$token&sub_institute_id=${user.subInstituteId}';

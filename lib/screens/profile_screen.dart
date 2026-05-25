@@ -22,6 +22,8 @@ import 'organization_management/organization_detail_screen.dart';
 import 'lms/courses_list_screen.dart';
 import 'lms/my_learning_dashboard_screen.dart';
 import 'lms/assessment_list_screen.dart';
+import 'hrms/apply_leave_screen.dart';
+import 'hrms/my_leave_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -376,12 +378,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       );
     } else if (menuItem.menuName.toLowerCase().contains('course') ||
-               menuItem.menuName.toLowerCase().contains('lms')) {
+                menuItem.menuName.toLowerCase().contains('lms')) {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => CoursesListScreen(menuItem: menuItem),
         ),
+      );
+    } else if (menuItem.menuName.toLowerCase().contains('apply') &&
+               menuItem.menuName.toLowerCase().contains('leave')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ApplyLeaveScreen()),
+      );
+    } else if (menuItem.menuName.toLowerCase().contains('my') &&
+               menuItem.menuName.toLowerCase().contains('leave')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MyLeaveScreen()),
       );
     } else {
       Navigator.push(
