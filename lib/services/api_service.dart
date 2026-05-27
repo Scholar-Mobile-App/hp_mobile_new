@@ -13,6 +13,7 @@ import '../models/user_knowledge.dart';
 import '../models/user_ability.dart';
 import '../models/user_behaviour.dart';
 import '../models/task.dart';
+import '../models/lms/assessment_model.dart';
 import '../config/api_config.dart';
 
 class OrgSectionForSubmit {
@@ -844,6 +845,199 @@ class ApiService {
     }
   }
 
+  // Fetch Employee Attendance Monthly Report
+  Future<Map<String, dynamic>> fetchEmployeeAttendanceMonthlyReport({
+    required int userId,
+    required int subInstituteId,
+    required String token,
+    required String month,
+  }) async {
+    final uri = Uri.parse('https://hp.triz.co.in/api/employee-attendance-monthly-report').replace(
+      queryParameters: {
+        'sub_institute_id': subInstituteId.toString(),
+        'user_id': userId.toString(),
+        'month': month,
+        'type': 'API',
+        'token': token,
+      },
+    );
+
+    debugPrint('Fetching employee attendance monthly report from: $uri');
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(uri, headers: headers);
+
+    debugPrint('Monthly attendance report status: ${response.statusCode}');
+    debugPrint('Monthly attendance report body: ${response.body.substring(0, response.body.length > 500 ? 500 : response.body.length)}...');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      debugPrint('Employee attendance monthly report fetch successful');
+      return data;
+    } else {
+      debugPrint('Employee attendance monthly report failed: ${response.body}');
+      throw Exception('Failed to fetch attendance report: ${response.statusCode}');
+    }
+  }
+
+  // Fetch leave types for Apply Leave
+  Future<List<Map<String, dynamic>>> fetchLeaveTypes({
+    required int subInstituteId,
+    required String token,
+  }) async {
+    final url = 'https://hp.triz.co.in/leave-type?type=API&sub_institute_id=$subInstituteId&token=$token';
+
+    debugPrint('Fetching leave types from: $url');
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(Uri.parse(url), headers: headers);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      final list = data['LeaveTypeLists'] as List<dynamic>? ?? [];
+      debugPrint('Leave types fetch successful: ${list.length} types');
+      return list.map((e) => Map<String, dynamic>.from(e)).toList();
+    } else {
+      debugPrint('Leave types fetch failed: ${response.body}');
+      throw Exception('Failed to fetch leave types: ${response.statusCode}');
+    }
+  }
+
+  // Apply Leave - POST to leave-apply
+  Future<Map<String, dynamic>> applyLeave({
+    required int subInstituteId,
+    required String token,
+    required int userId,
+    required String leaveTypeId,       // numeric id from leave type list (e.g. "4")
+    required String dayType,           // "full" or "half"
+    required String fromDate,          // yyyy-MM-dd
+    required String toDate,            // yyyy-MM-dd
+    String? slot,                      // "first" or "second" (only for half day)
+    required String comment,
+  }) async {
+    const url = 'https://hp.triz.co.in/leave-apply';
+
+    final payload = {
+      'type': 'API',
+      'sub_institute_id': subInstituteId,
+      'token': token,
+      'user_id': userId,
+      'leave_type': leaveTypeId,
+      'leave_type_id': leaveTypeId,
+      'day_type': dayType,
+      'from_date': fromDate,
+      'to_date': toDate,
+      'comment': comment,
+    };
+
+    if (slot != null && slot.isNotEmpty) {
+      payload['slot'] = slot;
+    }
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    debugPrint('Applying leave to: $url');
+    debugPrint('Leave apply payload: $payload');
+
+    final response = await _httpClient.post(
+      Uri.parse(url),
+      headers: headers,
+      body: json.encode(payload),
+    );
+
+    debugPrint('Leave apply response status: ${response.statusCode}');
+    debugPrint('Leave apply response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['status'] == 1 || data['status'] == '1' || data['status'] == true) {
+        debugPrint('Leave application successful');
+        return data;
+      } else {
+        throw Exception(data['message'] ?? 'Failed to apply leave');
+      }
+    } else {
+      throw Exception('Failed to apply leave: ${response.statusCode}');
+    }
+  }
+
+  // Fetch leave data for My Leave screen (history + types + balances)
+  Future<Map<String, dynamic>> fetchLeaveApplyData({
+    required int subInstituteId,
+    required String token,
+    required int userId,
+    required String syear,
+  }) async {
+    final url = 'https://hp.triz.co.in/leave-apply?type=API&sub_institute_id=$subInstituteId&token=$token&user_id=$userId';
+
+    debugPrint('Fetching leave data from: $url');
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(Uri.parse(url), headers: headers);
+
+    debugPrint('Leave data response status: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      debugPrint('Leave data fetch successful: ${(data['leaveHistory'] as List?)?.length ?? 0} history items');
+      return data;
+    } else {
+      debugPrint('Leave data fetch failed: ${response.body}');
+      throw Exception('Failed to fetch leave data: ${response.statusCode}');
+    }
+  }
+
+  // Fetch my leaves - simple list from /get-leave
+  Future<List<Map<String, dynamic>>> fetchMyLeaves({
+    required int subInstituteId,
+    required String token,
+    required int userId,
+  }) async {
+    final url = 'https://hp.triz.co.in/get-leave?type=API&user_id=$userId&sub_institute_id=$subInstituteId';
+
+    debugPrint('Fetching my leaves from: $url');
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(Uri.parse(url), headers: headers);
+
+    debugPrint('My leaves response status: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data is List) {
+        debugPrint('My leaves fetch successful: ${data.length} items');
+        return data.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+      } else if (data is Map && data['data'] is List) {
+        final list = data['data'] as List;
+        return list.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+      }
+      return [];
+    } else {
+      debugPrint('My leaves fetch failed: ${response.body}');
+      throw Exception('Failed to fetch leaves: ${response.statusCode}');
+    }
+  }
+
   // Fetch user skills
   Future<List<Map<String, dynamic>>> fetchUserSkills(User user, String token) async {
     final url = 'https://hp.triz.co.in/api/user-skills/${user.id}?type=API&token=$token&sub_institute_id=${user.subInstituteId}';
@@ -877,6 +1071,95 @@ class ApiService {
     } else {
       debugPrint('User skills fetch failed for ID $userId: ${response.body}');
       throw Exception('Failed to fetch user skills: ${response.statusCode}');
+    }
+  }
+
+  // Fetch Skill Development Progress (for My Learning Dashboard)
+  Future<Map<String, dynamic>> fetchSkillDevelopmentProgress(User user, String token) async {
+    final url = 'https://hp.triz.co.in/api/skill-development/progress?type=API&token=$token&sub_institute_id=${user.subInstituteId}&user_id=${user.id}';
+
+    debugPrint('Fetching skill development progress from: $url');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(Uri.parse(url), headers: headers);
+
+    debugPrint('Skill progress response status: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      debugPrint('Skill progress fetch successful');
+      return Map<String, dynamic>.from(data);
+    } else {
+      debugPrint('Skill progress fetch failed: ${response.body}');
+      throw Exception('Failed to fetch skill development progress: ${response.statusCode}');
+    }
+  }
+
+  // Fetch Skill Development Calendar (for My Learning Dashboard)
+  Future<Map<String, dynamic>> fetchSkillDevelopmentCalendar(User user, String token, {String? month, String? year}) async {
+    final now = DateTime.now();
+    final m = month ?? now.month.toString().padLeft(2, '0');
+    final y = year ?? now.year.toString();
+
+    final url = 'https://hp.triz.co.in/api/skill-development/calendar?type=API&token=$token&sub_institute_id=${user.subInstituteId}&user_id=${user.id}&month=$m&year=$y';
+
+    debugPrint('Fetching skill development calendar from: $url');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(Uri.parse(url), headers: headers);
+
+    debugPrint('Skill calendar response status: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      debugPrint('Skill calendar fetch successful');
+      return Map<String, dynamic>.from(data);
+    } else {
+      debugPrint('Skill calendar fetch failed: ${response.body}');
+      throw Exception('Failed to fetch skill development calendar: ${response.statusCode}');
+    }
+  }
+
+  // Fetch Enrolled Courses (dedicated endpoint for My Learning Dashboard)
+  Future<List<dynamic>> fetchEnrolledCourses(User user, String token) async {
+    final url = 'https://hp.triz.co.in/api/enrolled_courses?user_id=${user.id}&type=API&token=$token&sub_institute_id=${user.subInstituteId}';
+
+    debugPrint('Fetching enrolled courses from: $url');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(Uri.parse(url), headers: headers);
+
+    debugPrint('Enrolled courses response status: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      debugPrint('Enrolled courses fetch successful');
+
+      if (responseData['data'] is List) {
+        return List<dynamic>.from(responseData['data']);
+      } else if (responseData is List) {
+        return responseData;
+      } else {
+        return [];
+      }
+    } else {
+      debugPrint('Enrolled courses fetch failed: ${response.body}');
+      throw Exception('Failed to fetch enrolled courses: ${response.statusCode}');
     }
   }
 
@@ -1344,6 +1627,99 @@ class ApiService {
     } else {
       debugPrint('Fetch course chapters failed: ${response.body}');
       throw Exception('Failed to fetch course chapters: ${response.statusCode}');
+    }
+  }
+
+  // Fetch AI Generated Assessments
+  Future<List<Assessment>> fetchAiGeneratedAssessments(User user, String token) async {
+    final subInstituteId = user.subInstituteId ?? 3;
+    final url = 'https://hp.triz.co.in/api/ai-generated-assessment/assessment/index?sub_institute_id=$subInstituteId&type=API&token=$token';
+
+    debugPrint('Fetching AI assessments from: $url');
+
+    await loadCookies();
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(
+      Uri.parse(url),
+      headers: headers,
+    );
+
+    debugPrint('AI Assessments response status: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      final listResponse = AssessmentListResponse.fromJson(jsonData);
+      return listResponse.data;
+    } else {
+      debugPrint('Fetch AI assessments failed: ${response.body}');
+      throw Exception('Failed to fetch assessments: ${response.statusCode}');
+    }
+  }
+
+  // Submit Online Exam (LMS assessment)
+  Future<Map<String, dynamic>> submitOnlineExam({
+    required int questionpaperId,
+    required int userId,
+    required int subInstituteId,
+    required String token,
+    required int questionpaperTime,
+    required Map<int, List<int>> selectedAnswers, // questionId -> list of selected answerIds
+    required Map<int, Map<int, int>> answerCorrectMap, // questionId -> {answerId: correctAnswerFlag}
+    String? hidSessionQuiz,
+  }) async {
+    const url = 'https://hp.triz.co.in/lms/online_exam';
+
+    final sessionTime = hidSessionQuiz ?? DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+
+    final Map<String, String> body = {
+      'type': 'API',
+      'hid_session_quiz': sessionTime,
+      'questionpaper_time': questionpaperTime.toString(),
+      'questionpaper_id': questionpaperId.toString(),
+      'sub_institute_id': subInstituteId.toString(),
+      'user_id': userId.toString(),
+    };
+
+    // Build answer_single entries
+    selectedAnswers.forEach((qId, selectedIds) {
+      if (selectedIds.isNotEmpty) {
+        final firstAnswerId = selectedIds.first;
+        final correctFlag = answerCorrectMap[qId]?[firstAnswerId] ?? 0;
+        body['answer_single[$qId]'] = '$firstAnswerId##$correctFlag';
+      }
+    });
+
+    debugPrint('Submitting online exam to: $url');
+    debugPrint('Online exam payload: $body');
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.post(
+      Uri.parse(url),
+      headers: headers,
+      body: body,
+    );
+
+    debugPrint('Online exam submit response status: ${response.statusCode}');
+    debugPrint('Online exam submit response: ${response.body}');
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      try {
+        return json.decode(response.body) as Map<String, dynamic>;
+      } catch (_) {
+        return {'status': 'success', 'raw': response.body};
+      }
+    } else {
+      throw Exception('Failed to submit exam: ${response.statusCode}');
     }
   }
 }

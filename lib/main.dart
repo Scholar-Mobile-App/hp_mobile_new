@@ -43,19 +43,22 @@ class MyApp extends StatelessWidget {
               iconTheme: IconThemeData(color: Colors.white),
             ),
             colorScheme: ColorScheme(
-              primary: const Color(0xFF1F2A6D), // Dark Blue
+              primary: const Color(0xFFFF6A00), // Logo Orange
               onPrimary: Colors.white,
-              primaryContainer: const Color(0xFF2E3A8C),
-              onPrimaryContainer: Colors.white,
-              secondary: const Color(0xFFFF6A00), // Bright Orange
+              primaryContainer: const Color(0xFFFFEDE0),
+              onPrimaryContainer: const Color(0xFF5C2E00),
+              secondary: const Color(0xFF2F80FF), // Complementary Blue
               onSecondary: Colors.white,
-              secondaryContainer: const Color(0xFFFF7A1A),
-              onSecondaryContainer: Colors.white,
+              secondaryContainer: const Color(0xFFE0F0FF),
+              onSecondaryContainer: const Color(0xFF0D3B66),
               surface: Colors.white,
-              onSurface: Colors.black,
-              surfaceContainerHighest: Colors.grey[100]!,
-              onSurfaceVariant: Colors.grey[700]!,
-              outline: Colors.grey[400]!,
+              onSurface: const Color(0xFF1A1A1A),
+              surfaceContainerLowest: const Color(0xFFF7F8FC),
+              surfaceContainerLow: const Color(0xFFF8FAFC),
+              surfaceContainerHighest: const Color(0xFFF1F5F9),
+              onSurfaceVariant: const Color(0xFF475569),
+              outline: const Color(0xFFE2E8F0),
+              outlineVariant: const Color(0xFFE2E8F0),
               error: Colors.red,
               onError: Colors.white,
               brightness: Brightness.light,

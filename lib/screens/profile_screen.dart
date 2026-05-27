@@ -16,9 +16,14 @@ import 'content_screen.dart';
 import 'competency_management/library_taxonomy/library_taxonomy_screen.dart';
 import 'competency_management/library_taxonomy/jobrole_screen.dart';
 import 'attendance/attendance_screen.dart';
+import 'attendance/attendance_report_screen.dart';
 import 'organization_management/task_assignment_progress_screen.dart';
 import 'organization_management/organization_detail_screen.dart';
 import 'lms/courses_list_screen.dart';
+import 'lms/my_learning_dashboard_screen.dart';
+import 'lms/assessment_list_screen.dart';
+import 'hrms/apply_leave_screen.dart';
+import 'hrms/my_leave_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -336,6 +341,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           builder: (context) => AttendanceScreen(),
         ),
       );
+    } else if (menuItem.menuName.toLowerCase().contains('attendance') &&
+               menuItem.menuName.toLowerCase().contains('report')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const AttendanceReportScreen(),
+        ),
+      );
     } else if (menuItem.menuName == "Task Assignment & Progress") {
       Navigator.push(
         context,
@@ -350,13 +363,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
           builder: (context) => const OrganizationDetailScreen(),
         ),
       );
+    } else if (menuItem.menuName == "My Learning Dashboard") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MyLearningDashboardScreen(menuItem: menuItem),
+        ),
+      );
+    } else if (menuItem.menuName == "Assessment List") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AssessmentListScreen(menuItem: menuItem),
+        ),
+      );
     } else if (menuItem.menuName.toLowerCase().contains('course') ||
-               menuItem.menuName.toLowerCase().contains('lms')) {
+                menuItem.menuName.toLowerCase().contains('lms')) {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => CoursesListScreen(menuItem: menuItem),
         ),
+      );
+    } else if (menuItem.menuName.toLowerCase().contains('apply') &&
+               menuItem.menuName.toLowerCase().contains('leave')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ApplyLeaveScreen()),
+      );
+    } else if (menuItem.menuName.toLowerCase().contains('my') &&
+               menuItem.menuName.toLowerCase().contains('leave')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MyLeaveScreen()),
       );
     } else {
       Navigator.push(

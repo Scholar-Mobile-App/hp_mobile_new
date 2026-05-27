@@ -45,25 +45,26 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FC),
+      backgroundColor: colorScheme.surfaceContainerLowest,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Organization Management',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-          ),
+          style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w600) ??
+              const TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: colorScheme.surface,
         elevation: 0,
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
-        foregroundColor: const Color(0xFF1A1A1A),
+        foregroundColor: colorScheme.onSurface,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back,
-            color: Color(0xFF1A1A1A),
+            color: colorScheme.onSurface,
             size: 24,
           ),
           onPressed: () => Navigator.of(context).pop(),
@@ -170,14 +171,15 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen>
                                       0.0,
                                       1.0,
                                     );
+                            final colorScheme = Theme.of(context).colorScheme;
                             final iconColor = Color.lerp(
                               const Color(0xFF5B6476),
-                              const Color(0xFF2F80FF),
+                              colorScheme.primary,
                               selectionStrength,
                             )!;
                             final labelColor = Color.lerp(
                               const Color(0xFF6B7280),
-                              const Color(0xFF2F80FF),
+                              colorScheme.primary,
                               selectionStrength,
                             )!;
                             final scale =
@@ -304,6 +306,7 @@ class _SelectedTabBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -311,7 +314,7 @@ class _SelectedTabBackground extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             Colors.white.withOpacity(0.72),
-            const Color(0xFFE8F1FF).withOpacity(0.60),
+            colorScheme.primaryContainer.withOpacity(0.55),
           ],
         ),
         borderRadius: BorderRadius.circular(28),
@@ -322,7 +325,7 @@ class _SelectedTabBackground extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2F80FF).withOpacity(
+            color: colorScheme.primary.withOpacity(
               lerpDouble(0.06, 0.16, highlightStrength)!,
             ),
             blurRadius: lerpDouble(16, 26, highlightStrength)!,
@@ -413,11 +416,12 @@ class _SelectedTabIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       height: 4,
-      decoration: const BoxDecoration(
-        color: Color(0xFF2F80FF),
-        borderRadius: BorderRadius.vertical(
+      decoration: BoxDecoration(
+        color: colorScheme.primary,
+        borderRadius: const BorderRadius.vertical(
           bottom: Radius.circular(4),
         ),
       ),
@@ -567,6 +571,9 @@ class _OrganizationInfoTabState extends State<_OrganizationInfoTab> {
       return const Center(child: CircularProgressIndicator());
     }
 
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -575,9 +582,9 @@ class _OrganizationInfoTabState extends State<_OrganizationInfoTab> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Organization Information', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+              Text('Organization Information', style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
               IconButton(
-                icon: const Icon(Icons.add_circle, color: Color(0xFF2F80FF), size: 32),
+                icon: Icon(Icons.add_circle, color: colorScheme.primary, size: 32),
                 onPressed: _addNewSection,
               ),
             ],
@@ -596,10 +603,10 @@ class _OrganizationInfoTabState extends State<_OrganizationInfoTab> {
             child: ElevatedButton(
               onPressed: _saveAll,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2F80FF),
+                backgroundColor: colorScheme.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('Submit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+              child: Text('Submit', style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600, color: colorScheme.onPrimary)),
             ),
           ),
         ],
@@ -608,13 +615,16 @@ class _OrganizationInfoTabState extends State<_OrganizationInfoTab> {
   }
 
   Widget _buildOrgSectionCard(int index, _OrgSection section) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))],
+        boxShadow: [BoxShadow(color: colorScheme.shadow.withOpacity(0.06), blurRadius: 10, offset: const Offset(0, 4))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -624,7 +634,7 @@ class _OrganizationInfoTabState extends State<_OrganizationInfoTab> {
             children: [
               Text(
                 section.isSister ? 'Sister Company' : 'Organization ${index + 1}',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
               ),
               if (section.isSister)
                 IconButton(
@@ -663,6 +673,7 @@ class _OrganizationInfoTabState extends State<_OrganizationInfoTab> {
   }
 
   Widget _buildLogoPicker(_OrgSection section) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Center(
       child: GestureDetector(
         onTap: () => _pickLogo(section),
@@ -670,9 +681,9 @@ class _OrganizationInfoTabState extends State<_OrganizationInfoTab> {
           width: 120,
           height: 120,
           decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
+            color: colorScheme.surfaceContainerLowest,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+            border: Border.all(color: colorScheme.outlineVariant),
           ),
               child: section.logoPath != null
               ? ClipRRect(
@@ -681,13 +692,13 @@ class _OrganizationInfoTabState extends State<_OrganizationInfoTab> {
                       ? Image.network(section.logoPath!, fit: BoxFit.cover)
                       : Image.file(File(section.logoPath!), fit: BoxFit.cover),
                 )
-              : const Column(
+              : Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.cloud_upload_outlined, size: 32, color: Color(0xFF64748B)),
-                    SizedBox(height: 4),
-                    Text('Upload Logo', style: TextStyle(fontSize: 12, color: Color(0xFF64748B))),
-                    Text('PNG, JPG up to 2MB', style: TextStyle(fontSize: 10, color: Color(0xFF94A3B8))),
+                    Icon(Icons.cloud_upload_outlined, size: 32, color: colorScheme.onSurfaceVariant),
+                    const SizedBox(height: 4),
+                    Text('Upload Logo', style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant)),
+                    Text('PNG, JPG up to 2MB', style: TextStyle(fontSize: 10, color: colorScheme.onSurfaceVariant.withOpacity(0.7))),
                   ],
                 ),
         ),
@@ -697,10 +708,11 @@ class _OrganizationInfoTabState extends State<_OrganizationInfoTab> {
 
   Widget _buildField(String label, TextEditingController controller, IconData icon,
       {int maxLines = 1, TextInputType? keyboardType, String? hint}) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF475569))),
+        Text(label, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant)),
         const SizedBox(height: 5),
         TextFormField(
           controller: controller,
@@ -708,11 +720,11 @@ class _OrganizationInfoTabState extends State<_OrganizationInfoTab> {
           keyboardType: keyboardType,
           decoration: InputDecoration(
             hintText: hint,
-            prefixIcon: Icon(icon, size: 20, color: const Color(0xFF64748B)),
+            prefixIcon: Icon(icon, size: 20, color: colorScheme.onSurfaceVariant),
             filled: true,
-            fillColor: const Color(0xFFF8FAFC),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
+            fillColor: colorScheme.surfaceContainerLowest,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colorScheme.outlineVariant)),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colorScheme.outlineVariant)),
           ),
         ),
       ],
@@ -720,10 +732,11 @@ class _OrganizationInfoTabState extends State<_OrganizationInfoTab> {
   }
 
   Widget _buildDropdown(String label, String? value, List<String> items, ValueChanged<String?> onChanged) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF475569))),
+        Text(label, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant)),
         const SizedBox(height: 5),
         DropdownButtonFormField<String>(
           initialValue: value,
@@ -731,8 +744,8 @@ class _OrganizationInfoTabState extends State<_OrganizationInfoTab> {
           onChanged: onChanged,
           decoration: InputDecoration(
             filled: true,
-            fillColor: const Color(0xFFF8FAFC),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
+            fillColor: colorScheme.surfaceContainerLowest,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colorScheme.outlineVariant)),
           ),
         ),
       ],
@@ -740,10 +753,11 @@ class _OrganizationInfoTabState extends State<_OrganizationInfoTab> {
   }
 
   Widget _buildMobileField(_OrgSection section) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Mobile Number', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF475569))),
+        Text('Mobile Number', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant)),
         const SizedBox(height: 5),
         Row(
           children: [
@@ -751,9 +765,9 @@ class _OrganizationInfoTabState extends State<_OrganizationInfoTab> {
               width: 90,
               padding: const EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(
-                color: const Color(0xFFF8FAFC),
+                color: colorScheme.surfaceContainerLowest,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xFFE2E8F0)),
+                border: Border.all(color: colorScheme.outlineVariant),
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
@@ -771,8 +785,8 @@ class _OrganizationInfoTabState extends State<_OrganizationInfoTab> {
                 decoration: InputDecoration(
                   hintText: '9876543210',
                   filled: true,
-                  fillColor: const Color(0xFFF8FAFC),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
+                  fillColor: colorScheme.surfaceContainerLowest,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colorScheme.outlineVariant)),
                 ),
               ),
             ),
@@ -1015,6 +1029,9 @@ class _DepartmentManagementTabState extends State<_DepartmentManagementTab> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -1023,15 +1040,15 @@ class _DepartmentManagementTabState extends State<_DepartmentManagementTab> {
       children: [
         Row(
           children: [
-            const Expanded(child: Text('Department Structure', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, letterSpacing: -0.3))),
+            Expanded(child: Text('Department Structure', style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700, letterSpacing: -0.3))),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              decoration: BoxDecoration(gradient: const LinearGradient(colors: [Color(0xFF2F80FF), Color(0xFF1E5FCC)]), borderRadius: BorderRadius.circular(20)),
-              child: Text('${_mainDepartments.length} Departments', style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w600)),
+              decoration: BoxDecoration(color: colorScheme.primary, borderRadius: BorderRadius.circular(20)),
+              child: Text('${_mainDepartments.length} Departments', style: TextStyle(fontSize: 12, color: colorScheme.onPrimary, fontWeight: FontWeight.w600)),
             ),
             const SizedBox(width: 8),
             IconButton(
-              icon: const Icon(Icons.add_circle_rounded, color: Color(0xFF2F80FF), size: 28),
+              icon: Icon(Icons.add_circle_rounded, color: colorScheme.primary, size: 28),
               onPressed: () => setState(() => _showAddForm = !_showAddForm),
             ),
           ],
@@ -1041,23 +1058,23 @@ class _DepartmentManagementTabState extends State<_DepartmentManagementTab> {
             margin: const EdgeInsets.only(bottom: 20),
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(20),
-              boxShadow: [BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.06), blurRadius: 24, offset: const Offset(0, 8))],
+              boxShadow: [BoxShadow(color: colorScheme.shadow.withOpacity(0.06), blurRadius: 24, offset: const Offset(0, 8))],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Add New Department', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                Text('Add New Department', style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
                 const SizedBox(height: 14),
                 TextField(
                   controller: _newDeptController,
                   decoration: InputDecoration(
                     hintText: 'Enter department name',
                     filled: true,
-                    fillColor: const Color(0xFFF8FAFC),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
-                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
+                    fillColor: colorScheme.surfaceContainerLowest,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide(color: colorScheme.outlineVariant)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide(color: colorScheme.outlineVariant)),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -1088,8 +1105,8 @@ class _DepartmentManagementTabState extends State<_DepartmentManagementTab> {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
                       }
                     },
-                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2F80FF), padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
-                    child: const Text('Add Department', style: TextStyle(fontWeight: FontWeight.w600)),
+                    style: ElevatedButton.styleFrom(backgroundColor: colorScheme.primary, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+                    child: Text('Add Department', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onPrimary)),
                   ),
                 ),
               ],
@@ -1104,62 +1121,62 @@ class _DepartmentManagementTabState extends State<_DepartmentManagementTab> {
           return Container(
             margin: const EdgeInsets.only(bottom: 18),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(20),
-              boxShadow: [BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.06), blurRadius: 24, offset: const Offset(0, 8))],
+              boxShadow: [BoxShadow(color: colorScheme.shadow.withOpacity(0.06), blurRadius: 24, offset: const Offset(0, 8))],
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Theme(
                 data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                 child: ExpansionTile(
-                  backgroundColor: Colors.white,
-                  collapsedBackgroundColor: Colors.white,
+                  backgroundColor: colorScheme.surface,
+                  collapsedBackgroundColor: colorScheme.surface,
                   tilePadding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
                   childrenPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                   leading: Container(
                     width: 46, height: 46,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(colors: [Color(0xFFE0EDFF), Color(0xFFC8DFFF)]),
+                      color: colorScheme.primaryContainer.withOpacity(0.35),
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: const Icon(Icons.apartment_rounded, color: Color(0xFF2F80FF), size: 24),
+                    child: Icon(Icons.apartment_rounded, color: colorScheme.primary, size: 24),
                   ),
-                  title: Text(dept['department'] ?? '', style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700, height: 1.1)),
+                  title: Text(dept['department'] ?? '', style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700, height: 1.1)),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
-                        decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(999)),
-                        child: Text('${subs.length}', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF475569))),
+                        decoration: BoxDecoration(color: colorScheme.surfaceContainerHighest, borderRadius: BorderRadius.circular(999)),
+                        child: Text('${subs.length}', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant)),
                       ),
-                      const SizedBox(width: 4),
+                       const SizedBox(width: 4),
                       IconButton(
-                        icon: const Icon(Icons.add_circle_outline_rounded, size: 20, color: Color(0xFF2F80FF)),
+                        icon: Icon(Icons.add_circle_outline_rounded, size: 20, color: colorScheme.primary),
                         onPressed: () => _showAddSubDialog(dept, subs),
                       ),
-                      const Icon(Icons.expand_more_rounded, color: Color(0xFF94A3B8)),
+                      Icon(Icons.expand_more_rounded, color: colorScheme.outline),
                     ],
                   ),
                   children: subs.isEmpty
-                      ? [const Padding(padding: EdgeInsets.symmetric(vertical: 8), child: Text('No sub-departments yet', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 14)))]
-                       : subs.map((subData) {
-                           final sub = Map<String, dynamic>.from(subData as Map);
-                           return Container(
-                             margin: const EdgeInsets.only(bottom: 8),
-                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                             decoration: BoxDecoration(color: const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(14)),
-                             child: Row(children: [
-                               Container(width: 6, height: 6, decoration: const BoxDecoration(color: Color(0xFF94A3B8), shape: BoxShape.circle)),
-                               const SizedBox(width: 14),
-                               Expanded(child: Text(sub['department'] ?? '', style: const TextStyle(fontSize: 15.5, fontWeight: FontWeight.w500, color: Color(0xFF334155)))),
-                               IconButton(
-                                 icon: const Icon(Icons.edit_outlined, size: 18, color: Color(0xFF64748B)),
-                                 onPressed: () => _showEditSubDialog(dept, sub),
-                               ),
-                             ]),
-                           );
+                       ? [Padding(padding: const EdgeInsets.symmetric(vertical: 8), child: Text('No sub-departments yet', style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 14)))]
+                        : subs.map((subData) {
+                            final sub = Map<String, dynamic>.from(subData as Map);
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 8),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              decoration: BoxDecoration(color: colorScheme.surfaceContainerLowest, borderRadius: BorderRadius.circular(14)),
+                              child: Row(children: [
+                                Container(width: 6, height: 6, decoration: BoxDecoration(color: colorScheme.outline, shape: BoxShape.circle)),
+                                const SizedBox(width: 14),
+                                Expanded(child: Text(sub['department'] ?? '', style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w500, color: colorScheme.onSurface))),
+                                IconButton(
+                                  icon: Icon(Icons.edit_outlined, size: 18, color: colorScheme.onSurfaceVariant),
+                                  onPressed: () => _showEditSubDialog(dept, sub),
+                                ),
+                              ]),
+                            );
                          }).toList(),
                 ),
               ),
@@ -1176,8 +1193,9 @@ class _ComplianceManagementTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Compliance Management Content'),
+    final colorScheme = Theme.of(context).colorScheme;
+    return Center(
+      child: Text('Compliance Management Content', style: TextStyle(color: colorScheme.onSurfaceVariant)),
     );
   }
 }
@@ -1187,8 +1205,9 @@ class _DisciplinaryManagementTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Disciplinary Management Content'),
+    final colorScheme = Theme.of(context).colorScheme;
+    return Center(
+      child: Text('Disciplinary Management Content', style: TextStyle(color: colorScheme.onSurfaceVariant)),
     );
   }
 }
