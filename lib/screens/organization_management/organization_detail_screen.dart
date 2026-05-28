@@ -1035,155 +1035,170 @@ class _DepartmentManagementTabState extends State<_DepartmentManagementTab> {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
-      children: [
-        Row(
+    
+    // Build the header widgets
+    final headerWidgets = <Widget>[
+      Row(
+        children: [
+          Expanded(child: Text('Department Structure', style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700, letterSpacing: -0.3))),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            decoration: BoxDecoration(color: colorScheme.primary, borderRadius: BorderRadius.circular(20)),
+            child: Text('${_mainDepartments.length} Departments', style: TextStyle(fontSize: 12, color: colorScheme.onPrimary, fontWeight: FontWeight.w600)),
+          ),
+          const SizedBox(width: 8),
+          IconButton(
+            icon: Icon(Icons.add_circle_rounded, color: colorScheme.primary, size: 28),
+            onPressed: () => setState(() => _showAddForm = !_showAddForm),
+          ),
+        ],
+      ),
+    ];
+    
+    if (_showAddForm) {
+      headerWidgets.add(Container(
+        margin: const EdgeInsets.only(bottom: 20),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: colorScheme.surface,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [BoxShadow(color: colorScheme.shadow.withOpacity(0.06), blurRadius: 24, offset: const Offset(0, 8))],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: Text('Department Structure', style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700, letterSpacing: -0.3))),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              decoration: BoxDecoration(color: colorScheme.primary, borderRadius: BorderRadius.circular(20)),
-              child: Text('${_mainDepartments.length} Departments', style: TextStyle(fontSize: 12, color: colorScheme.onPrimary, fontWeight: FontWeight.w600)),
+            Text('Add New Department', style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+            const SizedBox(height: 14),
+            TextField(
+              controller: _newDeptController,
+              decoration: InputDecoration(
+                hintText: 'Enter department name',
+                filled: true,
+                fillColor: colorScheme.surfaceContainerLowest,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide(color: colorScheme.outlineVariant)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide(color: colorScheme.outlineVariant)),
+              ),
             ),
-            const SizedBox(width: 8),
-            IconButton(
-              icon: Icon(Icons.add_circle_rounded, color: colorScheme.primary, size: 28),
-              onPressed: () => setState(() => _showAddForm = !_showAddForm),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  final name = _newDeptController.text.trim();
+                  if (name.isEmpty) return;
+                  try {
+                    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                    final user = authProvider.currentUser;
+                    if (user == null) return;
+                    final tokenToUse = authProvider.originalToken ?? user.token;
+                    await _apiService.addDepartment(
+                      subInstituteId: user.subInstituteId,
+                      token: tokenToUse,
+                      userId: user.id,
+                      department: name,
+                    );
+                    setState(() {
+                      _mainDepartments.insert(0, {'id': DateTime.now().millisecondsSinceEpoch, 'department': name});
+                      _newDeptController.clear();
+                      _showAddForm = false;
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Department added')));
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                  }
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: colorScheme.primary, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+                child: Text('Add Department', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onPrimary)),
+              ),
             ),
           ],
         ),
-        if (_showAddForm) ...[
-          Container(
-            margin: const EdgeInsets.only(bottom: 20),
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: colorScheme.surface,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [BoxShadow(color: colorScheme.shadow.withOpacity(0.06), blurRadius: 24, offset: const Offset(0, 8))],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Add New Department', style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
-                const SizedBox(height: 14),
-                TextField(
-                  controller: _newDeptController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter department name',
-                    filled: true,
-                    fillColor: colorScheme.surfaceContainerLowest,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide(color: colorScheme.outlineVariant)),
-                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide(color: colorScheme.outlineVariant)),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final name = _newDeptController.text.trim();
-                      if (name.isEmpty) return;
-                      try {
-                        final authProvider = Provider.of<AuthProvider>(context, listen: false);
-                        final user = authProvider.currentUser;
-                        if (user == null) return;
-                        final tokenToUse = authProvider.originalToken ?? user.token;
-                        await _apiService.addDepartment(
-                          subInstituteId: user.subInstituteId,
-                          token: tokenToUse,
-                          userId: user.id,
-                          department: name,
-                        );
-                        setState(() {
-                          _mainDepartments.insert(0, {'id': DateTime.now().millisecondsSinceEpoch, 'department': name});
-                          _newDeptController.clear();
-                          _showAddForm = false;
-                        });
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Department added')));
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(backgroundColor: colorScheme.primary, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
-                    child: Text('Add Department', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onPrimary)),
-                  ),
-                ),
-              ],
-            ),
+      ));
+    }
+    headerWidgets.add(const SizedBox(height: 8));
+    
+    // Total item count = header widgets + department items
+    final totalItemCount = headerWidgets.length + _mainDepartments.length;
+    
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+      itemCount: totalItemCount,
+      itemBuilder: (context, index) {
+        if (index < headerWidgets.length) {
+          return headerWidgets[index];
+        }
+        
+        final deptIndex = index - headerWidgets.length;
+        final deptData = _mainDepartments[deptIndex];
+        final dept = deptData as Map<String, dynamic>;
+        final deptId = dept['id'].toString();
+        final subs = _subDepartments[deptId] ?? [];
+        
+        return Container(
+          margin: const EdgeInsets.only(bottom: 18),
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [BoxShadow(color: colorScheme.shadow.withOpacity(0.06), blurRadius: 24, offset: const Offset(0, 8))],
           ),
-        ],
-        const SizedBox(height: 8),
-        ..._mainDepartments.map((deptData) {
-          final dept = deptData as Map<String, dynamic>;
-          final deptId = dept['id'].toString();
-          final subs = _subDepartments[deptId] ?? [];
-          return Container(
-            margin: const EdgeInsets.only(bottom: 18),
-            decoration: BoxDecoration(
-              color: colorScheme.surface,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [BoxShadow(color: colorScheme.shadow.withOpacity(0.06), blurRadius: 24, offset: const Offset(0, 8))],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Theme(
-                data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-                child: ExpansionTile(
-                  backgroundColor: colorScheme.surface,
-                  collapsedBackgroundColor: colorScheme.surface,
-                  tilePadding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
-                  childrenPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                  leading: Container(
-                    width: 46, height: 46,
-                    decoration: BoxDecoration(
-                      color: colorScheme.primaryContainer.withOpacity(0.35),
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Icon(Icons.apartment_rounded, color: colorScheme.primary, size: 24),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Theme(
+              data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+              child: ExpansionTile(
+                backgroundColor: colorScheme.surface,
+                collapsedBackgroundColor: colorScheme.surface,
+                tilePadding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+                childrenPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                leading: Container(
+                  width: 46, height: 46,
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer.withOpacity(0.35),
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  title: Text(dept['department'] ?? '', style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700, height: 1.1)),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
-                        decoration: BoxDecoration(color: colorScheme.surfaceContainerHighest, borderRadius: BorderRadius.circular(999)),
-                        child: Text('${subs.length}', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant)),
-                      ),
-                       const SizedBox(width: 4),
-                      IconButton(
-                        icon: Icon(Icons.add_circle_outline_rounded, size: 20, color: colorScheme.primary),
-                        onPressed: () => _showAddSubDialog(dept, subs),
-                      ),
-                      Icon(Icons.expand_more_rounded, color: colorScheme.outline),
-                    ],
-                  ),
-                  children: subs.isEmpty
-                       ? [Padding(padding: const EdgeInsets.symmetric(vertical: 8), child: Text('No sub-departments yet', style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 14)))]
-                        : subs.map((subData) {
-                            final sub = Map<String, dynamic>.from(subData as Map);
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 8),
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                              decoration: BoxDecoration(color: colorScheme.surfaceContainerLowest, borderRadius: BorderRadius.circular(14)),
-                              child: Row(children: [
-                                Container(width: 6, height: 6, decoration: BoxDecoration(color: colorScheme.outline, shape: BoxShape.circle)),
-                                const SizedBox(width: 14),
-                                Expanded(child: Text(sub['department'] ?? '', style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w500, color: colorScheme.onSurface))),
-                                IconButton(
-                                  icon: Icon(Icons.edit_outlined, size: 18, color: colorScheme.onSurfaceVariant),
-                                  onPressed: () => _showEditSubDialog(dept, sub),
-                                ),
-                              ]),
-                            );
-                         }).toList(),
+                  child: Icon(Icons.apartment_rounded, color: colorScheme.primary, size: 24),
                 ),
+                title: Text(dept['department'] ?? '', style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700, height: 1.1)),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
+                      decoration: BoxDecoration(color: colorScheme.surfaceContainerHighest, borderRadius: BorderRadius.circular(999)),
+                      child: Text('${subs.length}', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant)),
+                    ),
+                     const SizedBox(width: 4),
+                    IconButton(
+                      icon: Icon(Icons.add_circle_outline_rounded, size: 20, color: colorScheme.primary),
+                      onPressed: () => _showAddSubDialog(dept, subs),
+                    ),
+                    Icon(Icons.expand_more_rounded, color: colorScheme.outline),
+                  ],
+                ),
+                children: subs.isEmpty
+                     ? [Padding(padding: const EdgeInsets.symmetric(vertical: 8), child: Text('No sub-departments yet', style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 14)))]
+                      : subs.map((subData) {
+                          final sub = Map<String, dynamic>.from(subData as Map);
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            decoration: BoxDecoration(color: colorScheme.surfaceContainerLowest, borderRadius: BorderRadius.circular(14)),
+                            child: Row(children: [
+                              Container(width: 6, height: 6, decoration: BoxDecoration(color: colorScheme.outline, shape: BoxShape.circle)),
+                              const SizedBox(width: 14),
+                              Expanded(child: Text(sub['department'] ?? '', style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w500, color: colorScheme.onSurface))),
+                              IconButton(
+                                icon: Icon(Icons.edit_outlined, size: 18, color: colorScheme.onSurfaceVariant),
+                                onPressed: () => _showEditSubDialog(dept, sub),
+                              ),
+                            ]),
+                          );
+                       }).toList(),
               ),
             ),
-          );
-        }),
-      ],
+          ),
+        );
+      },
     );
   }
 }

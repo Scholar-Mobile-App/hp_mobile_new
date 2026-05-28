@@ -202,9 +202,21 @@ class _ApplyLeaveScreenState extends State<ApplyLeaveScreen> {
       String toDateStr;
 
       if (_dayType == 'Full Day') {
+        if (_fromDate == null || _toDate == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select dates')),
+          );
+          return;
+        }
         fromDateStr = dateFormat.format(_fromDate!);
         toDateStr = dateFormat.format(_toDate!);
       } else {
+        if (_halfDayDate == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select half day date')),
+          );
+          return;
+        }
         fromDateStr = dateFormat.format(_halfDayDate!);
         toDateStr = dateFormat.format(_halfDayDate!);
       }
