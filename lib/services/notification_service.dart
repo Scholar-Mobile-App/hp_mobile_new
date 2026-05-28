@@ -253,14 +253,20 @@ class NotificationService {
       await apiService.loadCookies();
       final tasks = await apiService.fetchAssignedTasks(user, token);
 
-      final task = tasks.firstWhere(
-        (t) => t.id == int.parse(taskId.toString()),
-        orElse: () => null as Task,
-      );
+      Task? task;
+      try {
+        task = tasks.firstWhere(
+          (t) => t.id == int.parse(taskId.toString()),
+        );
+      } catch (e) {
+        debugPrint('Task not found: $e');
+        _navigateToTaskScreen();
+        return;
+      }
 
       navigatorKey.currentState?.push(
         MaterialPageRoute(
-          builder: (context) => TaskDetailsScreen(task: task),
+          builder: (context) => TaskDetailsScreen(task: task!),
         ),
       );
         } catch (e) {

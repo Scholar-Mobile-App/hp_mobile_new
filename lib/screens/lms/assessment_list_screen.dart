@@ -195,9 +195,11 @@ class _AssessmentListScreenState extends State<AssessmentListScreen> {
                   const SizedBox(height: 12),
                   SizedBox(
                     height: 38,
-                    child: ListView(
+                    child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      children: ['All', 'Pending', 'In Progress', 'Completed'].map((status) {
+                      itemCount: ['All', 'Pending', 'In Progress', 'Completed'].length,
+                      itemBuilder: (context, index) {
+                        final status = ['All', 'Pending', 'In Progress', 'Completed'][index];
                         final isSelected = _selectedStatus == status;
                         return Padding(
                           padding: const EdgeInsets.only(right: 8),
@@ -224,7 +226,7 @@ class _AssessmentListScreenState extends State<AssessmentListScreen> {
                             ),
                           ),
                         );
-                      }).toList(),
+                      },
                     ),
                   ),
                 ],

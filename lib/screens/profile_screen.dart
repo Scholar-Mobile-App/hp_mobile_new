@@ -585,73 +585,76 @@ class _ProfileScreenState extends State<ProfileScreen> {
               end: Alignment.bottomCenter,
             ),
           ),
-          child: ListView(
+          child: ListView.builder(
             padding: EdgeInsets.zero,
-            children: [
-              DrawerHeader(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFFF6A00), Color(0xFFFF7A1A)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+            itemCount: 2,
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return DrawerHeader(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFFFF6A00), Color(0xFFFF7A1A)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                   ),
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                        radius: 35,
-                        backgroundImage: user.image.isNotEmpty ? NetworkImage(
-                          user.image.startsWith('http') ? user.image : 'https://s3-triz.fra1.cdn.digitaloceanspaces.com/public/hp_user/${user.image}'
-                        ) : null,
-                        backgroundColor: Colors.white,
-                        child: user.image.isEmpty ? const Icon(
-                          Icons.person,
-                          size: 35,
-                          color: Color(0xFF1F2A6D),
-                        ) : null,
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        user.fullName,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          radius: 35,
+                          backgroundImage: user.image.isNotEmpty ? NetworkImage(
+                            user.image.startsWith('http') ? user.image : 'https://s3-triz.fra1.cdn.digitaloceanspaces.com/public/hp_user/${user.image}'
+                          ) : null,
+                          backgroundColor: Colors.white,
+                          child: user.image.isEmpty ? const Icon(
+                            Icons.person,
+                            size: 35,
+                            color: Color(0xFF1F2A6D),
+                          ) : null,
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        user.email,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 14,
+                        const SizedBox(height: 12),
+                        Text(
+                          user.fullName,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 4),
+                        Text(
+                          user.email,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                );
+              }
+              return Container(
+                color: Colors.white.withOpacity(0.1),
+                child: ListTile(
+                  leading: const Icon(Icons.logout, color: Colors.white),
+                  title: const Text(
+                    'Logout',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                  onTap: () async {
+                    Navigator.pop(context); // Close the drawer
+                    await auth.logout();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                    );
+                  },
                 ),
-              ),
-               Container(
-                 color: Colors.white.withOpacity(0.1),
-                 child: ListTile(
-                   leading: const Icon(Icons.logout, color: Colors.white),
-                   title: const Text(
-                     'Logout',
-                     style: TextStyle(color: Colors.white, fontSize: 16),
-                   ),
-                   onTap: () async {
-                     Navigator.pop(context); // Close the drawer
-                     await auth.logout();
-                     Navigator.pushReplacement(
-                       context,
-                       MaterialPageRoute(builder: (context) => LoginScreen()),
-                     );
-                   },
-                 ),
-               ),
-            ],
+              );
+            },
           ),
         ),
       ),
