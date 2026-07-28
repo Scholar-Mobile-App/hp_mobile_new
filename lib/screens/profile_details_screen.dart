@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/network_avatar.dart';
 import 'package:provider/provider.dart';
 import '../services/auth_provider.dart';
 import '../services/api_service.dart';
@@ -103,7 +104,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [const Color(0xFF1F2A6D).withOpacity(0.1), const Color(0xFF2E3A8C).withOpacity(0.05)],
+            colors: [
+              const Color(0xFF1F2A6D).withOpacity(0.1),
+              const Color(0xFF2E3A8C).withOpacity(0.05)
+            ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -113,21 +117,16 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
+              NetworkAvatar(
                 radius: 60,
-                backgroundImage: userData['image']?.isNotEmpty == true ? NetworkImage(
-                  userData['image'].startsWith('http') ? userData['image'] : 'https://s3-triz.fra1.cdn.digitaloceanspaces.com/public/hp_user/' + userData['image']
-                ) : null,
                 backgroundColor: const Color(0xFF1F2A6D),
-                child: userData['image']?.isEmpty != false ? const Icon(
-                  Icons.person,
-                  size: 60,
-                  color: Colors.white,
-                ) : null,
+                iconColor: Colors.white,
+                image: userData['image']?.toString() ?? '',
               ),
               const SizedBox(height: 20),
               Text(
-                '${userData['first_name'] ?? ''} ${userData['middle_name'] ?? ''} ${userData['last_name'] ?? ''}'.trim(),
+                '${userData['first_name'] ?? ''} ${userData['middle_name'] ?? ''} ${userData['last_name'] ?? ''}'
+                    .trim(),
                 style: const TextStyle(
                   color: Color(0xFF1F2A6D),
                   fontSize: 28,
@@ -161,37 +160,50 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildDetailRow('Phone', userData['mobile']?.toString() ?? ''),
+                    _buildDetailRow(
+                        'Phone', userData['mobile']?.toString() ?? ''),
                     const SizedBox(height: 12),
-                    _buildDetailRow('Email', userData['email']?.toString() ?? ''),
+                    _buildDetailRow(
+                        'Email', userData['email']?.toString() ?? ''),
                     const SizedBox(height: 12),
-                    _buildDetailRow('Qualification', userData['qualification']?.toString() ?? ''),
+                    _buildDetailRow('Qualification',
+                        userData['qualification']?.toString() ?? ''),
                     const SizedBox(height: 12),
-                    _buildDetailRow('Occupation', userData['occupation']?.toString() ?? ''),
+                    _buildDetailRow(
+                        'Occupation', userData['occupation']?.toString() ?? ''),
                     const SizedBox(height: 12),
-                    _buildDetailRow('Gender', userData['gender']?.toString() ?? ''),
+                    _buildDetailRow(
+                        'Gender', userData['gender']?.toString() ?? ''),
                     const SizedBox(height: 12),
-                    _buildDetailRow('Date of Birth', userData['birthdate']?.toString() ?? ''),
+                    _buildDetailRow('Date of Birth',
+                        userData['birthdate']?.toString() ?? ''),
                     const SizedBox(height: 12),
-                    _buildDetailRow('Address', userData['address']?.toString() ?? ''),
+                    _buildDetailRow(
+                        'Address', userData['address']?.toString() ?? ''),
                     const SizedBox(height: 12),
                     _buildDetailRow('City', userData['city']?.toString() ?? ''),
                     const SizedBox(height: 12),
-                    _buildDetailRow('State', userData['state']?.toString() ?? ''),
+                    _buildDetailRow(
+                        'State', userData['state']?.toString() ?? ''),
                     const SizedBox(height: 12),
-                    _buildDetailRow('Zip Code', userData['pincode']?.toString() ?? ''),
+                    _buildDetailRow(
+                        'Zip Code', userData['pincode']?.toString() ?? ''),
                     const SizedBox(height: 12),
-                    _buildDetailRow('Job Role', userData['userJobrole']?.toString() ?? ''),
+                    _buildDetailRow(
+                        'Job Role', userData['userJobrole']?.toString() ?? ''),
                     const SizedBox(height: 12),
-                    _buildDetailRow('Department', userData['userDepartment']?.toString() ?? ''),
+                    _buildDetailRow('Department',
+                        userData['userDepartment']?.toString() ?? ''),
                   ],
                 ),
               ),
               const SizedBox(height: 24),
               if (skills.isNotEmpty) _buildListSection('Skills', skills),
-              if (departments.isNotEmpty) _buildListSection('Departments', departments),
+              if (departments.isNotEmpty)
+                _buildListSection('Departments', departments),
               if (jobRoles.isNotEmpty) _buildListSection('Job Roles', jobRoles),
-              if (employees.isNotEmpty) _buildListSection('Employees', employees),
+              if (employees.isNotEmpty)
+                _buildListSection('Employees', employees),
             ],
           ),
         ),
@@ -250,9 +262,11 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
             color: Color(0xFF1F2A6D),
           ),
         ),
-        children: items.map((item) => ListTile(
-          title: Text(item['name']?.toString() ?? ''),
-        )).toList(),
+        children: items
+            .map((item) => ListTile(
+                  title: Text(item['name']?.toString() ?? ''),
+                ))
+            .toList(),
       ),
     );
   }

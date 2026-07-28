@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -105,7 +107,8 @@ class ApiService {
   // Get cookie header string
   String _getCookieHeader() {
     debugPrint('Generating cookie header from _cookies: $_cookies');
-    final header = _cookies.entries.map((e) => '${e.key}=${e.value}').join('; ');
+    final header =
+        _cookies.entries.map((e) => '${e.key}=${e.value}').join('; ');
     debugPrint('Generated cookie header: "$header"');
     return header;
   }
@@ -114,8 +117,6 @@ class ApiService {
   String? getXsrfToken() {
     return _cookies['XSRF-TOKEN'];
   }
-
-
 
   // Login function
   Future<User> login(String email, String password) async {
@@ -127,7 +128,20 @@ class ApiService {
       },
     );
     debugPrint('Making login GET request to: $uri');
-    final response = await _httpClient.get(uri);
+    late final http.Response response;
+    try {
+      response = await _httpClient.get(uri).timeout(ApiConfig.defaultTimeout);
+    } on TimeoutException {
+      throw Exception(
+        'Login timed out. Check the internet connection on this device and try again.',
+      );
+    } on SocketException {
+      throw Exception(
+        'Cannot connect to the login server. Check the internet or DNS connection on this device.',
+      );
+    } on http.ClientException catch (error) {
+      throw Exception('Login network error: ${error.message}');
+    }
 
     if (response.statusCode == 200) {
       debugPrint('Login request successful');
@@ -137,7 +151,8 @@ class ApiService {
       final data = json.decode(response.body);
       debugPrint('Response data: $data');
       if (data['status'] == 0) {
-        throw Exception(data['message'] ?? 'Incorrect password or invalid credentials');
+        throw Exception(
+            data['message'] ?? 'Incorrect password or invalid credentials');
       }
       // Pass full response data to handle nested structures
       return User.fromLoginJson(data);
@@ -177,8 +192,10 @@ class ApiService {
   }
 
   // Fetch user edit details
-  Future<Map<String, dynamic>> fetchUserEditDetails(String token, int userId, int subInstituteId, String orgType, String syear) async {
-    final url = 'https://hp.triz.co.in/user/add_user/$userId/edit?type=API&token=$token&sub_institute_id=$subInstituteId&org_type=${Uri.encodeComponent(orgType)}&syear=$syear';
+  Future<Map<String, dynamic>> fetchUserEditDetails(String token, int userId,
+      int subInstituteId, String orgType, String syear) async {
+    final url =
+        'https://hp.triz.co.in/user/add_user/$userId/edit?type=API&token=$token&sub_institute_id=$subInstituteId&org_type=${Uri.encodeComponent(orgType)}&syear=$syear';
     debugPrint('Fetching user edit details from: $url');
 
     final headers = {
@@ -192,15 +209,18 @@ class ApiService {
       debugPrint('Response body: ${response.body}');
       return json.decode(response.body);
     } else {
-      debugPrint('User edit details fetch failed with status: ${response.statusCode}');
+      debugPrint(
+          'User edit details fetch failed with status: ${response.statusCode}');
       debugPrint('Response body: ${response.body}');
-      throw Exception('Failed to fetch user edit details: ${response.statusCode}');
+      throw Exception(
+          'Failed to fetch user edit details: ${response.statusCode}');
     }
   }
 
   // Fetch menu rights - use same auth as profile API
   Future<MenuResponse> fetchMenuRights(User user, String token) async {
-    final url = '${ApiConfig.baseUrl}${ApiConfig.menuRightsEndpoint}?type=API&token=$token&sub_institute_id=${user.subInstituteId}&profile_id=${user.userProfileId}';
+    final url =
+        '${ApiConfig.baseUrl}${ApiConfig.menuRightsEndpoint}?type=API&token=$token&sub_institute_id=${user.subInstituteId}&profile_id=${user.userProfileId}';
 
     debugPrint('Fetching menu rights with same auth as profile API: $url');
 
@@ -231,7 +251,8 @@ class ApiService {
 
   // Fetch skill library
   Future<List<dynamic>> fetchSkillLibrary(User user, String token) async {
-    final url = 'https://hp.triz.co.in/skill_library?type=API&token=$token&sub_institute_id=${user.subInstituteId}&org_type=${Uri.encodeComponent(user.orgType)}&category=&sub_category=';
+    final url =
+        'https://hp.triz.co.in/skill_library?type=API&token=$token&sub_institute_id=${user.subInstituteId}&org_type=${Uri.encodeComponent(user.orgType)}&category=&sub_category=';
 
     debugPrint('Fetching skill library from: $url');
 
@@ -251,8 +272,10 @@ class ApiService {
   }
 
   // Fetch skill details
-  Future<Map<String, dynamic>> fetchSkillDetails(int skillId, User user, String token) async {
-    final url = 'https://hp.triz.co.in/skill_library/$skillId/edit?type=API&token=$token&sub_institute_id=${user.subInstituteId}&org_type=${Uri.encodeComponent(user.orgType)}&formType=user';
+  Future<Map<String, dynamic>> fetchSkillDetails(
+      int skillId, User user, String token) async {
+    final url =
+        'https://hp.triz.co.in/skill_library/$skillId/edit?type=API&token=$token&sub_institute_id=${user.subInstituteId}&org_type=${Uri.encodeComponent(user.orgType)}&formType=user';
 
     debugPrint('Fetching skill details from: $url');
 
@@ -271,7 +294,8 @@ class ApiService {
 
   // Fetch job roles
   Future<List<dynamic>> fetchJobRoles(User user, String token) async {
-    final url = 'https://hp.triz.co.in/table_data?table=s_user_jobrole&filters[sub_institute_id]=${user.subInstituteId}';
+    final url =
+        'https://hp.triz.co.in/table_data?table=s_user_jobrole&filters[sub_institute_id]=${user.subInstituteId}';
 
     debugPrint('Fetching job roles from: $url');
 
@@ -292,8 +316,10 @@ class ApiService {
   }
 
   // Fetch organization data
-  Future<Map<String, dynamic>> fetchOrganizationData(int subInstituteId, String token) async {
-    final url = 'https://hp.triz.co.in/settings/organization_data?type=API&sub_institute_id=$subInstituteId&token=$token';
+  Future<Map<String, dynamic>> fetchOrganizationData(
+      int subInstituteId, String token) async {
+    final url =
+        'https://hp.triz.co.in/settings/organization_data?type=API&sub_institute_id=$subInstituteId&token=$token';
 
     debugPrint('Fetching organization data from: $url');
 
@@ -304,7 +330,8 @@ class ApiService {
       return json.decode(response.body);
     } else {
       debugPrint('Organization data fetch failed: ${response.body}');
-      throw Exception('Failed to fetch organization data: ${response.statusCode}');
+      throw Exception(
+          'Failed to fetch organization data: ${response.statusCode}');
     }
   }
 
@@ -349,7 +376,8 @@ class ApiService {
       body['sister_companies[$i][cin]'] = sister.cin;
       body['sister_companies[$i][gstin]'] = sister.gstin;
       body['sister_companies[$i][pan]'] = sister.pan;
-      body['sister_companies[$i][registered_address]'] = sister.registeredAddress;
+      body['sister_companies[$i][registered_address]'] =
+          sister.registeredAddress;
       body['sister_companies[$i][mobile_no]'] = sister.mobileNo;
       body['sister_companies[$i][country_code]'] = sister.countryCode;
       body['sister_companies[$i][email]'] = sister.email;
@@ -371,13 +399,16 @@ class ApiService {
       return json.decode(response.body);
     } else {
       debugPrint('Organization submit failed: ${response.body}');
-      throw Exception('Failed to submit organization data: ${response.statusCode}');
+      throw Exception(
+          'Failed to submit organization data: ${response.statusCode}');
     }
   }
 
   // Fetch job roles by department (original)
-  Future<Map<String, dynamic>> fetchJobRolesByDepartment(User user, String token) async {
-    final url = 'https://hp.triz.co.in/api/jobroles-by-department?sub_institute_id=${user.subInstituteId}';
+  Future<Map<String, dynamic>> fetchJobRolesByDepartment(
+      User user, String token) async {
+    final url =
+        'https://hp.triz.co.in/api/jobroles-by-department?sub_institute_id=${user.subInstituteId}';
 
     debugPrint('Fetching job roles by department from: $url');
 
@@ -393,7 +424,8 @@ class ApiService {
       return data['data'] as Map<String, dynamic>;
     } else {
       debugPrint('Job roles by department fetch failed: ${response.body}');
-      throw Exception('Failed to fetch job roles by department: ${response.statusCode}');
+      throw Exception(
+          'Failed to fetch job roles by department: ${response.statusCode}');
     }
   }
 
@@ -404,8 +436,10 @@ class ApiService {
   }
 
   // Fetch department management data (main + sub departments)
-  Future<Map<String, dynamic>> fetchDepartmentManagement(User user, String token) async {
-    final url = 'https://hp.triz.co.in/api/departments-management?type=api&token=$token&sub_institute_id=${user.subInstituteId}';
+  Future<Map<String, dynamic>> fetchDepartmentManagement(
+      User user, String token) async {
+    final url =
+        'https://hp.triz.co.in/api/departments-management?type=api&token=$token&sub_institute_id=${user.subInstituteId}';
     debugPrint('Fetching department management from: $url');
 
     final headers = {
@@ -419,7 +453,8 @@ class ApiService {
       return json.decode(response.body) as Map<String, dynamic>;
     } else {
       debugPrint('Department management fetch failed: ${response.body}');
-      throw Exception('Failed to fetch department management: ${response.statusCode}');
+      throw Exception(
+          'Failed to fetch department management: ${response.statusCode}');
     }
   }
 
@@ -446,7 +481,8 @@ class ApiService {
     });
 
     debugPrint('Adding department to: $url');
-    final response = await _httpClient.post(Uri.parse(url), headers: headers, body: body);
+    final response =
+        await _httpClient.post(Uri.parse(url), headers: headers, body: body);
 
     if (response.statusCode == 200) {
       debugPrint('Add department successful');
@@ -481,7 +517,8 @@ class ApiService {
     });
 
     debugPrint('Adding sub-department to: $url');
-    final response = await _httpClient.post(Uri.parse(url), headers: headers, body: body);
+    final response =
+        await _httpClient.post(Uri.parse(url), headers: headers, body: body);
 
     if (response.statusCode == 200) {
       debugPrint('Add sub-department successful');
@@ -518,7 +555,8 @@ class ApiService {
     });
 
     debugPrint('Editing sub-department to: $url');
-    final response = await _httpClient.post(Uri.parse(url), headers: headers, body: body);
+    final response =
+        await _httpClient.post(Uri.parse(url), headers: headers, body: body);
 
     debugPrint('Edit sub-department response: ${response.body}');
     if (response.statusCode == 200) {
@@ -535,7 +573,8 @@ class ApiService {
   }
 
   // Fetch job roles by department name
-  Future<List<dynamic>> fetchJobRolesByDepartmentName(User user, String token, String department) async {
+  Future<List<dynamic>> fetchJobRolesByDepartmentName(
+      User user, String token, String department) async {
     final data = await fetchJobRolesByDepartment(user, token);
     if (data[department] != null) {
       return data[department] as List<dynamic>;
@@ -546,7 +585,8 @@ class ApiService {
 
   // Fetch attitudes
   Future<List<dynamic>> fetchAttitudes(User user, String token) async {
-    final url = 'https://hp.triz.co.in/table_data?table=s_user_attitude&filters[sub_institute_id]=${user.subInstituteId}&order_by[id]=desc';
+    final url =
+        'https://hp.triz.co.in/table_data?table=s_user_attitude&filters[sub_institute_id]=${user.subInstituteId}&order_by[id]=desc';
 
     debugPrint('Fetching attitudes from: $url');
 
@@ -567,8 +607,10 @@ class ApiService {
   }
 
   // Fetch job role tasks
-  Future<List<JobRoleTask>> fetchJobRoleTasks(User user, String token, String jobRole, int jobRoleId) async {
-    final url = 'https://hp.triz.co.in/jobrole_library/create?type=API&token=$token&sub_institute_id=${user.subInstituteId}&org_type=${Uri.encodeComponent(user.orgType)}&jobrole=${Uri.encodeComponent(jobRole)}&formType=tasks';
+  Future<List<JobRoleTask>> fetchJobRoleTasks(
+      User user, String token, String jobRole, int jobRoleId) async {
+    final url =
+        'https://hp.triz.co.in/jobrole_library/create?type=API&token=$token&sub_institute_id=${user.subInstituteId}&org_type=${Uri.encodeComponent(user.orgType)}&jobrole=${Uri.encodeComponent(jobRole)}&formType=tasks';
 
     debugPrint('Fetching job role tasks from: $url');
 
@@ -587,7 +629,8 @@ class ApiService {
 
   // Fetch job role KABA (Knowledge, Attitude, Behavior, Abilities)
   Future<JobRoleKABA> fetchJobRoleKABA(User user, int jobRoleId) async {
-    final url = 'https://hp.triz.co.in/get-kaba?sub_institute_id=${user.subInstituteId}&type=jobrole&type_id=$jobRoleId';
+    final url =
+        'https://hp.triz.co.in/get-kaba?sub_institute_id=${user.subInstituteId}&type=jobrole&type_id=$jobRoleId';
 
     debugPrint('Fetching job role KABA from: $url');
 
@@ -595,7 +638,8 @@ class ApiService {
 
     if (response.statusCode == 200) {
       debugPrint('Job role KABA fetch successful');
-      return JobRoleKABA.fromJson(json.decode(response.body) as Map<String, dynamic>);
+      return JobRoleKABA.fromJson(
+          json.decode(response.body) as Map<String, dynamic>);
     } else {
       debugPrint('Job role KABA fetch failed: ${response.body}');
       throw Exception('Failed to fetch job role KABA: ${response.statusCode}');
@@ -603,8 +647,10 @@ class ApiService {
   }
 
   // Fetch job role skills
-  Future<List<JobRoleSkill>> fetchJobRoleSkills(User user, String token, String jobRole) async {
-    final url = 'https://hp.triz.co.in/jobrole_library/create?type=API&token=$token&sub_institute_id=${user.subInstituteId}&org_type=${Uri.encodeComponent(user.orgType)}&jobrole=${Uri.encodeComponent(jobRole)}&formType=skills';
+  Future<List<JobRoleSkill>> fetchJobRoleSkills(
+      User user, String token, String jobRole) async {
+    final url =
+        'https://hp.triz.co.in/jobrole_library/create?type=API&token=$token&sub_institute_id=${user.subInstituteId}&org_type=${Uri.encodeComponent(user.orgType)}&jobrole=${Uri.encodeComponent(jobRole)}&formType=skills';
 
     debugPrint('Fetching job role skills from: $url');
 
@@ -617,13 +663,16 @@ class ApiService {
       return skills.map((skill) => JobRoleSkill.fromJson(skill)).toList();
     } else {
       debugPrint('Job role skills fetch failed: ${response.body}');
-      throw Exception('Failed to fetch job role skills: ${response.statusCode}');
+      throw Exception(
+          'Failed to fetch job role skills: ${response.statusCode}');
     }
   }
 
   // Fetch job role tasks from table_data endpoint
-  Future<List<JobRoleTaskTable>> fetchJobRoleTasksTable(User user, {String? sector, String? jobrole, String orderDirection = 'desc'}) async {
-    String url = 'https://hp.triz.co.in/table_data?table=s_user_jobrole_task&filters[sub_institute_id]=${user.subInstituteId}';
+  Future<List<JobRoleTaskTable>> fetchJobRoleTasksTable(User user,
+      {String? sector, String? jobrole, String orderDirection = 'desc'}) async {
+    String url =
+        'https://hp.triz.co.in/table_data?table=s_user_jobrole_task&filters[sub_institute_id]=${user.subInstituteId}';
     if (sector != null) {
       url += '&filters[sector]=${Uri.encodeComponent(sector)}';
     }
@@ -646,14 +695,18 @@ class ApiService {
       }
       return data.map((json) => JobRoleTaskTable.fromJson(json)).toList();
     } else {
-      debugPrint('ApiService: Job role tasks table fetch failed: ${response.body}');
-      throw Exception('Failed to fetch job role tasks table: ${response.statusCode}');
+      debugPrint(
+          'ApiService: Job role tasks table fetch failed: ${response.body}');
+      throw Exception(
+          'Failed to fetch job role tasks table: ${response.statusCode}');
     }
   }
 
   // Fetch user knowledge
-  Future<List<UserKnowledge>> fetchUserKnowledge(User user, String token) async {
-    final url = 'https://hp.triz.co.in/table_data?filters[sub_institute_id]=${user.subInstituteId}&table=s_user_knowledge&type=API&token=$token';
+  Future<List<UserKnowledge>> fetchUserKnowledge(
+      User user, String token) async {
+    final url =
+        'https://hp.triz.co.in/table_data?filters[sub_institute_id]=${user.subInstituteId}&table=s_user_knowledge&type=API&token=$token';
 
     debugPrint('Fetching user knowledge from: $url');
 
@@ -675,7 +728,8 @@ class ApiService {
 
   // Fetch user ability
   Future<List<UserAbility>> fetchUserAbility(User user, String token) async {
-    final url = 'https://hp.triz.co.in/table_data?filters[sub_institute_id]=${user.subInstituteId}&table=s_user_ability&order_by[id]=desc&type=API&token=$token';
+    final url =
+        'https://hp.triz.co.in/table_data?filters[sub_institute_id]=${user.subInstituteId}&table=s_user_ability&order_by[id]=desc&type=API&token=$token';
 
     debugPrint('Fetching user ability from: $url');
 
@@ -696,8 +750,10 @@ class ApiService {
   }
 
   // Fetch user behaviour
-  Future<List<UserBehaviour>> fetchUserBehaviour(User user, String token) async {
-    final url = 'https://hp.triz.co.in/table_data?filters[sub_institute_id]=${user.subInstituteId}&table=s_user_behaviour&type=API&token=$token';
+  Future<List<UserBehaviour>> fetchUserBehaviour(
+      User user, String token) async {
+    final url =
+        'https://hp.triz.co.in/table_data?filters[sub_institute_id]=${user.subInstituteId}&table=s_user_behaviour&type=API&token=$token';
 
     debugPrint('Fetching user behaviour from: $url');
 
@@ -733,7 +789,8 @@ class ApiService {
       'sub_institute_id': user.subInstituteId.toString(),
       'outdate': outdate,
       'punchin_time': punchinTime,
-      'address_in': '127.0.0.1', // Placeholder IP, can be replaced with actual IP fetching
+      'address_in':
+          '127.0.0.1', // Placeholder IP, can be replaced with actual IP fetching
     };
 
     debugPrint('Punching in with payload: $payload');
@@ -784,7 +841,8 @@ class ApiService {
       'sub_institute_id': user.subInstituteId.toString(),
       'outdate': outdate,
       'punchout_time': punchoutTime,
-      'address_out': '127.0.0.1', // Placeholder IP, can be replaced with actual IP fetching
+      'address_out':
+          '127.0.0.1', // Placeholder IP, can be replaced with actual IP fetching
     };
 
     debugPrint('Punching out with payload: $payload');
@@ -821,7 +879,8 @@ class ApiService {
 
   // Fetch Attendance Data
   Future<Map<String, dynamic>> fetchAttendance(User user, String token) async {
-    final url = 'https://hp.triz.co.in/hrms-attendance?type=API&token=$token&sub_institute_id=${user.subInstituteId}&user_id=${user.id}&formType=MyAttendance';
+    final url =
+        'https://hp.triz.co.in/hrms-attendance?type=API&token=$token&sub_institute_id=${user.subInstituteId}&user_id=${user.id}&formType=MyAttendance';
 
     debugPrint('Fetching attendance from: $url');
 
@@ -852,7 +911,9 @@ class ApiService {
     required String token,
     required String month,
   }) async {
-    final uri = Uri.parse('https://hp.triz.co.in/api/employee-attendance-monthly-report').replace(
+    final uri = Uri.parse(
+            'https://hp.triz.co.in/api/employee-attendance-monthly-report')
+        .replace(
       queryParameters: {
         'sub_institute_id': subInstituteId.toString(),
         'user_id': userId.toString(),
@@ -872,7 +933,8 @@ class ApiService {
     final response = await _httpClient.get(uri, headers: headers);
 
     debugPrint('Monthly attendance report status: ${response.statusCode}');
-    debugPrint('Monthly attendance report body: ${response.body.substring(0, response.body.length > 500 ? 500 : response.body.length)}...');
+    debugPrint(
+        'Monthly attendance report body: ${response.body.substring(0, response.body.length > 500 ? 500 : response.body.length)}...');
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -880,7 +942,8 @@ class ApiService {
       return data;
     } else {
       debugPrint('Employee attendance monthly report failed: ${response.body}');
-      throw Exception('Failed to fetch attendance report: ${response.statusCode}');
+      throw Exception(
+          'Failed to fetch attendance report: ${response.statusCode}');
     }
   }
 
@@ -889,7 +952,8 @@ class ApiService {
     required int subInstituteId,
     required String token,
   }) async {
-    final url = 'https://hp.triz.co.in/leave-type?type=API&sub_institute_id=$subInstituteId&token=$token';
+    final url =
+        'https://hp.triz.co.in/leave-type?type=API&sub_institute_id=$subInstituteId&token=$token';
 
     debugPrint('Fetching leave types from: $url');
 
@@ -916,11 +980,11 @@ class ApiService {
     required int subInstituteId,
     required String token,
     required int userId,
-    required String leaveTypeId,       // numeric id from leave type list (e.g. "4")
-    required String dayType,           // "full" or "half"
-    required String fromDate,          // yyyy-MM-dd
-    required String toDate,            // yyyy-MM-dd
-    String? slot,                      // "first" or "second" (only for half day)
+    required String leaveTypeId, // numeric id from leave type list (e.g. "4")
+    required String dayType, // "full" or "half"
+    required String fromDate, // yyyy-MM-dd
+    required String toDate, // yyyy-MM-dd
+    String? slot, // "first" or "second" (only for half day)
     required String comment,
   }) async {
     const url = 'https://hp.triz.co.in/leave-apply';
@@ -962,7 +1026,9 @@ class ApiService {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      if (data['status'] == 1 || data['status'] == '1' || data['status'] == true) {
+      if (data['status'] == 1 ||
+          data['status'] == '1' ||
+          data['status'] == true) {
         debugPrint('Leave application successful');
         return data;
       } else {
@@ -980,7 +1046,8 @@ class ApiService {
     required int userId,
     required String syear,
   }) async {
-    final url = 'https://hp.triz.co.in/leave-apply?type=API&sub_institute_id=$subInstituteId&token=$token&user_id=$userId';
+    final url =
+        'https://hp.triz.co.in/leave-apply?type=API&sub_institute_id=$subInstituteId&token=$token&user_id=$userId';
 
     debugPrint('Fetching leave data from: $url');
 
@@ -995,7 +1062,8 @@ class ApiService {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body) as Map<String, dynamic>;
-      debugPrint('Leave data fetch successful: ${(data['leaveHistory'] as List?)?.length ?? 0} history items');
+      debugPrint(
+          'Leave data fetch successful: ${(data['leaveHistory'] as List?)?.length ?? 0} history items');
       return data;
     } else {
       debugPrint('Leave data fetch failed: ${response.body}');
@@ -1009,7 +1077,8 @@ class ApiService {
     required String token,
     required int userId,
   }) async {
-    final url = 'https://hp.triz.co.in/get-leave?type=API&user_id=$userId&sub_institute_id=$subInstituteId';
+    final url =
+        'https://hp.triz.co.in/get-leave?type=API&user_id=$userId&sub_institute_id=$subInstituteId';
 
     debugPrint('Fetching my leaves from: $url');
 
@@ -1039,8 +1108,10 @@ class ApiService {
   }
 
   // Fetch user skills
-  Future<List<Map<String, dynamic>>> fetchUserSkills(User user, String token) async {
-    final url = 'https://hp.triz.co.in/api/user-skills/${user.id}?type=API&token=$token&sub_institute_id=${user.subInstituteId}';
+  Future<List<Map<String, dynamic>>> fetchUserSkills(
+      User user, String token) async {
+    final url =
+        'https://hp.triz.co.in/api/user-skills/${user.id}?type=API&token=$token&sub_institute_id=${user.subInstituteId}';
 
     debugPrint('Fetching user skills from: $url');
 
@@ -1057,8 +1128,10 @@ class ApiService {
   }
 
   // Fetch user skills by user ID
-  Future<List<Map<String, dynamic>>> fetchUserSkillsById(int userId, String token, User currentUser) async {
-    final url = 'https://hp.triz.co.in/api/user-skills/$userId?type=API&token=$token&sub_institute_id=${currentUser.subInstituteId}';
+  Future<List<Map<String, dynamic>>> fetchUserSkillsById(
+      int userId, String token, User currentUser) async {
+    final url =
+        'https://hp.triz.co.in/api/user-skills/$userId?type=API&token=$token&sub_institute_id=${currentUser.subInstituteId}';
 
     debugPrint('Fetching user skills for ID $userId from: $url');
 
@@ -1075,8 +1148,10 @@ class ApiService {
   }
 
   // Fetch Skill Development Progress (for My Learning Dashboard)
-  Future<Map<String, dynamic>> fetchSkillDevelopmentProgress(User user, String token) async {
-    final url = 'https://hp.triz.co.in/api/skill-development/progress?type=API&token=$token&sub_institute_id=${user.subInstituteId}&user_id=${user.id}';
+  Future<Map<String, dynamic>> fetchSkillDevelopmentProgress(
+      User user, String token) async {
+    final url =
+        'https://hp.triz.co.in/api/skill-development/progress?type=API&token=$token&sub_institute_id=${user.subInstituteId}&user_id=${user.id}';
 
     debugPrint('Fetching skill development progress from: $url');
 
@@ -1096,17 +1171,21 @@ class ApiService {
       return Map<String, dynamic>.from(data);
     } else {
       debugPrint('Skill progress fetch failed: ${response.body}');
-      throw Exception('Failed to fetch skill development progress: ${response.statusCode}');
+      throw Exception(
+          'Failed to fetch skill development progress: ${response.statusCode}');
     }
   }
 
   // Fetch Skill Development Calendar (for My Learning Dashboard)
-  Future<Map<String, dynamic>> fetchSkillDevelopmentCalendar(User user, String token, {String? month, String? year}) async {
+  Future<Map<String, dynamic>> fetchSkillDevelopmentCalendar(
+      User user, String token,
+      {String? month, String? year}) async {
     final now = DateTime.now();
     final m = month ?? now.month.toString().padLeft(2, '0');
     final y = year ?? now.year.toString();
 
-    final url = 'https://hp.triz.co.in/api/skill-development/calendar?type=API&token=$token&sub_institute_id=${user.subInstituteId}&user_id=${user.id}&month=$m&year=$y';
+    final url =
+        'https://hp.triz.co.in/api/skill-development/calendar?type=API&token=$token&sub_institute_id=${user.subInstituteId}&user_id=${user.id}&month=$m&year=$y';
 
     debugPrint('Fetching skill development calendar from: $url');
 
@@ -1126,13 +1205,15 @@ class ApiService {
       return Map<String, dynamic>.from(data);
     } else {
       debugPrint('Skill calendar fetch failed: ${response.body}');
-      throw Exception('Failed to fetch skill development calendar: ${response.statusCode}');
+      throw Exception(
+          'Failed to fetch skill development calendar: ${response.statusCode}');
     }
   }
 
   // Fetch Enrolled Courses (dedicated endpoint for My Learning Dashboard)
   Future<List<dynamic>> fetchEnrolledCourses(User user, String token) async {
-    final url = 'https://hp.triz.co.in/api/enrolled_courses?user_id=${user.id}&type=API&token=$token&sub_institute_id=${user.subInstituteId}';
+    final url =
+        'https://hp.triz.co.in/api/enrolled_courses?user_id=${user.id}&type=API&token=$token&sub_institute_id=${user.subInstituteId}';
 
     debugPrint('Fetching enrolled courses from: $url');
 
@@ -1159,13 +1240,16 @@ class ApiService {
       }
     } else {
       debugPrint('Enrolled courses fetch failed: ${response.body}');
-      throw Exception('Failed to fetch enrolled courses: ${response.statusCode}');
+      throw Exception(
+          'Failed to fetch enrolled courses: ${response.statusCode}');
     }
   }
 
   // Fetch supervisor
-  Future<Map<String, dynamic>> fetchSupervisor(int userId, int subInstituteId) async {
-    final url = 'https://hp.triz.co.in/getSupervisor?user_id=$userId&sub_institute_id=$subInstituteId';
+  Future<Map<String, dynamic>> fetchSupervisor(
+      int userId, int subInstituteId) async {
+    final url =
+        'https://hp.triz.co.in/getSupervisor?user_id=$userId&sub_institute_id=$subInstituteId';
 
     debugPrint('Fetching supervisor for user ID $userId from: $url');
 
@@ -1182,8 +1266,10 @@ class ApiService {
   }
 
   // Fetch employees by job role
-  Future<List<dynamic>> fetchEmployeesByJobRole(User user, String token, String jobRoleId) async {
-    final url = 'https://hp.triz.co.in/search_data?type=API&token=$token&sub_institute_id=${user.subInstituteId}&org_type=${Uri.encodeComponent(user.orgType)}&searchType=jobrole_emp&searchWord=$jobRoleId';
+  Future<List<dynamic>> fetchEmployeesByJobRole(
+      User user, String token, String jobRoleId) async {
+    final url =
+        'https://hp.triz.co.in/search_data?type=API&token=$token&sub_institute_id=${user.subInstituteId}&org_type=${Uri.encodeComponent(user.orgType)}&searchType=jobrole_emp&searchWord=$jobRoleId';
 
     debugPrint('Fetching employees by job role from: $url');
 
@@ -1222,7 +1308,8 @@ class ApiService {
     required int repeatDays,
     required String repeatUntil,
   }) async {
-    final url = 'https://hp.triz.co.in/task?type=API&token=$token&sub_institute_id=${user.subInstituteId}&org_type=Healthcare&syear=2025&user_id=${user.id}&formType=multiUser';
+    final url =
+        'https://hp.triz.co.in/task?type=API&token=$token&sub_institute_id=${user.subInstituteId}&org_type=Healthcare&syear=2025&user_id=${user.id}&formType=multiUser';
 
     final payload = {
       'TASK_ALLOCATED_TO': taskAllocatedTo,
@@ -1268,7 +1355,8 @@ class ApiService {
 
   // Fetch a single task by ID
   Future<Task?> fetchTaskById(int taskId, User user, String token) async {
-    final url = 'https://hp.triz.co.in/task/$taskId?type=API&token=$token&sub_institute_id=${user.subInstituteId}';
+    final url =
+        'https://hp.triz.co.in/task/$taskId?type=API&token=$token&sub_institute_id=${user.subInstituteId}';
 
     debugPrint('Fetching task by ID from: $url');
 
@@ -1284,7 +1372,8 @@ class ApiService {
     );
 
     debugPrint('Fetch task by ID response status: ${response.statusCode}');
-    debugPrint('Fetch task by ID response body length: ${response.body.length}');
+    debugPrint(
+        'Fetch task by ID response body length: ${response.body.length}');
 
     if (response.statusCode == 200) {
       if (response.body.trim().isEmpty) {
@@ -1317,10 +1406,22 @@ class ApiService {
   }
 
   // Fetch assigned tasks for the user
-  Future<List<Task>> fetchAssignedTasks(User user, String token) async {
-    final url = 'https://hp.triz.co.in/task?type=API&sub_institute_id=${user.subInstituteId}&token=$token&user_id=${user.id}&syear=2025&user_profile_name=${user.userProfileName}';
+  Future<List<Task>> fetchAssignedTasks(User user, String token,
+      {int? userId}) async {
+    final targetUserId = userId ?? user.id;
+    final uri = Uri.parse('${ApiConfig.baseUrl}/task').replace(
+      queryParameters: {
+        'type': 'API',
+        'sub_institute_id': user.subInstituteId.toString(),
+        'token': token,
+        'user_id': targetUserId.toString(),
+        'syear': user.syear.isNotEmpty ? user.syear : '2025',
+        'user_profile_name': user.userProfileName,
+      },
+    );
 
-    debugPrint('Fetching assigned tasks from: $url');
+    debugPrint(
+        'Fetching assigned tasks for user $targetUserId from ${uri.path}');
 
     final headers = {
       'Content-Type': 'application/json',
@@ -1328,10 +1429,12 @@ class ApiService {
       'Cookie': _getCookieHeader(),
     };
 
-    final response = await _httpClient.get(
-      Uri.parse(url),
-      headers: headers,
-    );
+    final response = await _httpClient
+        .get(
+          uri,
+          headers: headers,
+        )
+        .timeout(ApiConfig.defaultTimeout);
 
     debugPrint('Fetch assigned tasks response status: ${response.statusCode}');
     debugPrint('Fetch assigned tasks response body: ${response.body}');
@@ -1339,18 +1442,62 @@ class ApiService {
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
       debugPrint('Fetch assigned tasks response: $responseData');
-      if (responseData['status'] == '1' && responseData['data'] is List) {
-        final tasks = responseData['data'] as List<dynamic>;
-        return tasks.map((task) => Task.fromJson(task)).toList();
-      } else if (responseData['checkList'] is List) {
-        final tasks = responseData['checkList'] as List<dynamic>;
-        return tasks.map((task) => Task.fromJson(task)).toList();
-      } else {
-        return [];
+
+      if (responseData is! Map<String, dynamic>) {
+        throw const FormatException(
+            'Task API returned an unexpected response format.');
       }
+
+      // The task endpoint returns successful results in `data` without a
+      // `status` field. `checkList` is a separate fallback collection and may
+      // legitimately be empty even when `data` contains tasks.
+      final taskData = responseData['data'] is List
+          ? responseData['data'] as List<dynamic>
+          : responseData['checkList'] is List
+              ? responseData['checkList'] as List<dynamic>
+              : const <dynamic>[];
+
+      return taskData
+          .whereType<Map>()
+          .map((task) => Task.fromJson(Map<String, dynamic>.from(task)))
+          .toList();
     } else {
       debugPrint('Fetch assigned tasks failed: ${response.body}');
       throw Exception('Failed to fetch assigned tasks: ${response.statusCode}');
+    }
+  }
+
+  // Fetch all users for admin people filter
+  Future<List<Map<String, dynamic>>> fetchAllUsers(
+      User user, String token) async {
+    final url =
+        'https://hp.triz.co.in/table_data?table=s_user&filters[sub_institute_id]=${user.subInstituteId}&order_by[id]=desc&type=API&token=$token';
+
+    debugPrint('Fetching all users from: $url');
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Cookie': _getCookieHeader(),
+    };
+
+    final response = await _httpClient.get(Uri.parse(url), headers: headers);
+
+    debugPrint('All users response status: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      debugPrint('All users fetch successful');
+      if (data is List) {
+        return data.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+      } else if (data is Map && data['data'] is List) {
+        return (data['data'] as List<dynamic>)
+            .map((e) => Map<String, dynamic>.from(e as Map))
+            .toList();
+      }
+      return [];
+    } else {
+      debugPrint('All users fetch failed: ${response.body}');
+      throw Exception('Failed to fetch users: ${response.statusCode}');
     }
   }
 
@@ -1437,7 +1584,6 @@ class ApiService {
       throw Exception('Failed to update task: ${response.statusCode}');
     }
   }
-  
 
   // Forgot Password API
   Future<Map<String, dynamic>> forgotPassword(String email) async {
@@ -1477,7 +1623,8 @@ class ApiService {
 
   // Fetch LMS Courses
   Future<List<dynamic>> fetchLmsCourses(User user, String token) async {
-    final url = 'https://hp.triz.co.in/lms/course_master?type=API&sub_institute_id=${user.subInstituteId}&syear=2025&user_id=${user.id}&user_profile_name=${Uri.encodeComponent(user.userProfileName)}&token=$token';
+    final url =
+        'https://hp.triz.co.in/lms/course_master?type=API&sub_institute_id=${user.subInstituteId}&syear=2025&user_id=${user.id}&user_profile_name=${Uri.encodeComponent(user.userProfileName)}&token=$token';
 
     debugPrint('Fetching LMS courses from: $url');
 
@@ -1509,14 +1656,16 @@ class ApiService {
             for (var item in list) {
               if (item is Map) {
                 final mutable = Map<String, dynamic>.from(item);
-                mutable['content_category'] = category; // keep category for UI grouping
+                mutable['content_category'] =
+                    category; // keep category for UI grouping
                 allCourses.add(mutable);
               }
             }
           }
         });
 
-        debugPrint('Flattened ${allCourses.length} LMS subjects from ${lmsSubject.keys.length} categories');
+        debugPrint(
+            'Flattened ${allCourses.length} LMS subjects from ${lmsSubject.keys.length} categories');
         return allCourses;
       }
 
@@ -1547,8 +1696,10 @@ class ApiService {
     const url = 'https://hp.triz.co.in/api/enroll';
 
     final now = DateTime.now();
-    final startDate = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
-    final endDate = "${now.year + 1}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}"; // 1 year validity as fallback
+    final startDate =
+        "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+    final endDate =
+        "${now.year + 1}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}"; // 1 year validity as fallback
 
     final payload = {
       "user_id": user.id,
@@ -1585,7 +1736,8 @@ class ApiService {
       final data = json.decode(response.body);
       debugPrint('Enroll response: $data');
 
-      if (data['status'] == '0' || data['message']?.toString().toLowerCase().contains('fail') == true) {
+      if (data['status'] == '0' ||
+          data['message']?.toString().toLowerCase().contains('fail') == true) {
         throw Exception(data['message'] ?? 'Enrollment failed');
       }
 
@@ -1603,7 +1755,8 @@ class ApiService {
     required User user,
     required String token,
   }) async {
-    final url = 'https://hp.triz.co.in/lms/chapter_master?type=API&sub_institute_id=${user.subInstituteId}&syear=2025&user_profile_name=${Uri.encodeComponent(user.userProfileName)}&user_id=${user.id}&standard_id=$standardId&subject_id=$subjectId&token=$token';
+    final url =
+        'https://hp.triz.co.in/lms/chapter_master?type=API&sub_institute_id=${user.subInstituteId}&syear=2025&user_profile_name=${Uri.encodeComponent(user.userProfileName)}&user_id=${user.id}&standard_id=$standardId&subject_id=$subjectId&token=$token';
 
     debugPrint('Fetching course chapters from: $url');
 
@@ -1626,14 +1779,17 @@ class ApiService {
       return data;
     } else {
       debugPrint('Fetch course chapters failed: ${response.body}');
-      throw Exception('Failed to fetch course chapters: ${response.statusCode}');
+      throw Exception(
+          'Failed to fetch course chapters: ${response.statusCode}');
     }
   }
 
   // Fetch AI Generated Assessments
-  Future<List<Assessment>> fetchAiGeneratedAssessments(User user, String token) async {
+  Future<List<Assessment>> fetchAiGeneratedAssessments(
+      User user, String token) async {
     final subInstituteId = user.subInstituteId ?? 3;
-    final url = 'https://hp.triz.co.in/api/ai-generated-assessment/assessment/index?sub_institute_id=$subInstituteId&type=API&token=$token';
+    final url =
+        'https://hp.triz.co.in/api/ai-generated-assessment/assessment/index?sub_institute_id=$subInstituteId&type=API&token=$token';
 
     debugPrint('Fetching AI assessments from: $url');
 
@@ -1669,13 +1825,16 @@ class ApiService {
     required int subInstituteId,
     required String token,
     required int questionpaperTime,
-    required Map<int, List<int>> selectedAnswers, // questionId -> list of selected answerIds
-    required Map<int, Map<int, int>> answerCorrectMap, // questionId -> {answerId: correctAnswerFlag}
+    required Map<int, List<int>>
+        selectedAnswers, // questionId -> list of selected answerIds
+    required Map<int, Map<int, int>>
+        answerCorrectMap, // questionId -> {answerId: correctAnswerFlag}
     String? hidSessionQuiz,
   }) async {
     const url = 'https://hp.triz.co.in/lms/online_exam';
 
-    final sessionTime = hidSessionQuiz ?? DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+    final sessionTime = hidSessionQuiz ??
+        DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
 
     final Map<String, String> body = {
       'type': 'API',

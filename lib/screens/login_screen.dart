@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../services/auth_provider.dart';
 import 'profile_screen.dart';
 import 'forgot_password_screen.dart';
@@ -107,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 24),
                       Text(
                         'Welcome Back',
-                        style: GoogleFonts.poppins(
+                        style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF0F172A),
@@ -116,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 8),
                       Text(
                         'Access your growth dashboard',
-                        style: GoogleFonts.inter(
+                        style: TextStyle(
                           fontSize: 16,
                           color: const Color(0xFF64748B),
                         ),
@@ -147,15 +146,17 @@ class _LoginScreenState extends State<LoginScreen> {
                               // Email field
                               TextFormField(
                                 controller: _emailController,
-                                style: GoogleFonts.inter(color: const Color(0xFF0F172A)),
+                                style:
+                                    TextStyle(color: const Color(0xFF0F172A)),
                                 decoration: InputDecoration(
                                   labelText: 'Email',
-                                  labelStyle: GoogleFonts.inter(
+                                  labelStyle: TextStyle(
                                     color: const Color(0xFF64748B),
                                     fontSize: 14,
                                   ),
                                   hintText: 'Enter your email',
-                                  hintStyle: GoogleFonts.inter(color: const Color(0xFFCBD5E1)),
+                                  hintStyle:
+                                      TextStyle(color: const Color(0xFFCBD5E1)),
                                   filled: true,
                                   fillColor: Colors.white.withOpacity(0.7),
                                   border: OutlineInputBorder(
@@ -178,14 +179,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                     color: Color(0xFF64748B),
                                     size: 20,
                                   ),
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 16),
                                 ),
                                 keyboardType: TextInputType.emailAddress,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter your email';
                                   }
-                                  if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                                  if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                                      .hasMatch(value)) {
                                     return 'Please enter a valid email';
                                   }
                                   return null;
@@ -195,15 +198,17 @@ class _LoginScreenState extends State<LoginScreen> {
                               // Password field
                               TextFormField(
                                 controller: _passwordController,
-                                style: GoogleFonts.inter(color: const Color(0xFF0F172A)),
+                                style:
+                                    TextStyle(color: const Color(0xFF0F172A)),
                                 decoration: InputDecoration(
                                   labelText: 'Password',
-                                  labelStyle: GoogleFonts.inter(
+                                  labelStyle: TextStyle(
                                     color: const Color(0xFF64748B),
                                     fontSize: 14,
                                   ),
                                   hintText: 'Enter your password',
-                                  hintStyle: GoogleFonts.inter(color: const Color(0xFFCBD5E1)),
+                                  hintStyle:
+                                      TextStyle(color: const Color(0xFFCBD5E1)),
                                   filled: true,
                                   fillColor: Colors.white.withOpacity(0.7),
                                   border: OutlineInputBorder(
@@ -223,7 +228,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   suffixIcon: IconButton(
                                     icon: Icon(
-                                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                                      _obscurePassword
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
                                       color: const Color(0xFF64748B),
                                       size: 20,
                                     ),
@@ -233,7 +240,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       });
                                     },
                                   ),
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 16),
                                 ),
                                 obscureText: _obscurePassword,
                                 validator: (value) {
@@ -245,57 +253,60 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               const SizedBox(height: 16),
                               // Remember me and Forgot Password
-                               Row(
-                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                 children: [
-                                   Flexible(
-                                     child: Row(
-                                       children: [
-                                         Checkbox(
-                                           value: _rememberMe,
-                                           onChanged: (value) {
-                                             setState(() {
-                                               _rememberMe = value ?? false;
-                                             });
-                                           },
-                                           activeColor: const Color(0xFF0F172A),
-                                           shape: RoundedRectangleBorder(
-                                             borderRadius: BorderRadius.circular(4),
-                                           ),
-                                         ),
-                                         Flexible(
-                                           child: Text(
-                                             'Remember me',
-                                             style: GoogleFonts.inter(
-                                               color: const Color(0xFF64748B),
-                                               fontSize: 14,
-                                             ),
-                                           ),
-                                         ),
-                                       ],
-                                     ),
-                                   ),
-                                   Flexible(
-                                     child: TextButton(
-                                       onPressed: () {
-                                         Navigator.push(
-                                           context,
-                                           MaterialPageRoute(
-                                             builder: (context) => const ForgotPasswordScreen(),
-                                           ),
-                                         );
-                                       },
-                                       child: Text(
-                                         'Forgot Password?',
-                                         style: GoogleFonts.inter(
-                                           color: const Color(0xFF0F172A),
-                                           fontSize: 14,
-                                           fontWeight: FontWeight.w500,
-                                         ),
-                                       ),
-                                     ),
-                                   ),
-                                 ],
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Flexible(
+                                    child: Row(
+                                      children: [
+                                        Checkbox(
+                                          value: _rememberMe,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _rememberMe = value ?? false;
+                                            });
+                                          },
+                                          activeColor: const Color(0xFF0F172A),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Text(
+                                            'Remember me',
+                                            style: TextStyle(
+                                              color: const Color(0xFF64748B),
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Flexible(
+                                    child: TextButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const ForgotPasswordScreen(),
+                                          ),
+                                        );
+                                      },
+                                      child: Text(
+                                        'Forgot Password?',
+                                        style: TextStyle(
+                                          color: const Color(0xFF0F172A),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                               const SizedBox(height: 24),
                               // Login Button
@@ -304,14 +315,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                 height: 50,
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
-                                    colors: [Color(0xFFFF6A00), Color(0xFFFF8C42)],
+                                    colors: [
+                                      Color(0xFFFF6A00),
+                                      Color(0xFFFF8C42)
+                                    ],
                                     begin: Alignment.centerLeft,
                                     end: Alignment.centerRight,
                                   ),
                                   borderRadius: BorderRadius.circular(25),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFFFF6A00).withOpacity(0.3),
+                                      color: const Color(0xFFFF6A00)
+                                          .withOpacity(0.3),
                                       blurRadius: 15,
                                       offset: const Offset(0, 6),
                                     ),
@@ -323,7 +338,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       onPressed: auth.isLoading
                                           ? null
                                           : () async {
-                                              if (_formKey.currentState!.validate()) {
+                                              if (_formKey.currentState!
+                                                  .validate()) {
                                                 try {
                                                   await auth.login(
                                                     _emailController.text,
@@ -333,20 +349,31 @@ class _LoginScreenState extends State<LoginScreen> {
                                                   Navigator.pushReplacement(
                                                     context,
                                                     MaterialPageRoute(
-                                                      builder: (context) => ProfileScreen(),
+                                                      builder: (context) =>
+                                                          ProfileScreen(),
                                                     ),
                                                   );
                                                 } catch (e) {
                                                   if (!mounted) return;
-                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
                                                     SnackBar(
-                                                      content: Text(e.toString()),
-                                                      backgroundColor: const Color(0xFFDC2626),
-                                                      behavior: SnackBarBehavior.floating,
-                                                      shape: RoundedRectangleBorder(
-                                                        borderRadius: BorderRadius.circular(12),
+                                                      content:
+                                                          Text(e.toString()),
+                                                      backgroundColor:
+                                                          const Color(
+                                                              0xFFDC2626),
+                                                      behavior: SnackBarBehavior
+                                                          .floating,
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
                                                       ),
-                                                      margin: const EdgeInsets.all(16),
+                                                      margin:
+                                                          const EdgeInsets.all(
+                                                              16),
                                                     ),
                                                   );
                                                 }
@@ -356,14 +383,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                         backgroundColor: Colors.transparent,
                                         shadowColor: Colors.transparent,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(25),
+                                          borderRadius:
+                                              BorderRadius.circular(25),
                                         ),
                                       ),
                                       child: auth.isLoading
-                                          ? const CircularProgressIndicator(color: Colors.white)
+                                          ? const CircularProgressIndicator(
+                                              color: Colors.white)
                                           : Text(
                                               'Login',
-                                              style: GoogleFonts.inter(
+                                              style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w600,
                                                 color: Colors.white,
@@ -377,7 +406,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                       const SizedBox(height: 32),
+                      const SizedBox(height: 32),
                     ],
                   ),
                 ),

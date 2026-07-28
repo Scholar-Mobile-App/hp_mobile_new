@@ -8,6 +8,7 @@ import '../models/menu.dart';
 import '../models/menu_response.dart';
 import 'login_screen.dart';
 import 'profile_details_screen.dart';
+import '../widgets/network_avatar.dart';
 import 'goals_screen.dart';
 import 'achievements_screen.dart';
 import 'training_screen.dart';
@@ -37,7 +38,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       final notificationService = NotificationService();
       await notificationService.initialize();
-      await notificationService.updateTokenWithUser(user.id.toString(), user.token);
+      await notificationService.updateTokenWithUser(
+          user.id.toString(), user.token);
     } catch (e) {
       debugPrint('Error initializing FCM token: $e');
     }
@@ -48,7 +50,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
-  Widget _buildQuickActionCard(BuildContext context, String title, IconData icon, String subtitle, VoidCallback? onTap, {required int level}) {
+  Widget _buildQuickActionCard(BuildContext context, String title,
+      IconData icon, String subtitle, VoidCallback? onTap,
+      {required int level}) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -66,7 +70,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       basePadding = isLandscape ? 16 : 18;
     }
 
-    double padding = level == 1 ? basePadding * 1.5 : level == 2 ? basePadding * 1.2 : basePadding;
+    double padding = level == 1
+        ? basePadding * 1.5
+        : level == 2
+            ? basePadding * 1.2
+            : basePadding;
 
     return InkWell(
       onTap: onTap,
@@ -84,7 +92,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(16),
-          border: level == 3 ? Border.all(color: const Color(0xFF1F2A6D).withOpacity(0.2), width: 1) : null,
+          border: level == 3
+              ? Border.all(
+                  color: const Color(0xFF1F2A6D).withOpacity(0.2), width: 1)
+              : null,
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.2),
@@ -97,9 +108,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           builder: (context, constraints) {
             final bool isCompactCard = constraints.maxWidth < 180;
             final double cardWidth = constraints.maxWidth;
-            final double iconSize = (cardWidth * (isCompactCard ? 0.16 : 0.18)).clamp(22.0, 44.0);
-            final double titleFontSize = (cardWidth * (isCompactCard ? 0.088 : 0.105)).clamp(12.5, 22.0);
-            final double subtitleFontSize = (cardWidth * (isCompactCard ? 0.062 : 0.078)).clamp(10.0, 16.0);
+            final double iconSize =
+                (cardWidth * (isCompactCard ? 0.16 : 0.18)).clamp(22.0, 44.0);
+            final double titleFontSize =
+                (cardWidth * (isCompactCard ? 0.088 : 0.105)).clamp(12.5, 22.0);
+            final double subtitleFontSize =
+                (cardWidth * (isCompactCard ? 0.062 : 0.078)).clamp(10.0, 16.0);
 
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -107,7 +121,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Icon(
                   icon,
                   size: iconSize,
-                  color: level == 1 || level == 2 ? Colors.white : const Color(0xFFFF6A00),
+                  color: level == 1 || level == 2
+                      ? Colors.white
+                      : const Color(0xFFFF6A00),
                 ),
                 SizedBox(height: isCompactCard ? 6 : 12),
                 Flexible(
@@ -117,7 +133,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: TextStyle(
                       fontSize: titleFontSize,
                       fontWeight: FontWeight.bold,
-                      color: level == 1 || level == 2 ? Colors.white : const Color(0xFF1F2A6D),
+                      color: level == 1 || level == 2
+                          ? Colors.white
+                          : const Color(0xFF1F2A6D),
                       height: 1.15,
                     ),
                     textAlign: TextAlign.center,
@@ -132,8 +150,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     subtitle,
                     style: TextStyle(
                       fontSize: subtitleFontSize,
-                      fontWeight: screenWidth >= 500 ? FontWeight.w600 : FontWeight.normal,
-                      color: level == 1 || level == 2 ? Colors.white70 : Colors.grey[600],
+                      fontWeight: screenWidth >= 500
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                      color: level == 1 || level == 2
+                          ? Colors.white70
+                          : Colors.grey[600],
                       height: 1.15,
                     ),
                     textAlign: TextAlign.center,
@@ -277,11 +299,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // Check for specific keywords in menu name
     if (name.contains('goal') || name.contains('target')) {
       return Icons.track_changes;
-    } else if (name.contains('achievement') || name.contains('trophy') || name.contains('award')) {
+    } else if (name.contains('achievement') ||
+        name.contains('trophy') ||
+        name.contains('award')) {
       return Icons.emoji_events;
-    } else if (name.contains('training') || name.contains('course') || name.contains('learning')) {
+    } else if (name.contains('training') ||
+        name.contains('course') ||
+        name.contains('learning')) {
       return Icons.school;
-    } else if (name.contains('resource') || name.contains('library') || name.contains('document')) {
+    } else if (name.contains('resource') ||
+        name.contains('library') ||
+        name.contains('document')) {
       return Icons.library_books;
     } else if (name.contains('profile') || name.contains('account')) {
       return Icons.account_circle;
@@ -289,9 +317,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return Icons.calendar_today;
     } else if (name.contains('competency') || name.contains('skill')) {
       return Icons.psychology;
-    } else if (name.contains('organization') || name.contains('team') || name.contains('group')) {
+    } else if (name.contains('organization') ||
+        name.contains('team') ||
+        name.contains('group')) {
       return Icons.group;
-    } else if (name.contains('report') || name.contains('chart') || name.contains('analytics')) {
+    } else if (name.contains('report') ||
+        name.contains('chart') ||
+        name.contains('analytics')) {
       return Icons.bar_chart;
     } else if (name.contains('task') || name.contains('assignment')) {
       return Icons.assignment;
@@ -342,7 +374,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       );
     } else if (menuItem.menuName.toLowerCase().contains('attendance') &&
-               menuItem.menuName.toLowerCase().contains('report')) {
+        menuItem.menuName.toLowerCase().contains('report')) {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -378,7 +410,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       );
     } else if (menuItem.menuName.toLowerCase().contains('course') ||
-                menuItem.menuName.toLowerCase().contains('lms')) {
+        menuItem.menuName.toLowerCase().contains('lms')) {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -386,13 +418,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       );
     } else if (menuItem.menuName.toLowerCase().contains('apply') &&
-               menuItem.menuName.toLowerCase().contains('leave')) {
+        menuItem.menuName.toLowerCase().contains('leave')) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => ApplyLeaveScreen()),
       );
     } else if (menuItem.menuName.toLowerCase().contains('my') &&
-               menuItem.menuName.toLowerCase().contains('leave')) {
+        menuItem.menuName.toLowerCase().contains('leave')) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => MyLeaveScreen()),
@@ -406,7 +438,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
-
 
   Widget _buildDefaultQuickActions(BuildContext context) {
     debugPrint('No mobile menus available, showing default menus');
@@ -483,7 +514,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildDynamicQuickActions(BuildContext context, List<MenuItem> mobileMenus) {
+  Widget _buildDynamicQuickActions(
+      BuildContext context, List<MenuItem> mobileMenus) {
     debugPrint('Showing ${mobileMenus.length} dynamic menus');
 
     // Responsive grid configuration based on screen size and orientation (same as default)
@@ -524,7 +556,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       itemCount: mobileMenus.length,
       itemBuilder: (context, index) {
         final menuItem = mobileMenus[index];
-        debugPrint('Menu item $index: ${menuItem.menuName}, icon: ${menuItem.icon}');
+        debugPrint(
+            'Menu item $index: ${menuItem.menuName}, icon: ${menuItem.icon}');
         return _buildQuickActionCard(
           context,
           menuItem.menuName,
@@ -542,7 +575,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final auth = Provider.of<AuthProvider>(context);
     final user = auth.currentUser;
     var mobileMenus = auth.menuResponse?.getMobileMenus() ?? [];
-
 
     debugPrint('Dashboard user image: ${user?.image}');
 
@@ -602,17 +634,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CircleAvatar(
+                        NetworkAvatar(
                           radius: 35,
-                          backgroundImage: user.image.isNotEmpty ? NetworkImage(
-                            user.image.startsWith('http') ? user.image : 'https://s3-triz.fra1.cdn.digitaloceanspaces.com/public/hp_user/${user.image}'
-                          ) : null,
                           backgroundColor: Colors.white,
-                          child: user.image.isEmpty ? const Icon(
-                            Icons.person,
-                            size: 35,
-                            color: Color(0xFF1F2A6D),
-                          ) : null,
+                          iconColor: const Color(0xFF1F2A6D),
+                          image: user.image,
                         ),
                         const SizedBox(height: 12),
                         Text(
@@ -666,7 +692,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [const Color(0xFF1F2A6D).withOpacity(0.1), const Color(0xFF2E3A8C).withOpacity(0.05)],
+              colors: [
+                const Color(0xFF1F2A6D).withOpacity(0.1),
+                const Color(0xFF2E3A8C).withOpacity(0.05)
+              ],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -675,77 +704,164 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFFF6A00), Color(0xFFFF7A1A)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFFFF6A00).withOpacity(0.3),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFFF6A00), Color(0xFFFF7A1A)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.waving_hand,
-                        color: Colors.white,
-                        size: 32,
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Welcome, ${user.firstName}!',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Logged in as ${user.userProfileName} at ${user.orgName}',
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFFF6A00).withOpacity(0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
                         ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.waving_hand,
+                          color: Colors.white,
+                          size: 32,
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Welcome, ${user.firstName}!',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Logged in as ${user.userProfileName} at ${user.orgName}',
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Dashboard',
+                    style: TextStyle(
+                      color: Color(0xFF1F2A6D),
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProfileDetailsScreen()),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                    ],
+                      child: Row(
+                        children: [
+                          NetworkAvatar(
+                            radius: 30,
+                            backgroundColor: const Color(0xFF1F2A6D),
+                            iconColor: Colors.white,
+                            image: user.image,
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user.fullName,
+                                  style: const TextStyle(
+                                    color: Color(0xFF1F2A6D),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  user.email,
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                const Text(
+                                  'Tap to view full profile',
+                                  style: TextStyle(
+                                    color: Color(0xFFFF6A00),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(
+                            Icons.arrow_forward_ios,
+                            color: Color(0xFF1F2A6D),
+                            size: 16,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  'Dashboard',
-                  style: TextStyle(
-                    color: Color(0xFF1F2A6D),
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Quick Actions',
+                    style: TextStyle(
+                      color: Color(0xFF1F2A6D),
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ProfileDetailsScreen()),
-                    );
-                  },
-                  child: Container(
+                  const SizedBox(height: 16),
+                  mobileMenus.isEmpty
+                      ? _buildDefaultQuickActions(context)
+                      : _buildDynamicQuickActions(context, mobileMenus),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Recent Announcements',
+                    style: TextStyle(
+                      color: Color(0xFF1F2A6D),
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -758,197 +874,107 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ],
                     ),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundImage: user.image.isNotEmpty ? NetworkImage(
-                            user.image.startsWith('http') ? user.image : 'https://s3-triz.fra1.cdn.digitaloceanspaces.com/public/hp_user/${user.image}'
-                          ) : null,
-                          backgroundColor: const Color(0xFF1F2A6D),
-                          child: user.image.isEmpty ? const Icon(
-                            Icons.person,
-                            size: 30,
-                            color: Colors.white,
-                          ) : null,
+                        const Row(
+                          children: [
+                            Icon(Icons.campaign,
+                                color: Color(0xFFFF6A00), size: 24),
+                            SizedBox(width: 12),
+                            Text(
+                              'Welcome to Gaps To Growth!',
+                              style: TextStyle(
+                                color: Color(0xFF1F2A6D),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                user.fullName,
-                                style: const TextStyle(
-                                  color: Color(0xFF1F2A6D),
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                user.email,
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: 14,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              const Text(
-                                'Tap to view full profile',
-                                style: TextStyle(
-                                  color: Color(0xFFFF6A00),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
+                        const SizedBox(height: 12),
+                        Text(
+                          'Your journey to professional development starts here. Set goals, track progress, and achieve your career aspirations with our comprehensive tools.',
+                          style: TextStyle(
+                            color: Colors.grey[700],
+                            fontSize: 14,
+                            height: 1.5,
                           ),
                         ),
-                        const Icon(
-                          Icons.arrow_forward_ios,
-                          color: Color(0xFF1F2A6D),
-                          size: 16,
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Recent Update: New training modules available',
+                          style: TextStyle(
+                            color: Color(0xFFFF6A00),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  'Quick Actions',
-                  style: TextStyle(
-                    color: Color(0xFF1F2A6D),
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                mobileMenus.isEmpty
-                    ? _buildDefaultQuickActions(context)
-                    : _buildDynamicQuickActions(context, mobileMenus),
-                const SizedBox(height: 24),
-                const Text(
-                  'Recent Announcements',
-                  style: TextStyle(
-                    color: Color(0xFF1F2A6D),
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Row(
-                        children: [
-                          Icon(Icons.campaign, color: Color(0xFFFF6A00), size: 24),
-                          SizedBox(width: 12),
-                          Text(
-                            'Welcome to Gaps To Growth!',
-                            style: TextStyle(
-                              color: Color(0xFF1F2A6D),
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Your journey to professional development starts here. Set goals, track progress, and achieve your career aspirations with our comprehensive tools.',
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                          fontSize: 14,
-                          height: 1.5,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Recent Update: New training modules available',
-                        style: TextStyle(
-                          color: Color(0xFFFF6A00),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  'Progress Overview',
-                  style: TextStyle(
-                    color: Color(0xFF1F2A6D),
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFFF6A00), Color(0xFFFF7A1A)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Progress Overview',
+                    style: TextStyle(
+                      color: Color(0xFF1F2A6D),
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
                     ),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFFFF6A00).withOpacity(0.3),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Your Development Progress',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFFF6A00), Color(0xFFFF7A1A)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      const SizedBox(height: 16),
-                      _buildProgressItem('Goals Completed', '3/5', 0.6),
-                      const SizedBox(height: 12),
-                      _buildProgressItem('Courses Started', '2/8', 0.25),
-                      const SizedBox(height: 12),
-                      _buildProgressItem('Achievements Unlocked', '7/15', 0.47),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Keep up the great work! You\'re making excellent progress.',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 14,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFFF6A00).withOpacity(0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Your Development Progress',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        _buildProgressItem('Goals Completed', '3/5', 0.6),
+                        const SizedBox(height: 12),
+                        _buildProgressItem('Courses Started', '2/8', 0.25),
+                        const SizedBox(height: 12),
+                        _buildProgressItem(
+                            'Achievements Unlocked', '7/15', 0.47),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Keep up the great work! You\'re making excellent progress.',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ),
-  );
+    );
   }
 }

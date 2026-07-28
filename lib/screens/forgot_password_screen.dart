@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../services/api_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -89,7 +88,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       const SizedBox(height: 48),
                       Text(
                         'Reset Password',
-                        style: GoogleFonts.poppins(
+                        style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF0F172A),
@@ -98,7 +97,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       const SizedBox(height: 8),
                       Text(
                         "We'll send you a secure reset link",
-                        style: GoogleFonts.inter(
+                        style: TextStyle(
                           fontSize: 16,
                           color: const Color(0xFF64748B),
                         ),
@@ -129,15 +128,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               // Email field
                               TextFormField(
                                 controller: _emailController,
-                                style: GoogleFonts.inter(color: const Color(0xFF0F172A)),
+                                style:
+                                    TextStyle(color: const Color(0xFF0F172A)),
                                 decoration: InputDecoration(
                                   labelText: 'Email',
-                                  labelStyle: GoogleFonts.inter(
+                                  labelStyle: TextStyle(
                                     color: const Color(0xFF64748B),
                                     fontSize: 14,
                                   ),
                                   hintText: 'Enter your email',
-                                  hintStyle: GoogleFonts.inter(color: const Color(0xFFCBD5E1)),
+                                  hintStyle:
+                                      TextStyle(color: const Color(0xFFCBD5E1)),
                                   filled: true,
                                   fillColor: Colors.white.withOpacity(0.7),
                                   border: OutlineInputBorder(
@@ -160,14 +161,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     color: Color(0xFF64748B),
                                     size: 20,
                                   ),
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 16),
                                 ),
                                 keyboardType: TextInputType.emailAddress,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter your email';
                                   }
-                                  if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                                  if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                                      .hasMatch(value)) {
                                     return 'Please enter a valid email';
                                   }
                                   return null;
@@ -180,66 +183,88 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 height: 50,
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
-                                    colors: [Color(0xFFFF6A00), Color(0xFFFF8C42)],
+                                    colors: [
+                                      Color(0xFFFF6A00),
+                                      Color(0xFFFF8C42)
+                                    ],
                                     begin: Alignment.centerLeft,
                                     end: Alignment.centerRight,
                                   ),
                                   borderRadius: BorderRadius.circular(25),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFFFF6A00).withOpacity(0.3),
+                                      color: const Color(0xFFFF6A00)
+                                          .withOpacity(0.3),
                                       blurRadius: 15,
                                       offset: const Offset(0, 6),
                                     ),
                                   ],
                                 ),
                                 child: ElevatedButton(
-                                   onPressed: _isLoading
-                                       ? null
-                                       : () async {
-                                           if (_formKey.currentState!.validate()) {
-                                             setState(() {
-                                               _isLoading = true;
-                                             });
-                                             try {
-                                               final apiService = ApiService();
-                                               await apiService.forgotPassword(_emailController.text);
-                                               setState(() {
-                                                 _isLoading = false;
-                                               });
-                                               ScaffoldMessenger.of(context).showSnackBar(
-                                                 SnackBar(
-                                                   content: const Text('Reset link sent to your email'),
-                                                   backgroundColor: const Color(0xFF059669),
-                                                   behavior: SnackBarBehavior.floating,
-                                                   shape: RoundedRectangleBorder(
-                                                     borderRadius: BorderRadius.circular(12),
-                                                   ),
-                                                   margin: const EdgeInsets.all(16),
-                                                 ),
-                                               );
-                                               // Navigate back after success
-                                               Future.delayed(const Duration(seconds: 2), () {
-                                                 Navigator.pop(context);
-                                               });
-                                             } catch (e) {
-                                               setState(() {
-                                                 _isLoading = false;
-                                               });
-                                               ScaffoldMessenger.of(context).showSnackBar(
-                                                 SnackBar(
-                                                   content: Text('Failed to send reset email: ${e.toString()}'),
-                                                   backgroundColor: const Color(0xFFDC2626),
-                                                   behavior: SnackBarBehavior.floating,
-                                                   shape: RoundedRectangleBorder(
-                                                     borderRadius: BorderRadius.circular(12),
-                                                   ),
-                                                   margin: const EdgeInsets.all(16),
-                                                 ),
-                                               );
-                                             }
-                                           }
-                                         },
+                                  onPressed: _isLoading
+                                      ? null
+                                      : () async {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            setState(() {
+                                              _isLoading = true;
+                                            });
+                                            try {
+                                              final apiService = ApiService();
+                                              await apiService.forgotPassword(
+                                                  _emailController.text);
+                                              setState(() {
+                                                _isLoading = false;
+                                              });
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: const Text(
+                                                      'Reset link sent to your email'),
+                                                  backgroundColor:
+                                                      const Color(0xFF059669),
+                                                  behavior:
+                                                      SnackBarBehavior.floating,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                  ),
+                                                  margin:
+                                                      const EdgeInsets.all(16),
+                                                ),
+                                              );
+                                              // Navigate back after success
+                                              Future.delayed(
+                                                  const Duration(seconds: 2),
+                                                  () {
+                                                Navigator.pop(context);
+                                              });
+                                            } catch (e) {
+                                              setState(() {
+                                                _isLoading = false;
+                                              });
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Failed to send reset email: ${e.toString()}'),
+                                                  backgroundColor:
+                                                      const Color(0xFFDC2626),
+                                                  behavior:
+                                                      SnackBarBehavior.floating,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                  ),
+                                                  margin:
+                                                      const EdgeInsets.all(16),
+                                                ),
+                                              );
+                                            }
+                                          }
+                                        },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.transparent,
                                     shadowColor: Colors.transparent,
@@ -248,10 +273,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     ),
                                   ),
                                   child: _isLoading
-                                      ? const CircularProgressIndicator(color: Colors.white)
+                                      ? const CircularProgressIndicator(
+                                          color: Colors.white)
                                       : Text(
                                           'Send Reset Link',
-                                          style: GoogleFonts.inter(
+                                          style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600,
                                             color: Colors.white,
@@ -268,7 +294,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   },
                                   child: Text(
                                     'Back to Login',
-                                    style: GoogleFonts.inter(
+                                    style: TextStyle(
                                       color: const Color(0xFF0F172A),
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
