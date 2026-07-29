@@ -16,6 +16,7 @@ import '../models/user_ability.dart';
 import '../models/user_behaviour.dart';
 import '../models/task.dart';
 import '../models/lms/assessment_model.dart';
+import '../models/activity_stream.dart';
 import '../config/api_config.dart';
 
 class OrgSectionForSubmit {
@@ -52,6 +53,37 @@ class OrgSectionForSubmit {
 
 class ApiService {
   ApiService();
+
+  Future<ActivityStreamData> fetchActivityStream(
+      User user, String token) async {
+    final uri = Uri.parse('${ApiConfig.baseUrl}/lms/lmsActivityStream').replace(
+      queryParameters: {
+        'type': 'API',
+        'token': token,
+        'sub_institute_id': user.subInstituteId.toString(),
+        'user_id': user.id.toString(),
+        'user_profile_id': user.userProfileName,
+        'org_type': user.orgType,
+        'syear': user.syear.isNotEmpty ? user.syear : '2025',
+      },
+    );
+    final response = await _httpClient.get(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Cookie': _getCookieHeader(),
+      },
+    ).timeout(ApiConfig.defaultTimeout);
+
+    if (response.statusCode != 200) {
+      throw Exception('Unable to load activity stream (${response.statusCode}).');
+    }
+    final decoded = json.decode(response.body);
+    if (decoded is! Map) {
+      throw const FormatException('Activity stream returned invalid data.');
+    }
+    return ActivityStreamData.fromJson(Map<String, dynamic>.from(decoded));
+  }
 
   static String get baseUrl => '${ApiConfig.baseUrl}${ApiConfig.loginEndpoint}';
 

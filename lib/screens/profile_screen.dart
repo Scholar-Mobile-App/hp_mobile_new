@@ -23,6 +23,7 @@ import 'organization_management/organization_detail_screen.dart';
 import 'lms/courses_list_screen.dart';
 import 'lms/my_learning_dashboard_screen.dart';
 import 'lms/assessment_list_screen.dart';
+import 'lms/activity_stream_screen.dart';
 import 'hrms/apply_leave_screen.dart';
 import 'hrms/my_leave_screen.dart';
 
@@ -393,6 +394,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => const OrganizationDetailScreen(),
+        ),
+      );
+    } else if (menuItem.menuName.toLowerCase().contains('activity stream')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ActivityStreamScreen(),
         ),
       );
     } else if (menuItem.menuName == "My Learning Dashboard") {
