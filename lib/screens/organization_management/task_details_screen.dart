@@ -39,6 +39,13 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = Provider.of<AuthProvider>(
+      context,
+      listen: false,
+    ).currentUser;
+    final canUpdateTask =
+        currentUser != null && _isTaskAssigner(currentUser.id);
+
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAFA),
       appBar: AppBar(
@@ -173,11 +180,11 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
             const SizedBox(height: 24),
 
             // Approval Section
-            if ((Provider.of<AuthProvider>(context, listen: false).currentUser?.userProfileName ?? '').toLowerCase().contains('admin'))
-            _buildEditableCard(
-              'Approval',
-              Icons.approval,
-              [
+            if (canUpdateTask)
+              _buildEditableCard(
+                'Approval',
+                Icons.approval,
+                [
                 const Text(
                   'Approve Status',
                   style: TextStyle(
@@ -252,31 +259,35 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                   ),
                 ),
 
-              ],
-            ),
+                ],
+              ),
 
-            const SizedBox(height: 32),
+            if (canUpdateTask) const SizedBox(height: 32),
 
             // Update Button
-            Center(
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _updateTask,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF6366F1),
-                  padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
+            if (canUpdateTask)
+              Center(
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _updateTask,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6366F1),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 48,
+                      vertical: 16,
+                    ),
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text('Update Task'),
                 ),
-                child: _isLoading
-                    ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : const Text('Update Task'),
               ),
-            ),
             const SizedBox(height: 24),
           ],
         ),
@@ -489,21 +500,27 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
   }
 
   Future<void> _updateTask() async {
-    setState(() {
-      _isLoading = true;
-    });
-
     final auth = Provider.of<AuthProvider>(context, listen: false);
     final user = auth.currentUser;
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('User not logged in')),
       );
-      setState(() {
-        _isLoading = false;
-      });
       return;
     }
+
+    if (!_isTaskAssigner(user.id)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Only the user who assigned this task can update it.'),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
 
     final apiService = ApiService();
     await apiService.loadCookies();
@@ -557,6 +574,11 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
         SnackBar(content: Text('Failed to update task: $e')),
       );
     }
+  }
+
+  bool _isTaskAssigner(int userId) {
+    final managerId = int.tryParse(widget.task.manageby?.trim() ?? '');
+    return widget.task.createdBy == userId || managerId == userId;
   }
 
   String _formatDateTime(String dateTimeString) {
