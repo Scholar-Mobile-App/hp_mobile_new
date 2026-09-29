@@ -404,6 +404,322 @@ class _TaskAssignmentProgressScreenState
     }
   }
 
+  // Lightweight self-service task creation, available to every user (not
+  // just admins). Unlike the multi-step "Assign Task" wizard above (which is
+  // for admins assigning work to other employees across departments/job
+  // roles), this allocates the new task directly to the current user and
+  // uses its own local form state so it never interferes with the wizard's
+  // fields (taskTitleController, selectedPriority, etc).
+  Future<void> _showAddMyTaskDialog() async {
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final user = auth.currentUser;
+    if (user == null) return;
+
+    final titleController = TextEditingController();
+    final descriptionController = TextEditingController();
+    final kpaController = TextEditingController();
+    String repeatDaysValue = '1 days';
+    DateTime? repeatUntil;
+    String priority = 'Medium';
+    bool isSubmitting = false;
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (sheetContext, setSheetState) {
+            Future<void> pickUntilDate() async {
+              final picked = await showDatePicker(
+                context: sheetContext,
+                initialDate: repeatUntil ?? DateTime.now(),
+                firstDate: DateTime.now(),
+                lastDate: DateTime(2101),
+              );
+              if (picked != null) {
+                setSheetState(() => repeatUntil = picked);
+              }
+            }
+
+            Future<void> submit() async {
+              if (titleController.text.trim().isEmpty ||
+                  descriptionController.text.trim().isEmpty) {
+                ScaffoldMessenger.of(sheetContext).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please enter task title and description'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+                return;
+              }
+
+              setSheetState(() => isSubmitting = true);
+              try {
+                final apiService = ApiService();
+                await apiService.loadCookies();
+                final token = auth.originalToken ?? user.token;
+                final repeatDaysNum =
+                    int.parse(repeatDaysValue.split(' ')[0]);
+                final repeatUntilStr = repeatUntil != null
+                    ? DateFormat('yyyy-MM-dd').format(repeatUntil!)
+                    : '';
+                final title = titleController.text.trim();
+
+                await apiService.assignTask(
+                  user: user,
+                  token: token,
+                  taskTitle: title,
+                  taskDescription: descriptionController.text.trim(),
+                  taskAllocatedTo: user.id.toString(),
+                  skillId: '',
+                  skills: '',
+                  manageBy: user.id.toString(),
+                  observationPoint: 'KRA',
+                  kpa: kpaController.text.trim(),
+                  selType: priority,
+                  repeatDays: repeatDaysNum,
+                  repeatUntil: repeatUntilStr,
+                );
+
+                if (!mounted) return;
+                Navigator.of(sheetContext).pop();
+
+                Flushbar(
+                  title: '✅ Task Created!',
+                  message: 'Your task "$title" has been added.',
+                  duration: const Duration(seconds: 3),
+                  backgroundColor: Colors.green.shade600,
+                  flushbarPosition: FlushbarPosition.TOP,
+                  icon: const Icon(Icons.check_circle, color: Colors.white),
+                ).show(context);
+
+                fetchAssignedTasks();
+              } catch (e) {
+                debugPrint('Error creating self task: $e');
+                setSheetState(() => isSubmitting = false);
+                ScaffoldMessenger.of(sheetContext).showSnackBar(
+                  SnackBar(
+                    content: Text('Failed to create task: $e'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
+              ),
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                ),
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(
+                    20,
+                    16,
+                    20,
+                    MediaQuery.of(sheetContext).padding.bottom + 20,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 40,
+                          height: 4,
+                          margin: const EdgeInsets.only(bottom: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade300,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ),
+                      const Text(
+                        'Add My Task',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF18234A),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Create a task for yourself',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      TextField(
+                        controller: titleController,
+                        decoration: _buildInputDecoration('Task title'),
+                      ),
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: descriptionController,
+                        maxLines: 3,
+                        decoration: _buildInputDecoration('Task description'),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: DropdownButtonFormField<String>(
+                              initialValue: repeatDaysValue,
+                              decoration: _buildInputDecoration('Repeat every'),
+                              items: List.generate(10, (index) {
+                                final days = index + 1;
+                                return DropdownMenuItem<String>(
+                                  value: '$days days',
+                                  child: Text('$days days'),
+                                );
+                              }),
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setSheetState(() => repeatDaysValue = value);
+                                }
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: TextField(
+                              readOnly: true,
+                              decoration: InputDecoration(
+                                labelText: 'Until date',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                      color: Color(0xFFE5E7EB)),
+                                ),
+                                filled: true,
+                                fillColor: Colors.grey.shade50,
+                                suffixIcon: const Icon(
+                                  Icons.calendar_today,
+                                  color: Color(0xFF6B7280),
+                                ),
+                              ),
+                              controller: TextEditingController(
+                                text: repeatUntil != null
+                                    ? DateFormat('yyyy-MM-dd')
+                                        .format(repeatUntil!)
+                                    : '',
+                              ),
+                              onTap: pickUntilDate,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Priority',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF1A1A1A),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: Row(
+                          children: ['Low', 'Medium', 'High'].map((label) {
+                            final isSelected = priority == label;
+                            return Expanded(
+                              child: InkWell(
+                                onTap: () =>
+                                    setSheetState(() => priority = label),
+                                child: Container(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 14),
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? _getPriorityColor(label)
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.horizontal(
+                                      left: label == 'Low'
+                                          ? const Radius.circular(10)
+                                          : Radius.zero,
+                                      right: label == 'High'
+                                          ? const Radius.circular(10)
+                                          : Radius.zero,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    label,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: isSelected
+                                          ? Colors.white
+                                          : Colors.grey.shade600,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: kpaController,
+                        decoration: _buildInputDecoration('KPA (optional)'),
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: isSubmitting ? null : submit,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF2E3E98),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: isSubmitting
+                              ? const SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text(
+                                  'Create Task',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    titleController.dispose();
+    descriptionController.dispose();
+    kpaController.dispose();
+  }
+
   Future<void> updateSelectedSkills() async {
     setState(() {
       skills = [];
@@ -736,19 +1052,22 @@ class _TaskAssignmentProgressScreenState
                         ],
                       ),
                     ),
-                    if (isAdmin)
-                      IconButton.filled(
-                        onPressed: () {
+                    IconButton.filled(
+                      onPressed: () {
+                        if (isAdmin) {
                           setState(() => _isViewingTasks = false);
                           fetchDepartments();
-                        },
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: const Color(0xFF3148A4),
-                        ),
-                        tooltip: 'Assign task',
-                        icon: const Icon(Icons.add_rounded),
+                        } else {
+                          _showAddMyTaskDialog();
+                        }
+                      },
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFF3148A4),
                       ),
+                      tooltip: isAdmin ? 'Assign task' : 'Add task',
+                      icon: const Icon(Icons.add_rounded),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 22),
