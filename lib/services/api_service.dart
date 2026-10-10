@@ -805,24 +805,40 @@ class ApiService {
     }
   }
 
+  // Builds an error message that includes the server's reason, so a failure
+  // seen only on a release build (no console) still says why it was rejected.
+  String _httpErrorMessage(String prefix, http.Response response) {
+    var detail = '';
+    try {
+      final body = json.decode(response.body);
+      if (body is Map && body['message'] != null) {
+        detail = body['message'].toString();
+      }
+    } catch (_) {
+      // Non-JSON body (e.g. a proxy/WAF error page).
+      final text = response.body.replaceAll(RegExp(r'<[^>]*>'), ' ').trim();
+      detail = text.length > 120 ? text.substring(0, 120) : text;
+    }
+    final server = response.headers['server'];
+    return '$prefix: ${response.statusCode}'
+        '${detail.isNotEmpty ? ' - $detail' : ''}'
+        '${server != null ? ' [$server]' : ''}';
+  }
+
   // Punch In API
   Future<Map<String, dynamic>> punchIn(User user, String token) async {
-    const url = 'https://hp.triz.co.in/hrms-in-time/store';
+    // Self-service route open to every employee. hrms-in-time/store is the
+    // admin-only shift configuration route and returns 403 for employees.
+    const url = 'https://hp.triz.co.in/hrms-attendance-in-time/store';
 
     final now = DateTime.now();
-    final outdate = DateFormat('yyyy-MM-dd').format(now);
-    final punchinTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
-
     final payload = {
       'type': 'API',
       'token': token,
-      'user_id': user.id.toString(),
-      'client_id': '0',
       'sub_institute_id': user.subInstituteId.toString(),
-      'outdate': outdate,
-      'punchin_time': punchinTime,
-      'address_in':
-          '127.0.0.1', // Placeholder IP, can be replaced with actual IP fetching
+      'employee': user.id.toString(),
+      'indate': DateFormat('yyyy-MM-dd').format(now),
+      'intime': DateFormat('HH:mm:ss').format(now),
     };
 
     debugPrint('Punching in with payload: $payload');
@@ -843,9 +859,10 @@ class ApiService {
     debugPrint('Punch in response body: ${response.body}');
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
+      final decoded = response.body.isEmpty ? null : json.decode(response.body);
+      final data = decoded is Map<String, dynamic> ? decoded : <String, dynamic>{};
       debugPrint('Punch in response: $data');
-      if (data['status'] == '0') {
+      if (data['status'].toString() == '0') {
         // Handle already punched in
         throw Exception(data['message'] ?? 'Already punched in');
       }
@@ -853,28 +870,23 @@ class ApiService {
       return data;
     } else {
       debugPrint('Punch in failed: ${response.body}');
-      throw Exception('Failed to punch in: ${response.statusCode}');
+      throw Exception(_httpErrorMessage('Failed to punch in', response));
     }
   }
 
   // Punch Out API
   Future<Map<String, dynamic>> punchOut(User user, String token) async {
-    const url = 'https://hp.triz.co.in/hrms-out-time/store';
+    // Self-service route open to every employee (see punchIn).
+    const url = 'https://hp.triz.co.in/hrms-attendance-out-time/store';
 
     final now = DateTime.now();
-    final outdate = DateFormat('yyyy-MM-dd').format(now);
-    final punchoutTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
-
     final payload = {
       'type': 'API',
       'token': token,
-      'user_id': user.id.toString(),
-      'client_id': '0',
       'sub_institute_id': user.subInstituteId.toString(),
-      'outdate': outdate,
-      'punchout_time': punchoutTime,
-      'address_out':
-          '127.0.0.1', // Placeholder IP, can be replaced with actual IP fetching
+      'employee': user.id.toString(),
+      'outdate': DateFormat('yyyy-MM-dd').format(now),
+      'outtime': DateFormat('HH:mm:ss').format(now),
     };
 
     debugPrint('Punching out with payload: $payload');
@@ -895,9 +907,10 @@ class ApiService {
     debugPrint('Punch out response body: ${response.body}');
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
+      final decoded = response.body.isEmpty ? null : json.decode(response.body);
+      final data = decoded is Map<String, dynamic> ? decoded : <String, dynamic>{};
       debugPrint('Punch out response: $data');
-      if (data['status'] == '0') {
+      if (data['status'].toString() == '0') {
         // Handle not punched in or other errors
         throw Exception(data['message'] ?? 'Cannot punch out');
       }
@@ -905,7 +918,7 @@ class ApiService {
       return data;
     } else {
       debugPrint('Punch out failed: ${response.body}');
-      throw Exception('Failed to punch out: ${response.statusCode}');
+      throw Exception(_httpErrorMessage('Failed to punch out', response));
     }
   }
 
