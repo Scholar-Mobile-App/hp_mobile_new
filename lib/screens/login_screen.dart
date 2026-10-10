@@ -19,6 +19,21 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _rememberMe = false;
 
   @override
+  void initState() {
+    super.initState();
+    _loadRememberedEmail();
+  }
+
+  Future<void> _loadRememberedEmail() async {
+    final email = await context.read<AuthProvider>().getRememberedEmail();
+    if (!mounted || email == null) return;
+    setState(() {
+      _emailController.text = email;
+      _rememberMe = true;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -344,6 +359,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                   await auth.login(
                                                     _emailController.text,
                                                     _passwordController.text,
+                                                    rememberMe: _rememberMe,
                                                   );
                                                   if (!mounted) return;
                                                   Navigator.pushReplacement(

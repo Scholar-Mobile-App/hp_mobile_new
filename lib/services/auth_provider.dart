@@ -12,6 +12,7 @@ class AuthProvider with ChangeNotifier {
   MenuResponse? _menuResponse;
   String? _originalToken;
   bool _isLoading = false;
+  bool _rememberMe = true;
 
   User? get currentUser => _currentUser;
   MenuResponse? get menuResponse => _menuResponse;
@@ -19,7 +20,8 @@ class AuthProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
 
   // Login method
-  Future<void> login(String email, String password) async {
+  Future<void> login(String email, String password,
+      {bool rememberMe = false}) async {
     _isLoading = true;
     notifyListeners();
 
@@ -109,6 +111,18 @@ class AuthProvider with ChangeNotifier {
 
       // Persist the finalized session user and menu response
       final prefs = await SharedPreferences.getInstance();
+      _rememberMe = rememberMe;
+      await prefs.setBool('remember_me', rememberMe);
+      if (rememberMe) {
+        await prefs.setString('remembered_email', email);
+      } else {
+        await prefs.remove('remembered_email');
+        // Session lives in memory only; nothing to restore on next app start
+        await prefs.remove('user');
+        await prefs.remove('menu_response');
+        await prefs.remove('original_token');
+        return;
+      }
       await prefs.setString('user', jsonEncode(_currentUser!.toJson()));
       if (_originalToken != null) {
         await prefs.setString('original_token', _originalToken!);
@@ -157,7 +171,7 @@ class AuthProvider with ChangeNotifier {
 
       // Save to persistent storage
       final prefs = await SharedPreferences.getInstance();
-      if (_menuResponse != null) {
+      if (_menuResponse != null && _rememberMe) {
         await prefs.setString('menu_response', jsonEncode(_menuResponse!.toJson()));
       }
 
@@ -201,6 +215,7 @@ class AuthProvider with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     final userString = prefs.getString('user');
     if (userString != null) {
+      _rememberMe = true;
       final userMap = jsonDecode(userString) as Map<String, dynamic>;
       _currentUser = User.fromJson(userMap);
 
@@ -232,5 +247,14 @@ class AuthProvider with ChangeNotifier {
     } else {
       debugPrint('No session data found in shared preferences');
     }
+  }
+}
+
+extension AuthRememberMe on AuthProvider {
+  /// Returns the email saved by a previous "Remember me" login, if any.
+  Future<String?> getRememberedEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('remember_me') != true) return null;
+    return prefs.getString('remembered_email');
   }
 }
