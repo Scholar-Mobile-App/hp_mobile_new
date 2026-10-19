@@ -45,6 +45,8 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     ).currentUser;
     final canUpdateTask =
         currentUser != null && _isTaskAssigner(currentUser.id);
+    final canSubmitUpdate =
+        canUpdateTask || (currentUser != null && _isTaskAssignee(currentUser.id));
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAFA),
@@ -262,15 +264,16 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                 ],
               ),
 
-            if (canUpdateTask) const SizedBox(height: 32),
+            if (canSubmitUpdate) const SizedBox(height: 32),
 
             // Update Button
-            if (canUpdateTask)
+            if (canSubmitUpdate)
               Center(
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _updateTask,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF6366F1),
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 48,
                       vertical: 16,
@@ -509,10 +512,10 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
       return;
     }
 
-    if (!_isTaskAssigner(user.id)) {
+    if (!_isTaskAssigner(user.id) && !_isTaskAssignee(user.id)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Only the user who assigned this task can update it.'),
+          content: Text('Only the user who assigned this task or the user it is assigned to can update it.'),
         ),
       );
       return;
@@ -580,6 +583,8 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     final managerId = int.tryParse(widget.task.manageby?.trim() ?? '');
     return widget.task.createdBy == userId || managerId == userId;
   }
+
+  bool _isTaskAssignee(int userId) => widget.task.taskAllocatedTo == userId;
 
   String _formatDateTime(String dateTimeString) {
     try {
