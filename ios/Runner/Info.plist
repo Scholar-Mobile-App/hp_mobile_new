@@ -26,6 +26,12 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>FirebaseAutomaticInitializationEnabled</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>The camera is used to take your selfie when you start a travel visit.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Your location is recorded while you are on a travel visit.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Your location is recorded in the background while a travel visit is in progress.</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSUserNotificationsUsageDescription</key>
@@ -57,6 +63,7 @@
 	<array>
 		<string>remote-notification</string>
 		<string>fetch</string>
+		<string>location</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

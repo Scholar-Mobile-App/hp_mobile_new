@@ -17,6 +17,7 @@ import 'content_screen.dart';
 import 'competency_management/library_taxonomy/library_taxonomy_screen.dart';
 import 'competency_management/library_taxonomy/jobrole_screen.dart';
 import 'attendance/attendance_screen.dart';
+import 'hrms/travel_visit_screen.dart';
 import 'attendance/attendance_report_screen.dart';
 import 'organization_management/task_assignment_progress_screen.dart';
 import 'organization_management/organization_detail_screen.dart';
@@ -372,6 +373,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => AttendanceScreen(),
+        ),
+      );
+    } else if (menuItem.menuName == "Travel Visit") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const TravelVisitScreen(),
         ),
       );
     } else if (menuItem.menuName.toLowerCase().contains('attendance') &&

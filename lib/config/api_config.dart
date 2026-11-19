@@ -4,6 +4,7 @@ class ApiConfig {
   static const String loginEndpoint = '/login';
   static const String profileEndpoint = '/api/user/profile';
   static const String menuRightsEndpoint = '/user/ajax_groupwiserights';
+  static const String sidebarMenuEndpoint = '/user/ajax_sidebar_menu_g2g';
 
   // API call timeouts
   static const Duration defaultTimeout = Duration(seconds: 30);

@@ -249,35 +249,34 @@ class ApiService {
     }
   }
 
-  // Fetch menu rights - use same auth as profile API
+  // Fetch the menu the user may see, from the same API the web sidebar uses
+  // (/user/ajax_sidebar_menu_g2g, driven by Role & Permissions).
   Future<MenuResponse> fetchMenuRights(User user, String token) async {
     final url =
-        '${ApiConfig.baseUrl}${ApiConfig.menuRightsEndpoint}?type=API&token=$token&sub_institute_id=${user.subInstituteId}&profile_id=${user.userProfileId}';
+        '${ApiConfig.baseUrl}${ApiConfig.sidebarMenuEndpoint}?type=API&token=$token&sub_institute_id=${user.subInstituteId}&profile_id=${user.userProfileId}';
 
-    debugPrint('Fetching menu rights with same auth as profile API: $url');
+    debugPrint('Fetching sidebar menu: $url');
 
-    // Use same headers as profile API
     final headers = {
       'Authorization': 'Bearer $token',
+      'Accept': 'application/json',
       'Cookie': _getCookieHeader(),
     };
 
-    debugPrint('Using same headers as profile API');
-
     final response = await _httpClient.get(Uri.parse(url), headers: headers);
-    debugPrint('Menu rights response status: ${response.statusCode}');
+    debugPrint('Sidebar menu response status: ${response.statusCode}');
 
     if (response.statusCode == 200) {
-      debugPrint('Menu rights fetch successful');
-      final data = json.decode(response.body);
-      debugPrint('Menu response data keys: ${data.keys.toList()}');
-      final menuResponse = MenuResponse.fromJson(data);
-      final mobileMenus = menuResponse.getMobileMenus();
-      debugPrint('Parsed ${mobileMenus.length} mobile menus from API');
+      final body = json.decode(response.body);
+      if (body is! Map<String, dynamic> || body['data'] is! List) {
+        throw Exception('Unexpected menu response: ${body is Map ? (body['message'] ?? 'no data') : 'not an object'}');
+      }
+      final menuResponse = MenuResponse.fromSidebarTree(body['data'] as List<dynamic>);
+      debugPrint('Parsed ${menuResponse.getMobileMenus().length} mobile menus from sidebar API');
       return menuResponse;
     } else {
-      debugPrint('Menu rights fetch failed: ${response.body}');
-      throw Exception('Failed to fetch menu rights: ${response.statusCode}');
+      debugPrint('Sidebar menu fetch failed: ${response.body}');
+      throw Exception('Failed to fetch menu: ${response.statusCode}');
     }
   }
 
