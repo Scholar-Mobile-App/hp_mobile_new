@@ -11,21 +11,23 @@ import '../../services/auth_provider.dart';
 import '../../services/travel_visit_service.dart';
 
 const _purposes = <String, IconData>{
-  'Client Visit': Icons.handshake_outlined,
-  'Site Visit': Icons.location_city_outlined,
-  'Installation': Icons.build_outlined,
-  'Maintenance': Icons.settings_outlined,
-  'Collection': Icons.payments_outlined,
-  'Delivery': Icons.local_shipping_outlined,
-  'Meeting': Icons.groups_outlined,
+  'Client Visit': Icons.business_center,
+  'Site Visit': Icons.apartment,
+  'Installation': Icons.build,
+  'Maintenance': Icons.settings,
+  'Collection': Icons.credit_card,
+  'Delivery': Icons.inbox_outlined,
+  'Meeting': Icons.groups,
   'Other': Icons.more_horiz,
 };
 
-const _vehicles = <String, IconData>{
-  'Two Wheeler': Icons.two_wheeler,
-  'Four Wheeler': Icons.directions_car_outlined,
-  'Public Transport': Icons.directions_bus_outlined,
-  'Walking': Icons.directions_walk,
+// Emoji, not Material icons: the released app's icon font has no vehicle icons and a
+// Shorebird patch cannot add any. Emoji are drawn by the phone's own font.
+const _vehicles = <String, Object>{
+  'Two Wheeler': '🏍️',
+  'Four Wheeler': '🚗',
+  'Public Transport': '🚌',
+  'Walking': '🚶',
   'Other': Icons.more_horiz,
 };
 
@@ -319,7 +321,7 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(color: _navy.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12)),
-              child: const Icon(Icons.route, color: _navy),
+              child: const Icon(Icons.location_on, color: _navy),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -345,7 +347,7 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
               onPressed: _busy ? null : _start,
               icon: _busy
                   ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                  : const Icon(Icons.play_arrow_rounded, size: 26),
+                  : const Icon(Icons.play_circle_outline_rounded, size: 26),
               label: Text(_busy ? 'Starting trip…' : 'Start trip', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             ),
           ),
@@ -369,7 +371,7 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
 
   /// Icon tiles in a fixed grid: eight purposes fit in two rows instead of five.
   Widget _optionGrid(
-    Map<String, IconData> options,
+    Map<String, Object> options,
     String selected,
     ValueChanged<String> onPick,
     ColorScheme scheme, {
@@ -397,7 +399,10 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
               border: Border.all(color: on ? _navy : Colors.transparent),
             ),
             child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Icon(e.value, size: 24, color: on ? _accentLight : Colors.grey.shade700),
+              if (e.value is IconData)
+                Icon(e.value as IconData, size: 24, color: on ? _accentLight : Colors.grey.shade700)
+              else
+                Text(e.value as String, style: const TextStyle(fontSize: 22, height: 1.2)),
               const SizedBox(height: 6),
               Text(
                 short[e.key] ?? e.key,
@@ -453,7 +458,7 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(20)),
               child: Row(mainAxisSize: MainAxisSize.min, children: [
-                Icon(offline ? Icons.cloud_off : Icons.cloud_done_outlined, color: Colors.white, size: 14),
+                Icon(offline ? Icons.cloud_off_outlined : Icons.check_circle_outline, color: Colors.white, size: 14),
                 const SizedBox(width: 4),
                 Text(offline ? 'Will retry' : 'Synced', style: const TextStyle(color: Colors.white, fontSize: 11)),
               ]),
@@ -480,9 +485,9 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
           Center(child: Text('Started ${DateFormat('hh:mm a').format(v.startAt)}', style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 12))),
           const SizedBox(height: 18),
           Row(children: [
-            Expanded(child: _activeStat(Icons.straighten, '${_tracker.distanceKm.toStringAsFixed(2)} km', 'Distance')),
+            Expanded(child: _activeStat(Icons.show_chart, '${_tracker.distanceKm.toStringAsFixed(2)} km', 'Distance')),
             const SizedBox(width: 12),
-            Expanded(child: _activeStat(Icons.pin_drop_outlined, '${_tracker.pointCount}', 'Locations')),
+            Expanded(child: _activeStat(Icons.location_on, '${_tracker.pointCount}', 'Locations')),
           ]),
           if (locationOff) ...[
             const SizedBox(height: 14),
@@ -491,7 +496,7 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
               decoration: BoxDecoration(color: Colors.red.shade50, borderRadius: BorderRadius.circular(14)),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Row(children: [
-                  Icon(Icons.location_off, size: 20, color: Colors.red.shade700),
+                  Icon(Icons.warning, size: 20, color: Colors.red.shade700),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -551,7 +556,7 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
             OutlinedButton.icon(
               style: OutlinedButton.styleFrom(foregroundColor: Colors.white, side: const BorderSide(color: Colors.white70)),
               onPressed: _busy ? null : _load,
-              icon: const Icon(Icons.my_location),
+              icon: const Icon(Icons.location_on),
               label: const Text('Resume recording'),
             ),
           ],
@@ -567,7 +572,7 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
               onPressed: _busy ? null : _end,
               icon: _busy
                   ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: _navy))
-                  : const Icon(Icons.stop_circle_outlined),
+                  : const Icon(Icons.flag_outlined),
               label: Text(_busy ? 'Please wait…' : 'End trip', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
             ),
           ),
@@ -612,9 +617,9 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
         );
 
     return Row(children: [
-      tile(Icons.event_note_outlined, '${month.length}', 'Trips this month'),
+      tile(Icons.event_outlined, '${month.length}', 'Trips this month'),
       const SizedBox(width: 12),
-      tile(Icons.speed, '${km.toStringAsFixed(1)} km', 'Distance this month'),
+      tile(Icons.trending_up, '${km.toStringAsFixed(1)} km', 'Distance this month'),
     ]);
   }
 
@@ -632,7 +637,7 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
             decoration: _cardDecoration(),
             child: Center(
               child: Column(children: [
-                Icon(Icons.map_outlined, size: 40, color: Colors.grey.shade400),
+                Icon(Icons.location_on, size: 40, color: Colors.grey.shade400),
                 const SizedBox(height: 8),
                 Text('No trips yet', style: TextStyle(color: Colors.grey.shade600)),
               ]),
@@ -784,7 +789,7 @@ class _EndTripSheetState extends State<_EndTripSheet> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
                     onPressed: _take,
-                    icon: Icon(shot == null ? Icons.photo_camera_outlined : Icons.refresh, size: 18),
+                    icon: Icon(shot == null ? Icons.person_outline : Icons.refresh, size: 18),
                     label: Text(shot == null ? 'Take selfie' : 'Retake'),
                   ),
                 ]),
