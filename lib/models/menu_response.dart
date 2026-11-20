@@ -57,13 +57,74 @@ class MenuResponse {
     );
   }
 
+  /// Builds the same level_1 / level_2 / level_3 shape from the nested tree that
+  /// `/user/ajax_sidebar_menu_g2g` returns (module -> `menus` -> `submenus` ...).
+  ///
+  /// That endpoint is what the web sidebar uses and is driven by Role &
+  /// Permissions, so the app's menu now follows it. The tree has no `parent_id` or
+  /// `level`, so both come from where each row sits. Anything nested deeper than
+  /// level 3 is kept under its parent at level 3 rather than dropped.
+  factory MenuResponse.fromSidebarTree(List<dynamic> tree) {
+    final level1 = <MenuItem>[];
+    final level2 = <String, Map<String, MenuItem>>{};
+    final level3 = <String, Map<String, MenuItem>>{};
+
+    MenuItem toItem(Map<String, dynamic> n, int parentId, int level) => MenuItem(
+          id: (n['id'] as num?)?.toInt() ?? 0,
+          menuName: (n['label'] ?? n['menu_name'] ?? '').toString(),
+          parentId: parentId,
+          level: level,
+          pageType: (n['page_type'] ?? '').toString(),
+          accessLink: (n['access_link'] ?? '').toString(),
+          icon: (n['icon'] ?? '').toString(),
+          status: 1,
+          sortOrder: (n['sort_order'] as num?)?.toInt() ?? 0,
+          subInstituteId: '',
+          menuType: '',
+          canView: (n['can_view'] as num?)?.toInt() ?? 1,
+          canAdd: (n['can_add'] as num?)?.toInt() ?? 0,
+          canEdit: (n['can_edit'] as num?)?.toInt() ?? 0,
+          canDelete: (n['can_delete'] as num?)?.toInt() ?? 0,
+          dashboardRight: (n['dashboard_right'] as num?)?.toInt() ?? 0,
+          isMobile: (n['is_mobile'] as num?)?.toInt() ?? 0,
+        );
+
+    List<dynamic> childrenOf(Map<String, dynamic> n) =>
+        (n['menus'] ?? n['submenus'] ?? n['children'] ?? const []) as List<dynamic>;
+
+    void walk(Map<String, dynamic> node, int parentId, int level) {
+      final item = toItem(node, parentId, level);
+      if (level == 1) {
+        level1.add(item);
+      } else {
+        final bucket = level == 2 ? level2 : level3;
+        (bucket[parentId.toString()] ??= {})[item.id.toString()] = item;
+      }
+      for (final c in childrenOf(node)) {
+        if (c is Map<String, dynamic>) walk(c, item.id, level >= 3 ? 3 : level + 1);
+      }
+    }
+
+    for (final m in tree) {
+      if (m is Map<String, dynamic>) walk(m, 0, 1);
+    }
+
+    return MenuResponse(level1: level1, level2: level2, level3: level3);
+  }
+
   // Get only level 3 mobile menus (is_mobile == 1)
   List<MenuItem> getMobileMenus() {
     List<MenuItem> mobileMenus = [];
 
-    // Add only level 3 mobile menus
+    // Level 3 mobile menus
     for (var subMenus in level3.values) {
       mobileMenus.addAll(subMenus.values.where((menu) => menu.isMobile == 1));
+    }
+
+    // A screen sitting directly under a module (level 2, e.g. Travel Visit).
+    // Only real pages: a level 2 GROUP is a folder, not something to open.
+    for (var subMenus in level2.values) {
+      mobileMenus.addAll(subMenus.values.where((menu) => menu.isMobile == 1 && menu.pageType == 'page'));
     }
 
     // Sort by sort_order
