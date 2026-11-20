@@ -18,6 +18,7 @@ import 'competency_management/library_taxonomy/library_taxonomy_screen.dart';
 import 'competency_management/library_taxonomy/jobrole_screen.dart';
 import 'attendance/attendance_screen.dart';
 import 'hrms/travel_visit_screen.dart';
+import 'mobile_menu_routes.dart';
 import 'attendance/attendance_report_screen.dart';
 import 'organization_management/task_assignment_progress_screen.dart';
 import 'organization_management/organization_detail_screen.dart';
@@ -353,7 +354,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _navigateToMenuItem(BuildContext context, MenuItem menuItem) {
-    // Handle navigation based on menu item
+    // Menus from the sidebar API are matched by access_link (see mobile_menu_routes.dart).
+    final screen = mobileScreenFor(menuItem);
+    if (screen != null) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => screen));
+      return;
+    }
+
+    // Anything else falls through to the older name-based routing below.
     if (menuItem.menuName == "Library & Taxonomy") {
       Navigator.push(
         context,
@@ -590,7 +598,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context);
     final user = auth.currentUser;
-    var mobileMenus = auth.menuResponse?.getMobileMenus() ?? [];
+    // Only menus the app has a screen for: the menu now comes from the sidebar API,
+    // which also lists web-only screens that is_mobile may be set on.
+    var mobileMenus = openableMobileMenus(auth.menuResponse?.getMobileMenus() ?? []);
 
     debugPrint('Dashboard user image: ${user?.image}');
 
