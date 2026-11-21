@@ -211,13 +211,18 @@ class TravelVisitApi {
 
 class TripEndedException implements Exception {}
 
-/// Records the phone's position for the trip in progress, about once a minute.
+/// Records the phone's position for the trip in progress, every 30 seconds.
 ///
 /// Why it is built like this:
 ///  * A position STREAM with an Android foreground-service notification (and the
 ///    iOS background-location mode) is what keeps the app alive and receiving
 ///    fixes with the screen off. A bare Timer is paused by the OS in background.
-///  * Fixes are throttled to one per [interval], whatever rate the OS delivers.
+///  * The OS is asked for a fix every few seconds; out of those, the most accurate
+///    one in each [interval] window is recorded. A fix worse than [_goodAccuracyM]
+///    is not recorded, so the map is not drawn through GPS "jumps" - unless no good
+///    fix has come for [_maxGap], so a weak-signal stretch still leaves a trace.
+///  * The distance ignores GPS jitter (movement smaller than the fixes' own error,
+///    e.g. while standing still) and impossible jumps (faster than [_maxSpeedMps]).
 ///  * Fixes go into a buffer that is saved to SharedPreferences and flushed to the
 ///    server after each fix. If the network is down they stay queued and are sent
 ///    with the next flush, in time order. The server ignores repeats, so a retry
@@ -227,17 +232,32 @@ class TravelTracker extends ChangeNotifier {
   TravelTracker._();
   static final TravelTracker instance = TravelTracker._();
 
-  static const Duration interval = Duration(seconds: 60);
+  /// One point is recorded per this window.
+  static const Duration interval = Duration(seconds: 30);
+  /// How often the OS is asked for a fix, so each window has a few to choose from.
+  /// Every 10 s (not more often) to go easier on the battery.
+  static const Duration _osInterval = Duration(seconds: 10);
   static const String _prefsKey = 'travel_tracker_state_v1';
-  /// A fix less accurate than this is not trusted for the on-screen distance.
+  /// A fix at least this accurate is recorded as soon as its window is over.
+  static const double _goodAccuracyM = 50;
+  /// A fix less accurate than this is never used for the distance.
   static const double _maxAccuracyM = 100;
+  /// With no good fix for this long, the best one seen is recorded anyway.
+  static const Duration _maxGap = Duration(seconds: 60);
+  /// About 250 km/h: a "move" faster than this between two fixes is a GPS glitch.
+  static const double _maxSpeedMps = 70;
+  /// Movement below this is never counted (the floor of the jitter filter).
+  static const double _minMoveM = 10;
 
   TravelVisitApi? _api;
   int? visitId;
   StreamSubscription<Position>? _sub;
   final List<TravelPoint> _pending = [];
+  /// Where the distance was last measured from (the last trusted fix).
   TravelPoint? _last;
   DateTime? _lastRecorded;
+  /// The most accurate fix seen in the current window, not yet recorded.
+  Position? _candidate;
   bool _flushing = false;
 
   StreamSubscription<ServiceStatus>? _statusSub;
@@ -260,6 +280,7 @@ class TravelTracker extends ChangeNotifier {
     visitId = id;
     lastError = null;
 
+    _candidate = null;
     if (!resume) {
       _pending.clear();
       _last = null;
@@ -285,9 +306,9 @@ class TravelTracker extends ChangeNotifier {
     final LocationSettings settings;
     if (defaultTargetPlatform == TargetPlatform.android) {
       settings = AndroidSettings(
-        accuracy: LocationAccuracy.high,
+        accuracy: LocationAccuracy.best,
         distanceFilter: 0,
-        intervalDuration: interval,
+        intervalDuration: _osInterval,
         foregroundNotificationConfig: const ForegroundNotificationConfig(
           notificationTitle: 'Travel visit in progress',
           notificationText: 'Your location is being recorded for this trip.',
@@ -297,7 +318,7 @@ class TravelTracker extends ChangeNotifier {
       );
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       settings = AppleSettings(
-        accuracy: LocationAccuracy.high,
+        accuracy: LocationAccuracy.bestForNavigation,
         activityType: ActivityType.automotiveNavigation,
         distanceFilter: 0,
         pauseLocationUpdatesAutomatically: false,
@@ -389,12 +410,25 @@ class TravelTracker extends ChangeNotifier {
     }
   }
 
+  /// A fix's horizontal error in metres; an unknown one (0 or less) counts as poor.
+  static double _acc(Position p) => p.accuracy > 0 ? p.accuracy : _maxAccuracyM;
+
   void _record(Position p, {bool force = false}) {
-    final now = DateTime.now();
-    if (!force && _lastRecorded != null && now.difference(_lastRecorded!) < interval - const Duration(seconds: 5)) {
-      return;
+    // Android can hand back a cached fix from before the trip: skip anything stale.
+    if (!force && p.timestamp.isBefore(DateTime.now().subtract(const Duration(minutes: 2)))) return;
+
+    if (!force) {
+      // Keep the most accurate fix of the window; decide when the window is over.
+      if (_candidate == null || _acc(p) <= _acc(_candidate!)) _candidate = p;
+      final since = _lastRecorded == null ? interval : DateTime.now().difference(_lastRecorded!);
+      // A small allowance, since the OS does not deliver exactly on the second.
+      if (since < interval - const Duration(seconds: 2)) return;
+      // A poor fix is held back (a better one may still come), up to [_maxGap].
+      if (_acc(_candidate!) > _goodAccuracyM && since < _maxGap) return;
+      p = _candidate!;
     }
-    _lastRecorded = now;
+    _candidate = null;
+    _lastRecorded = DateTime.now();
 
     final point = TravelPoint(
       lat: p.latitude,
@@ -404,11 +438,7 @@ class TravelTracker extends ChangeNotifier {
       recordedAt: p.timestamp,
     );
 
-    if (_last != null && p.accuracy <= _maxAccuracyM) {
-      final m = Geolocator.distanceBetween(_last!.lat, _last!.lng, point.lat, point.lng);
-      if (m >= 5) distanceKm += m / 1000;
-    }
-    if (p.accuracy <= _maxAccuracyM) _last = point;
+    _addDistance(point);
 
     _pending.add(point);
     pointCount++;
@@ -416,6 +446,47 @@ class TravelTracker extends ChangeNotifier {
     notifyListeners();
     unawaited(_save());
     unawaited(flush());
+  }
+
+  /// Adds the stretch from the last trusted fix to [point], if it is a real move.
+  void _addDistance(TravelPoint point) {
+    final acc = point.accuracy != null && point.accuracy! > 0 ? point.accuracy! : _maxAccuracyM;
+    if (acc > _maxAccuracyM) return;          // too vague to measure from or to
+    final last = _last;
+    if (last == null) {
+      _last = point;
+      return;
+    }
+
+    final m = Geolocator.distanceBetween(last.lat, last.lng, point.lat, point.lng);
+    final lastAcc = last.accuracy != null && last.accuracy! > 0 ? last.accuracy! : _maxAccuracyM;
+
+    // Jitter: a move no bigger than the fixes' own error is noise (standing still
+    // or crawling). [_last] stays put, so a slow real move is still counted in
+    // full once it adds up past the threshold.
+    final noise = [_minMoveM, acc, lastAcc].reduce((a, b) => a > b ? a : b);
+    if (m < noise) return;
+
+    // A jump faster than any vehicle is a bad fix: skip it, keep the old anchor.
+    final secs = point.recordedAt.difference(last.recordedAt).inMilliseconds / 1000;
+    if (secs > 0 && m / secs > _maxSpeedMps) return;
+
+    distanceKm += m / 1000;
+    _last = point;
+  }
+
+  /// Counts the last stretch, from the last recorded fix to where the trip ends.
+  /// Distance only: the end position itself goes to the server with the end call.
+  void addFinalPosition(Position p) {
+    _addDistance(TravelPoint(
+      lat: p.latitude,
+      lng: p.longitude,
+      accuracy: p.accuracy,
+      speed: p.speed < 0 ? null : p.speed,
+      recordedAt: p.timestamp,
+    ));
+    unawaited(_save());
+    notifyListeners();
   }
 
   /// Send everything queued. Safe to call any time; a second call while one is running does nothing.
@@ -457,6 +528,7 @@ class TravelTracker extends ChangeNotifier {
       _pending.clear();
       _last = null;
       _lastRecorded = null;
+      _candidate = null;
       try {
         (await SharedPreferences.getInstance()).remove(_prefsKey);
       } catch (_) {}

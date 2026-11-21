@@ -40,8 +40,8 @@ const _slate = Color(0xFF475569);
 const _slateLight = Color(0xFF64748B);
 const _pageBg = Color(0xFFF8F9FA);
 
-/// Travel Visit: start a trip, let the phone record its route about once a
-/// minute, end the trip. Tracking lives in [TravelTracker] (a singleton), so
+/// Travel Visit: start a trip, let the phone record its route every 30
+/// seconds, end the trip. Tracking lives in [TravelTracker] (a singleton), so
 /// leaving this screen does not stop it.
 class TravelVisitScreen extends StatefulWidget {
   const TravelVisitScreen({super.key});
@@ -199,6 +199,8 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
     try {
       final pos = await _currentPosition();
       final address = await TravelPermissions.addressOf(pos.latitude, pos.longitude);
+      // The stretch from the last recorded fix to here belongs in the distance too.
+      _tracker.addFinalPosition(pos);
       // Everything not yet delivered rides along, so the last stretch is not lost.
       await TravelVisitApi(token).end(
         visit.id,
@@ -327,7 +329,7 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text('Start a new trip', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: _navy, fontWeight: FontWeight.w700)),
-                Text('Location is recorded every minute', style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+                Text('Location is recorded every 30 seconds', style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
               ]),
             ),
           ]),
