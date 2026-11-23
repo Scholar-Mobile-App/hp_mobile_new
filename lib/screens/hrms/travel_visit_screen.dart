@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show MissingPluginException;
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../services/auth_provider.dart';
 import '../../services/travel_visit_service.dart';
@@ -61,6 +63,9 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
   bool _busy = false;
   String? _error;
   bool _needsAlways = false;
+  // This install's store build predates Travel Visit: no location plugin, see
+  // TravelPermissions.isAvailable. The screen asks for an app update instead.
+  bool _unsupported = false;
   Timer? _clock;
 
   @override
@@ -111,19 +116,20 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
       _error = null;
     });
     try {
+      _unsupported = !await TravelPermissions.isAvailable();
       final api = TravelVisitApi(token);
       final results = await Future.wait([api.active(), api.mine()]);
       final active = results[0] as TravelVisit?;
       final history = results[1] as List<TravelVisit>;
 
-      if (active != null && !(_tracker.isTracking && _tracker.visitId == active.id)) {
+      if (!_unsupported && active != null && !(_tracker.isTracking && _tracker.visitId == active.id)) {
         // A trip is open on the server but this phone is not recording it
         // (app was restarted). Pick it back up if we are allowed to.
         if (await TravelPermissions.ensure() == null) {
           await _tracker.begin(token, active.id, resume: true);
         }
       }
-      _needsAlways = active != null && !await TravelPermissions.hasAlways();
+      _needsAlways = !_unsupported && active != null && !await TravelPermissions.hasAlways();
 
       if (!mounted) return;
       setState(() {
@@ -146,7 +152,7 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
 
   Future<void> _start() async {
     final token = _token;
-    if (token == null || _busy) return;
+    if (token == null || _busy || _unsupported) return;
 
     setState(() {
       _busy = true;
@@ -172,6 +178,8 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
       _load();
     } on TravelException catch (e) {
       _fail(e.message);
+    } on MissingPluginException {
+      if (mounted) setState(() => _unsupported = true);
     } catch (e) {
       _fail('Could not start the trip: $e');
     } finally {
@@ -276,7 +284,12 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
             if (_loading && _active == null && _history.isEmpty)
               const Padding(padding: EdgeInsets.all(60), child: Center(child: CircularProgressIndicator()))
             else ...[
-              if (_active != null) _activeCard(_active!, scheme) else _startCard(scheme),
+              if (_unsupported)
+                _updateCard()
+              else if (_active != null)
+                _activeCard(_active!, scheme)
+              else
+                _startCard(scheme),
               const SizedBox(height: 20),
               if (_active == null) _monthSummary(scheme),
               const SizedBox(height: 8),
@@ -309,6 +322,54 @@ class _TravelVisitScreenState extends State<TravelVisitScreen> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 16, offset: const Offset(0, 6))],
       );
+
+  // ── app update needed ───────────────────────────────────────────────────
+
+  static final _storeUrl = Uri.parse(Platform.isIOS
+      ? 'https://apps.apple.com/app/id6767505063'
+      : 'https://play.google.com/store/apps/details?id=com.triz.g2g');
+
+  Widget _updateCard() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: _cardDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(color: _accent.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
+              // Only icons the released build already used: its icon font is tree-shaken.
+              child: const Icon(Icons.download, color: _accent),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text('Update the app to use Travel Visit',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(color: _navy, fontWeight: FontWeight.w700)),
+            ),
+          ]),
+          const SizedBox(height: 12),
+          Text(
+            'Recording your trip needs location access, which this version of the app does not have. '
+            'Install the latest version from the ${Platform.isIOS ? 'App Store' : 'Play Store'}, then open Travel Visit again.',
+            style: const TextStyle(color: _slate, height: 1.4),
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            height: 54,
+            child: FilledButton.icon(
+              style: FilledButton.styleFrom(backgroundColor: _accent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+              onPressed: () => launchUrl(_storeUrl, mode: LaunchMode.externalApplication),
+              icon: const Icon(Icons.open_in_new),
+              label: const Text('Update app', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   // ── start ───────────────────────────────────────────────────────────────
 
