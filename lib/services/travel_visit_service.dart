@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show MissingPluginException;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -574,6 +575,24 @@ class TravelTracker extends ChangeNotifier {
 
 /// Location permission + service checks, with a message the screen can show.
 class TravelPermissions {
+  static bool? _available;
+
+  /// False when this install has no native location code: a store build made
+  /// before Travel Visit existed (1.0.15+20 and older) that gets the feature's
+  /// Dart code through a Shorebird patch. A patch cannot add a plugin's native
+  /// side, so only installing a newer store build fixes it.
+  static Future<bool> isAvailable() async {
+    if (_available != null) return _available!;
+    try {
+      await Geolocator.checkPermission();
+      return _available = true;
+    } on MissingPluginException {
+      return _available = false;
+    } catch (_) {
+      return true; // any other failure: let the normal flow report it
+    }
+  }
+
   /// Returns null when ready, otherwise what to tell the user.
   static Future<String?> ensure() async {
     // Permission first: the system "turn on location" prompt below needs it.
@@ -609,8 +628,13 @@ class TravelPermissions {
 
   static Future<void> openLocationSettings() => Geolocator.openLocationSettings();
 
-  /// "Allow all the time" is what lets tracking continue with the screen off.
-  static Future<bool> hasAlways() async => (await Geolocator.checkPermission()) == LocationPermission.always;
+  /// Whether tracking can continue with the screen off. On Android the foreground
+  /// service covers that on "While using the app", and the app does not declare
+  /// ACCESS_BACKGROUND_LOCATION, so "Allow all the time" is never asked there.
+  static Future<bool> hasAlways() async {
+    if (defaultTargetPlatform == TargetPlatform.android) return true;
+    return (await Geolocator.checkPermission()) == LocationPermission.always;
+  }
 
   static Future<void> requestAlways() async {
     // On Android 11+ the system sends the user to Settings for this one.
